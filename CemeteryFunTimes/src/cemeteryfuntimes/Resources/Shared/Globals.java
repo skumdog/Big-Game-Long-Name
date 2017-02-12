@@ -20,10 +20,11 @@ public interface Globals {
     public final static float PLAYERDAMP=.02f; //Friction coeffection
     
     //Ballistic constants
-    public final static float PROJECTILESPEED=5;
+    public final static float PROJECTILESPEED=10;
     public final static int PROJECTILELENGTH=7;
     public final static int PROJECTILEWIDTH=2;
-    public final static long PROJECTILEDELAY=100;
+    public final static long PROJECTILEDELAY=300;
+    public final static float PROJECTILEPLAYERBOOST=.25f;  //This constant represents the fraction of the players velocity that is added to the projectile speed
     
     //Creature dimensions
     public final static int PLAYERSIZE=50;
@@ -33,20 +34,20 @@ public interface Globals {
     public final static Color PROJECTILECOLOR=Color.BLACK;
     
     //Player commands //IS THIS NECESSARY? OR SHOULD WE STICK WITH THE KEYEVENTS
-    public final static int MOVELEFT=1;
-    public final static int MOVERIGHT=2;
-    public final static int MOVEUP=3;
-    public final static int MOVEDOWN=4;
-    public final static int SHOOTLEFT=5;
-    public final static int SHOOTRIGHT=6;
-    public final static int SHOOTUP=7;
-    public final static int SHOOTDOWN=8;
+    public final static int MOVELEFT=0;
+    public final static int MOVERIGHT=1;
+    public final static int MOVEUP=2;
+    public final static int MOVEDOWN=3;
+    public final static int SHOOTLEFT=0;
+    public final static int SHOOTRIGHT=1;
+    public final static int SHOOTUP=2;
+    public final static int SHOOTDOWN=3;
     
     //Other
     public final static int TIMERDELAY=10;
-    public final static int LEFTWALL=1;
-    public final static int RIGHTWALL=2;
-    public final static int TOPWALL=3;
-    public final static int BOTTOMWALL=4;
+    public final static int LEFTWALL=0;
+    public final static int RIGHTWALL=1;
+    public final static int TOPWALL=2;
+    public final static int BOTTOMWALL=3;
     
 }

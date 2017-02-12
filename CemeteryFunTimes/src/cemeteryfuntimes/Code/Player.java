@@ -32,16 +32,16 @@ public class Player implements Globals {
         //Record which directional keys are being pressed
         switch(direction) {
             case KeyEvent.VK_A:
-                keysPressed[0]=keyIsPressed;
+                keysPressed[MOVELEFT]=keyIsPressed;
                 break;
             case KeyEvent.VK_D:
-                keysPressed[1]=keyIsPressed;
+                keysPressed[MOVERIGHT]=keyIsPressed;
                 break;
             case KeyEvent.VK_W:
-                keysPressed[2]=keyIsPressed;
+                keysPressed[MOVEUP]=keyIsPressed;
                 break;
             case KeyEvent.VK_S:
-                keysPressed[3]=keyIsPressed;
+                keysPressed[MOVEDOWN]=keyIsPressed;
                 break;
         }
     }
@@ -62,25 +62,23 @@ public class Player implements Globals {
         // ? 1 : 0 casts a boolean as 1 if true and 0 if false
         xAccel = 0;
         yAccel = 0;
-        float xDampAccel=0;
-        float yDampAccel=0;
         
-        if( keysPressed[0] ^ keysPressed[1] ) { 
-            xAccel = (keysPressed[0] ? 1 : 0)*-PLAYERACCEL + (keysPressed[1] ? 1 : 0)*PLAYERACCEL;
+        //If only one of the x directional keys is pressed apply an acceleration in that direction
+        if( keysPressed[MOVELEFT] ^ keysPressed[MOVERIGHT] ) { 
+            xAccel = (keysPressed[MOVELEFT] ? 1 : 0)* -PLAYERACCEL + (keysPressed[MOVERIGHT] ? 1 : 0)*PLAYERACCEL;
         }
-        if ( posVel.xVel != 0 ) {
-            xDampAccel = -PLAYERDAMP * posVel.xVel;
-            if ( xAccel == 0 && (Math.abs(xDampAccel) > Math.abs(posVel.xVel)) ) { xAccel=0; posVel.xVel=0; }
+        if( keysPressed[MOVEUP] ^ keysPressed[MOVEDOWN] ) {
+            yAccel = (keysPressed[MOVEUP] ? 1 : 0)* -PLAYERACCEL + (keysPressed[MOVEDOWN] ? 1 : 0)*PLAYERACCEL;
         }
-        if( keysPressed[2] ^ keysPressed[3] ) {
-            yAccel = (keysPressed[2] ? 1 : 0)*-PLAYERACCEL + (keysPressed[3] ? 1 : 0)*PLAYERACCEL;
+        if (xAccel != 0 && yAccel != 0) {
+            //If moving in two directions divide both accels by square root of 2
+            //This ensures diagonal moving speed does not exceed linear moving speed
+            xAccel /= 1.41421356237;
+            yAccel /= 1.41421356237;
         }
-        if ( posVel.yVel != 0 ) {
-            yDampAccel = -PLAYERDAMP *  posVel.yVel;
-            if ( yAccel == 0 && (Math.abs(yDampAccel) > Math.abs(posVel.yVel)) ) { yAccel=0; posVel.yVel=0; }
-        }
-        xAccel += xDampAccel;
-        yAccel += yDampAccel;
+        //Combine both player accel and friction deaccel
+        xAccel += -PLAYERDAMP * posVel.xVel;
+        yAccel += -PLAYERDAMP *  posVel.yVel;
     }
     
     public void adjustForMaxSpeed() {
@@ -91,24 +89,22 @@ public class Player implements Globals {
     }
     
     public void checkWallCollision() {
-        int wall=cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(posVel.xPos,rad,posVel.yPos,rad);
-        switch(wall) {
-            case RIGHTWALL:
-                posVel.xVel = 0;
-                posVel.xPos = GAMEWIDTH - rad;
-                break;
-            case LEFTWALL:
-                posVel.xVel = 0;
-                posVel.xPos = rad;
-                break;
-            case TOPWALL:
-                posVel.yVel = 0;
-                posVel.yPos = rad;
-                break;
-            case BOTTOMWALL:
-                posVel.yVel = 0;
-                posVel.yPos = GAMEHEIGHT - rad;
-                break;
+        boolean[] wall=cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(posVel.xPos,rad,posVel.yPos,rad);
+        if (wall[RIGHTWALL]) {
+            posVel.xVel = 0;
+            posVel.xPos = GAMEWIDTH - rad;
+        }
+        if (wall[LEFTWALL]) {
+            posVel.xVel = 0;
+            posVel.xPos = rad;
+        }
+        if (wall[TOPWALL]) {
+            posVel.yVel = 0;
+            posVel.yPos = rad;
+        }
+        if (wall[BOTTOMWALL]) {
+            posVel.yVel = 0;
+            posVel.yPos = GAMEHEIGHT - rad;
         }
     }
     
@@ -122,12 +118,8 @@ public class Player implements Globals {
         return health;
     }
     
-    public int xPos() {
-        return Math.round(posVel.xPos);
-    }
-    
-    public int yPos() {
-        return Math.round(posVel.yPos);
+    public PosVel PosVel() {
+        return posVel;
     }
     
     public int rad() {

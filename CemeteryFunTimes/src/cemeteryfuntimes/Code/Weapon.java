@@ -26,28 +26,28 @@ public class Weapon implements Globals {
     public void shoot(int direction) {
         switch(direction) {
             case KeyEvent.VK_LEFT:
-                keyPressed[0]=true;
-                keyPressed[1]=false;
-                keyPressed[2]=false;
-                keyPressed[3]=false;
+                keyPressed[MOVELEFT]=true;
+                keyPressed[MOVERIGHT]=false;
+                keyPressed[MOVEUP]=false;
+                keyPressed[MOVEDOWN]=false;
                 break;
             case KeyEvent.VK_RIGHT:
-                keyPressed[0]=false;
-                keyPressed[1]=true;
-                keyPressed[2]=false;
-                keyPressed[3]=false;
+                keyPressed[MOVELEFT]=false;
+                keyPressed[MOVERIGHT]=true;
+                keyPressed[MOVEUP]=false;
+                keyPressed[MOVEDOWN]=false;
                 break;
             case KeyEvent.VK_UP:
-                keyPressed[0]=false;
-                keyPressed[1]=false;
-                keyPressed[2]=true;
-                keyPressed[3]=false;
+                keyPressed[MOVELEFT]=false;
+                keyPressed[MOVERIGHT]=false;
+                keyPressed[MOVEUP]=true;
+                keyPressed[MOVEDOWN]=false;
                 break;
             case KeyEvent.VK_DOWN:
-                keyPressed[0]=false;
-                keyPressed[1]=false;
-                keyPressed[2]=false;
-                keyPressed[3]=true;
+                keyPressed[MOVELEFT]=false;
+                keyPressed[MOVERIGHT]=false;
+                keyPressed[MOVEUP]=false;
+                keyPressed[MOVEDOWN]=true;
                 break;
         }
     }
@@ -55,16 +55,16 @@ public class Weapon implements Globals {
     public void stop(int direction) {
         switch(direction) {
             case KeyEvent.VK_LEFT:
-                keyPressed[0]=false;
+                keyPressed[MOVELEFT]=false;
                 break;
             case KeyEvent.VK_RIGHT:
-                keyPressed[1]=false;
+                keyPressed[MOVERIGHT]=false;
                 break;
             case KeyEvent.VK_UP:
-                keyPressed[2]=false;
+                keyPressed[MOVEUP]=false;
                 break;
             case KeyEvent.VK_DOWN:
-                keyPressed[3]=false;
+                keyPressed[MOVEDOWN]=false;
                 break;
         }
     }
@@ -87,23 +87,14 @@ public class Weapon implements Globals {
         lastUpdate = now;
         
         //Create new projectile with correct location relative to player
-        Projectile projectile;
-        if (keyPressed[0]) {
-            projectile = new Projectile(player.xPos()-player.rad(),player.yPos(),MOVELEFT);
+        for (int i=0; i<4; i++) {
+            if (keyPressed[i]) {
+                //If a key is currently pressed generate a projectile moving in that direction
+                Projectile projectile = new Projectile(player,i);
+                projectiles.add(projectile);
+                return;
+            }
         }
-        else if (keyPressed[1]) {
-            projectile = new Projectile(player.xPos()+player.rad(),player.yPos(),MOVERIGHT);
-        }
-        else if (keyPressed[2]) {
-            projectile = new Projectile(player.xPos(),player.yPos()-player.rad(),MOVEUP);
-        }
-        else if (keyPressed[3]) {
-            projectile = new Projectile(player.xPos(),player.yPos()+player.rad(),MOVEDOWN);
-        }
-        else {
-            return;
-        }
-        projectiles.add(projectile);
     }
     
     public void draw(Graphics g) {

@@ -12,29 +12,43 @@ public class Projectile implements Globals {
     
     private int xLength;
     private int yLength;
-    private float xSide;
-    private float ySide;
+    private final float xSide;
+    private final float ySide;
     
-    public Projectile(float xPos, float yPos, int direction) {
-        posVel = new PosVel(xPos,yPos,0,0);
+    public Projectile(Player player, int direction) {
+        PosVel playerPosVel = player.PosVel();
+        float playerRad = player.rad();
+ 
+        posVel = new PosVel();
+        //Create projectile
+        //Decide starting position by player position and direction projectile is being fired
+        //Decide velocity by adding PROJECTILESPEED with player velocity in that direction 
         switch( direction ) {
             case MOVELEFT:
-                posVel.xVel = -PROJECTILESPEED;
+                posVel.xPos = playerPosVel.xPos - playerRad;
+                posVel.yPos = playerPosVel.yPos;
+                posVel.xVel = playerPosVel.xVel*PROJECTILEPLAYERBOOST-PROJECTILESPEED;
                 xLength = PROJECTILELENGTH;
                 yLength = PROJECTILEWIDTH;
                 break;
             case MOVERIGHT:
-                posVel.xVel = PROJECTILESPEED;
+                posVel.xPos = playerPosVel.xPos + playerRad;
+                posVel.yPos = playerPosVel.yPos;
+                posVel.xVel = playerPosVel.xVel*PROJECTILEPLAYERBOOST+PROJECTILESPEED;
                 xLength = PROJECTILELENGTH;
                 yLength = PROJECTILEWIDTH;
                 break;
             case MOVEUP:
-                posVel.yVel = -PROJECTILESPEED;
+                posVel.xPos = playerPosVel.xPos;
+                posVel.yPos = playerPosVel.yPos - playerRad;
+                posVel.yVel = playerPosVel.yVel*PROJECTILEPLAYERBOOST-PROJECTILESPEED;
                 xLength = PROJECTILEWIDTH;
                 yLength = PROJECTILELENGTH;
                 break;
             case MOVEDOWN:
-                posVel.yVel = PROJECTILESPEED;
+                posVel.xPos = playerPosVel.xPos;
+                posVel.yPos = playerPosVel.yPos + playerRad;
+                posVel.yVel = playerPosVel.yVel+PROJECTILESPEED;
                 xLength = PROJECTILEWIDTH;
                 yLength = PROJECTILELENGTH;
                 break;
@@ -48,7 +62,8 @@ public class Projectile implements Globals {
     }
     
     public boolean hitWall() {
-        return cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(posVel.xPos,xLength/2,posVel.yPos,yLength/2) > 0;
+        //Return true if projectile has collidd with a wall
+        return cemeteryfuntimes.Resources.Shared.Collision.hitWall(posVel.xPos,xLength/2,posVel.yPos,yLength/2);
     }
     
     public void draw(Graphics g) {
