@@ -4,32 +4,34 @@ package cemeteryfuntimes.Resources.Shared;
 
 public class PosVel {
   
-    public float xPos;   
-    public float yPos;
-    public float xVel;
-    public float yVel;
- 
-    public PosVel(float xPos, float yPos, float xVel, float yVel){
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.xVel = xVel;
-        this.yVel = yVel;
-    }
+    protected float xPos;   
+    protected float yPos;
+    protected float xVel;
+    protected float yVel;
+    protected float xRad;
+    protected float yRad;
+    protected float rad;
     
-    public PosVel() {
-        xPos = 0;
-        yPos = 0;
-        xVel = 0;
-        yVel = 0;
+    public float xPos() {
+        return xPos;
     }
-    
-    public void update() {
-        xPos += xVel;
-        yPos += yVel;
+    public float yPos() {
+        return yPos;
     }
-    
-    public float totalSpeed() {
-        return (float) Math.sqrt(xVel*xVel + yVel*yVel);
+    public float xVel() {
+        return xVel;
+    }
+    public float yVel() {
+        return yVel;
+    }
+    public float xRad() {
+        return xRad;
+    }
+    public float yRad() {
+        return yRad;
+    }
+    public float rad() {
+        return rad;
     }
     
 }

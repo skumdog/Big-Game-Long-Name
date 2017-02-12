@@ -5,27 +5,26 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 // @author David Kozloff & Tyler Law
-public class Player implements Globals {
+public class Player extends PosVel implements Globals {
     
-    //Movement based variables
-    private final PosVel posVel;
+    //MOVEment based variables
     private float xAccel;
     private float yAccel;
     private final boolean[] keysPressed;
     
     //Other
-    private int health;
+    public int health;
     
     //Dimensional constants
-    private static final float rad = PLAYERSIZE/2;
-    private static final float xSide = GAMEBORDER-rad;
-    private static final float ySide = -rad;
+    private final float xSide;
+    private final float ySide;
     
     public Player(int xPos, int yPos) {
-        posVel = new PosVel();
-        posVel.xPos = xPos;
-        posVel.yPos = yPos;
         keysPressed = new boolean [4];
+        health = 6;
+        rad = PLAYERSIZE/2;
+        xSide = GAMEBORDER-rad;
+        ySide = -rad;
     }
     
     public void keyChanged(int direction, boolean keyIsPressed) {
@@ -49,10 +48,10 @@ public class Player implements Globals {
     public void update() {
         //Update postion and velocity
         calcAccels();
-        posVel.xVel += xAccel;
-        posVel.yVel += yAccel;
-        adjustForMaxSpeed();
-        posVel.update();
+        xVel += xAccel;
+        yVel += yAccel;
+        xPos += xVel;
+        yPos += yVel;
         checkWallCollision();
     }
     
@@ -77,53 +76,33 @@ public class Player implements Globals {
             yAccel /= 1.41421356237;
         }
         //Combine both player accel and friction deaccel
-        xAccel += -PLAYERDAMP * posVel.xVel;
-        yAccel += -PLAYERDAMP *  posVel.yVel;
-    }
-    
-    public void adjustForMaxSpeed() {
-        float totalVel = posVel.totalSpeed();
-        if (totalVel > PLAYERMAXSPEED) { 
-            //Figure out some way of limiting the max speed
-        }
+        xAccel += -PLAYERDAMP * xVel;
+        yAccel += -PLAYERDAMP *  yVel;
     }
     
     public void checkWallCollision() {
-        boolean[] wall=cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(posVel.xPos,rad,posVel.yPos,rad);
+        boolean[] wall=cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(xPos,rad,yPos,rad);
         if (wall[RIGHTWALL]) {
-            posVel.xVel = 0;
-            posVel.xPos = GAMEWIDTH - rad;
+            xVel = 0;
+            xPos = GAMEWIDTH - rad;
         }
         if (wall[LEFTWALL]) {
-            posVel.xVel = 0;
-            posVel.xPos = rad;
+            xVel = 0;
+            xPos = rad;
         }
         if (wall[TOPWALL]) {
-            posVel.yVel = 0;
-            posVel.yPos = rad;
+            yVel = 0;
+            yPos = rad;
         }
         if (wall[BOTTOMWALL]) {
-            posVel.yVel = 0;
-            posVel.yPos = GAMEHEIGHT - rad;
+            yVel = 0;
+            yPos = GAMEHEIGHT - rad;
         }
     }
     
     public void draw(Graphics g) {
         g.setColor(PLAYERCOLOR);
-        g.drawRect(Math.round(xSide+posVel.xPos),Math.round(ySide+posVel.yPos),PLAYERSIZE,PLAYERSIZE);
-    }
-    
-    //Retrieve private variables
-    public int Health() {
-        return health;
-    }
-    
-    public PosVel PosVel() {
-        return posVel;
-    }
-    
-    public int rad() {
-        return Math.round(rad);
+        g.fillRect(Math.round(xSide+xPos),Math.round(ySide+yPos),PLAYERSIZE,PLAYERSIZE);
     }
     
 }

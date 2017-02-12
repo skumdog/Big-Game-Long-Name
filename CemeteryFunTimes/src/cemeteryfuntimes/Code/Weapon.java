@@ -14,7 +14,7 @@ public class Weapon implements Globals {
     private final boolean[] keyPressed;
     private final Player player;
     private long lastUpdate;
-    
+    public int damage=1;
     
     
     public Weapon(Player player) {
@@ -23,48 +23,48 @@ public class Weapon implements Globals {
         keyPressed = new boolean[4];
     }
     
-    public void shoot(int direction) {
+    public void keyPressed(int direction) {
         switch(direction) {
             case KeyEvent.VK_LEFT:
-                keyPressed[MOVELEFT]=true;
-                keyPressed[MOVERIGHT]=false;
-                keyPressed[MOVEUP]=false;
-                keyPressed[MOVEDOWN]=false;
+                keyPressed[SHOOTLEFT]=true;
+                keyPressed[SHOOTRIGHT]=false;
+                keyPressed[SHOOTUP]=false;
+                keyPressed[SHOOTDOWN]=false;
                 break;
             case KeyEvent.VK_RIGHT:
-                keyPressed[MOVELEFT]=false;
-                keyPressed[MOVERIGHT]=true;
-                keyPressed[MOVEUP]=false;
-                keyPressed[MOVEDOWN]=false;
+                keyPressed[SHOOTLEFT]=false;
+                keyPressed[SHOOTRIGHT]=true;
+                keyPressed[SHOOTUP]=false;
+                keyPressed[SHOOTDOWN]=false;
                 break;
             case KeyEvent.VK_UP:
-                keyPressed[MOVELEFT]=false;
-                keyPressed[MOVERIGHT]=false;
-                keyPressed[MOVEUP]=true;
-                keyPressed[MOVEDOWN]=false;
+                keyPressed[SHOOTLEFT]=false;
+                keyPressed[SHOOTRIGHT]=false;
+                keyPressed[SHOOTUP]=true;
+                keyPressed[SHOOTDOWN]=false;
                 break;
             case KeyEvent.VK_DOWN:
-                keyPressed[MOVELEFT]=false;
-                keyPressed[MOVERIGHT]=false;
-                keyPressed[MOVEUP]=false;
-                keyPressed[MOVEDOWN]=true;
+                keyPressed[SHOOTLEFT]=false;
+                keyPressed[SHOOTRIGHT]=false;
+                keyPressed[SHOOTUP]=false;
+                keyPressed[SHOOTDOWN]=true;
                 break;
         }
     }
     
-    public void stop(int direction) {
+    public void keyReleased(int direction) {
         switch(direction) {
             case KeyEvent.VK_LEFT:
-                keyPressed[MOVELEFT]=false;
+                keyPressed[SHOOTLEFT]=false;
                 break;
             case KeyEvent.VK_RIGHT:
-                keyPressed[MOVERIGHT]=false;
+                keyPressed[SHOOTRIGHT]=false;
                 break;
             case KeyEvent.VK_UP:
-                keyPressed[MOVEUP]=false;
+                keyPressed[SHOOTUP]=false;
                 break;
             case KeyEvent.VK_DOWN:
-                keyPressed[MOVEDOWN]=false;
+                keyPressed[SHOOTDOWN]=false;
                 break;
         }
     }

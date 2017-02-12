@@ -6,8 +6,15 @@ import java.awt.event.KeyEvent;
 
 import cemeteryfuntimes.Resources.Shared.*;
 import cemeteryfuntimes.Code.*;
+import static cemeteryfuntimes.Resources.Shared.Globals.IMAGEPATH;
+import java.awt.Color;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -23,6 +30,9 @@ public class Screen extends JPanel implements Globals {
     private final Game game;
     private final java.util.Timer gameUpdater; 
     private boolean gameRunning;
+    
+    private BufferedImage backgroundImage;
+    private BufferedImage gameBackgroundImage;
     
     private enum Action {
         //This enum is for storing all keyboard events that map to specific game actions
@@ -42,6 +52,7 @@ public class Screen extends JPanel implements Globals {
     
     public Screen() {
         setKeyBindings();
+        setupImages();
         game = new Game();
         gameRunning = true;
         
@@ -69,7 +80,12 @@ public class Screen extends JPanel implements Globals {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawRect(GAMEBORDER, 0, GAMEHEIGHT, GAMEWIDTH);
+        g.drawImage(backgroundImage, 0, 0, null);
+        g.drawImage(gameBackgroundImage, GAMEBORDER, 0, null);
+        /*g.setColor(Color.WHITE);
+        g.fillRect(GAMEBORDER, 0, GAMEHEIGHT, GAMEWIDTH);
+        g.setColor(Color.BLACK);
+        g.drawRect(GAMEBORDER, 0, GAMEHEIGHT, GAMEWIDTH);*/
         game.draw(g);
     }
     
@@ -104,6 +120,17 @@ public class Screen extends JPanel implements Globals {
             if (pressed) { game.keyPressed(keyCode); }
             else { game.keyReleased(keyCode); } 
         }
+    }
+    
+    private void setupImages() {
+        try { 
+            backgroundImage = ImageIO.read(new File(IMAGEPATH+"background.jpg"));
+            backgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(backgroundImage,SCREENWIDTH,SCREENHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        } catch (IOException e) { }
+        try { 
+            gameBackgroundImage = ImageIO.read(new File(IMAGEPATH+"gameBackground.jpg"));
+            gameBackgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(gameBackgroundImage,GAMEWIDTH,GAMEHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        } catch (IOException e) { }
     }
     
 }
