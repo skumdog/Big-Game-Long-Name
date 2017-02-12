@@ -44,5 +44,9 @@ public interface Globals {
     
     //Other
     public final static int TIMERDELAY=10;
+    public final static int LEFTWALL=1;
+    public final static int RIGHTWALL=2;
+    public final static int TOPWALL=3;
+    public final static int BOTTOMWALL=4;
     
 }

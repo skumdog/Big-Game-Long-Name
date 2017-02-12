@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 public class Player implements Globals {
     
     //Movement based variables
-    private PosVel posVel;
+    private final PosVel posVel;
     private float xAccel;
     private float yAccel;
     private boolean[] keysPressed;
@@ -17,9 +17,9 @@ public class Player implements Globals {
     private int health;
     
     //Dimensional constants
-    private static float rad = PLAYERSIZE/2;
-    private static float xSide = GAMEBORDER-rad;
-    private static float ySide = -rad;
+    private static final float rad = PLAYERSIZE/2;
+    private static final float xSide = GAMEBORDER-rad;
+    private static final float ySide = -rad;
     
     public Player(int xPos, int yPos) {
         posVel = new PosVel();

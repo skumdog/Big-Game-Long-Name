@@ -2,24 +2,21 @@ package cemeteryfuntimes.Resources.Shared;
 
 // @author David Kozloff & Tyler Law
 
-import static cemeteryfuntimes.Resources.Shared.Globals.GAMEHEIGHT;
-import static cemeteryfuntimes.Resources.Shared.Globals.GAMEWIDTH;
 
-
-public class Collision {
+public class Collision implements Globals {
     
     public static int checkWallCollision(float xPos, int xRad, float yPos, int yRad) {
         if (xPos + xRad > GAMEWIDTH) {
-            return 1;
+            return RIGHTWALL;
         }
         else if (xPos - xRad < 0) {
-            return 2;
+            return LEFTWALL;
         }
         if (yPos + yRad > GAMEHEIGHT) {
-            return 3;
+            return BOTTOMWALL;
         }
         else if (yPos - yRad < 0) {
-            return 4;
+            return TOPWALL;
         }
         return 0;
     }
