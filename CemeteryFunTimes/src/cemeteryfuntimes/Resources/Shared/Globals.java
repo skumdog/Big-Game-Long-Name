@@ -52,5 +52,23 @@ public interface Globals {
     public final static int TOPWALL=2;
     public final static int BOTTOMWALL=3;
     public final static String IMAGEPATH="src/cemeteryfuntimes/Resources/Images/";
+    public final static String TEMPLATEPATH="src/cemeteryfuntimes/Resources/Templates/";
+    
+    //Weapons
+    public final static int PISTOL=1;
+    public final static int MACHINEGUN=2;
+    public final static int SHOTGUN=3;
+    public final static int FLAMETHROWER=4;
+    public final static int ROCKETLAUNCHER=5;
+    
+    //Weapon Types
+    public final static int REGULARBALLISTIC=1; //Simple firearms: pistol, machinegun, etc.
+    
+    //Action Types
+    //These represent the various actions that a user can do in the game
+    public final static int MOVEMENT=1;
+    public final static int SHOOT=2;
+    public final static int CHANGEWEAPON=3;
+    public final static int GAME=4;
     
 }

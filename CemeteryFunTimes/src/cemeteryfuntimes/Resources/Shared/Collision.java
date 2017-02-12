@@ -7,12 +7,13 @@ import java.util.ArrayList;
 
 public class Collision implements Globals {
     
-    public static void checkCollisions(Player player, ArrayList<Enemy> enemies, Weapon playerWeapon) {
+    public static void checkCollisions(Player player, ArrayList<Enemy> enemies) {
         //Check for collisions between Player and player projectiles with enemies
         //As well as enemy and enemy projectile collision with player
         //Update accordingly
         
         Enemy enemy;
+        Weapon playerWeapon = player.getWeapon();
         ArrayList<Projectile> projectiles = playerWeapon.Projectiles();
         
         //Check player projectiles collision with enemies
@@ -20,7 +21,7 @@ public class Collision implements Globals {
             for (int j=0; j<enemies.size(); j++) {
                 enemy = enemies.get(j);
                 if (enemyProjectileCollide(enemy,projectiles.get(i))) {
-                    enemy.health -= playerWeapon.damage;
+                    enemy.health -= playerWeapon.Damage();
                     if (enemy.health <= 0) {
                         enemies.remove(j); j--;
                     }

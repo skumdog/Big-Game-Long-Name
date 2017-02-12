@@ -3,6 +3,7 @@ package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Resources.Shared.*;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 // @author David Kozloff & Tyler Law
 public class Player extends PosVel implements Globals {
@@ -14,20 +15,22 @@ public class Player extends PosVel implements Globals {
     
     //Other
     public int health;
+    private Weapon weapon;
     
     //Dimensional constants
     private final float xSide;
     private final float ySide;
     
-    public Player(int xPos, int yPos) {
+    public Player(int xPos, int yPos, int weaponKey) {
         keysPressed = new boolean [4];
         health = 6;
         rad = PLAYERSIZE/2;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
+        this.weapon = new Weapon(this, weaponKey);
     }
     
-    public void keyChanged(int direction, boolean keyIsPressed) {
+    public void movementKeyChanged(int direction, boolean keyIsPressed) {
         //Record which directional keys are being pressed
         switch(direction) {
             case KeyEvent.VK_A:
@@ -45,8 +48,15 @@ public class Player extends PosVel implements Globals {
         }
     }
     
+    public void shootKeyChanged(int direction, boolean keyIsPressed) {
+        //If an arrow key was pressed, pass event to weapon
+        if (keyIsPressed) { weapon.keyPressed(direction); }
+        else { weapon.keyReleased(direction); }
+    }
+    
     public void update() {
         //Update postion and velocity
+        weapon.update();
         calcAccels();
         xVel += xAccel;
         yVel += yAccel;
@@ -101,8 +111,17 @@ public class Player extends PosVel implements Globals {
     }
     
     public void draw(Graphics g) {
+        weapon.draw(g);
         g.setColor(PLAYERCOLOR);
         g.fillRect(Math.round(xSide+xPos),Math.round(ySide+yPos),PLAYERSIZE,PLAYERSIZE);
+    }
+    
+    public void setupImages() {
+        
+    }
+    
+    public Weapon getWeapon() {
+        return weapon;
     }
     
 }

@@ -7,14 +7,11 @@ import java.awt.event.KeyEvent;
 import cemeteryfuntimes.Resources.Shared.*;
 import cemeteryfuntimes.Code.*;
 import static cemeteryfuntimes.Resources.Shared.Globals.IMAGEPATH;
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Timer;
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -36,17 +33,23 @@ public class Screen extends JPanel implements Globals {
     
     private enum Action {
         //This enum is for storing all keyboard events that map to specific game actions
-        MOVEUP(KeyEvent.VK_W),MOVEDOWN(KeyEvent.VK_S),MOVELEFT(KeyEvent.VK_A),MOVERIGHT(KeyEvent.VK_D),
-        SHOOTUP(KeyEvent.VK_UP),SHOOTDOWN(KeyEvent.VK_DOWN),SHOOTLEFT(KeyEvent.VK_LEFT),SHOOTRIGHT(KeyEvent.VK_RIGHT);
+        MOVEUP(KeyEvent.VK_W,MOVEMENT),MOVEDOWN(KeyEvent.VK_S,MOVEMENT),MOVELEFT(KeyEvent.VK_A,MOVEMENT),MOVERIGHT(KeyEvent.VK_D,MOVEMENT),
+        SHOOTUP(KeyEvent.VK_UP,SHOOT),SHOOTDOWN(KeyEvent.VK_DOWN,SHOOT),SHOOTLEFT(KeyEvent.VK_LEFT,SHOOT),SHOOTRIGHT(KeyEvent.VK_RIGHT,SHOOT);
         
         private final int keyCode;
+        private final int actionType;
         
-        private Action(int keyCode) {
+        private Action(int keyCode, int actionType) {
             this.keyCode = keyCode;
+            this.actionType=actionType;
         }
         
         public int getKeyCode() {
             return keyCode;
+        }
+        
+        public int getActionType() {
+            return actionType;
         }
     }
     
@@ -89,48 +92,57 @@ public class Screen extends JPanel implements Globals {
         game.draw(g);
     }
     
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(SCREENWIDTH,SCREENHEIGHT);
+    }
+    
     private void setKeyBindings() {
         //Sets up basic keybindings for game
         //Maps WASD and arrow keys to their respective actions
         InputMap inMap = getInputMap(JComponent.WHEN_FOCUSED);
         ActionMap actMap = getActionMap();
         int keyCode;
+        int actionType;
         for (final Action gameAction : Action.values()) {
             keyCode = gameAction.getKeyCode();
+            actionType = gameAction.getActionType();
             KeyStroke pressed = KeyStroke.getKeyStroke(keyCode, 0, false);
             KeyStroke released = KeyStroke.getKeyStroke(keyCode, 0, true);
             inMap.put(pressed,keyCode+"pressed");
             inMap.put(released,keyCode+"released");
-            actMap.put(keyCode+"pressed", new GameAction(keyCode,true));
-            actMap.put(keyCode+"released",new GameAction(keyCode,false));
+            actMap.put(keyCode+"pressed", new GameAction(keyCode,actionType,true));
+            actMap.put(keyCode+"released",new GameAction(keyCode,actionType,false));
         }
     }
     
     private class GameAction extends AbstractAction {
         //This class is to perform actions when a key is pressed
         int keyCode; //Unique integer mapped to a key see KeyEvent.VK_BLANK
-        boolean pressed; //True if this action is for key pressed false if for key released
+        boolean isPressed; //True if this action is for key pressed false if for key released
+        int actionType;
         
-        GameAction(int keyCode, boolean pressed) {
+        GameAction(int keyCode, int actionType, boolean isPressed) {
             this.keyCode=keyCode;
-            this.pressed=pressed;
+            this.isPressed=isPressed;
+            this.actionType=actionType;
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (pressed) { game.keyPressed(keyCode); }
-            else { game.keyReleased(keyCode); } 
+            switch (actionType) {
+                case MOVEMENT:
+                    game.movementAction(keyCode, isPressed);
+                    break;
+                case SHOOT:
+                    game.shootAction(keyCode, isPressed);
+                    break;
+            }
         }
     }
     
     private void setupImages() {
-        try { 
-            backgroundImage = ImageIO.read(new File(IMAGEPATH+"background.jpg"));
-            backgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(backgroundImage,SCREENWIDTH,SCREENHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-        } catch (IOException e) { }
-        try { 
-            gameBackgroundImage = ImageIO.read(new File(IMAGEPATH+"gameBackground.jpg"));
-            gameBackgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(gameBackgroundImage,GAMEWIDTH,GAMEHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-        } catch (IOException e) { }
+        backgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/background.jpg",SCREENWIDTH,SCREENHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        gameBackgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/gameBackground.jpg",GAMEWIDTH,GAMEHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
     
 }

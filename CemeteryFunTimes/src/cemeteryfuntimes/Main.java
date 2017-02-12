@@ -14,8 +14,6 @@ public class Main extends JFrame implements Globals {
         setTitle("Cemetery Fun Times");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        
-        game.setPreferredSize(new Dimension(SCREENWIDTH,SCREENHEIGHT));
         pack();
         game.setFocusable(true);
         game.requestFocus();

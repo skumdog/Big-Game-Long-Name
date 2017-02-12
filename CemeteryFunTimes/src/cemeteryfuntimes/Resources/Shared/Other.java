@@ -1,9 +1,11 @@
 package cemeteryfuntimes.Resources.Shared;
-
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 // @author David Kozloff & Tyler Law
 
@@ -13,7 +15,7 @@ public class Other {
      * Convenience method that returns a scaled instance of the
      * provided {@code BufferedImage}.
      *
-     * @param img the original image to be scaled
+     * @param filepath The path to the image you want to render
      * @param targetWidth the desired width of the scaled instance,
      *    in pixels
      * @param targetHeight the desired height of the scaled instance,
@@ -31,12 +33,17 @@ public class Other {
      *    the {@code BILINEAR} hint is specified)
      * @return a scaled version of the original {@code BufferedImage}
      */
-    public static BufferedImage getScaledInstance(BufferedImage img,
+    public static BufferedImage getScaledInstance(String filepath,
                                            int targetWidth,
                                            int targetHeight,
                                            Object hint,
                                            boolean higherQuality)
     {
+        BufferedImage img;
+        try { 
+            img = ImageIO.read(new File(filepath));
+        } catch (IOException e) { return null; }
+        
         int type = (img.getTransparency() == Transparency.OPAQUE) ?
             BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
         BufferedImage ret = (BufferedImage)img;

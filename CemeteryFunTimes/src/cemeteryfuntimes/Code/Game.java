@@ -6,17 +6,12 @@ import cemeteryfuntimes.Resources.Shared.*;
 
 import java.awt.Graphics;
 import java.awt.RenderingHints;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import javax.imageio.ImageIO;
 
 public class Game implements Globals {
     
     private final Player player;
-    private final Weapon playerWeapon;
     private final ArrayList<Enemy> enemies;
     private BufferedImage heartContainer=null;
     private BufferedImage halfHeartContainer=null;
@@ -26,8 +21,7 @@ public class Game implements Globals {
     private final static int HEARTPADDING=10;
     
     public Game() {
-        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2);
-        playerWeapon = new Weapon(player);
+        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
         enemies = new ArrayList();
         enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
         setupImages();
@@ -35,17 +29,15 @@ public class Game implements Globals {
     
     public void update() {
         player.update();
-        playerWeapon.update();
         enemies.stream().forEach((enemie) -> {
             enemie.update();
         });
-        cemeteryfuntimes.Resources.Shared.Collision.checkCollisions(player, enemies, playerWeapon);
+        cemeteryfuntimes.Resources.Shared.Collision.checkCollisions(player, enemies);
     }
     
     public void draw(Graphics g) {
         drawHUD(g);
         player.draw(g);
-        playerWeapon.draw(g);
         enemies.stream().forEach((enemy) -> {
             enemy.draw(g);
         });
@@ -62,53 +54,18 @@ public class Game implements Globals {
         }
     }
     
-    public void keyPressed(int keyCode) {
-        switch(keyCode) {
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_RIGHT:
-                playerWeapon.keyPressed(keyCode);
-                break;
-            case KeyEvent.VK_W:
-            case KeyEvent.VK_A:
-            case KeyEvent.VK_S:
-            case KeyEvent.VK_D:
-                player.keyChanged(keyCode,true);
-                break;
-            case KeyEvent.VK_SPACE: //Roll?
-        }
+    public void movementAction(int keyCode, boolean isPressed) {
+        player.movementKeyChanged(keyCode, isPressed);
     }
     
-    public void keyReleased(int keyCode) {
-        switch(keyCode) {
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_UP:
-            case KeyEvent.VK_LEFT:
-            case KeyEvent.VK_RIGHT:
-                playerWeapon.keyReleased(keyCode);
-                break;
-            case KeyEvent.VK_W:
-            case KeyEvent.VK_A:
-            case KeyEvent.VK_S:
-            case KeyEvent.VK_D:
-                player.keyChanged(keyCode,false);
-                break;
-            case KeyEvent.VK_SPACE: //Roll?
-        }
+    public void shootAction(int keyCode, boolean isPressed) {
+        player.shootKeyChanged(keyCode, isPressed);
     }
     
     private void setupImages() {
        //Initialize always relevent images images
-       try { 
-            heartContainer = ImageIO.read(new File(IMAGEPATH+"heart.png"));
-            heartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(heartContainer,HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-        } catch (IOException e) { }
-       try { 
-            halfHeartContainer = ImageIO.read(new File(IMAGEPATH+"halfHeart.png"));
-            halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(halfHeartContainer,HEARTSIZE/2,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-        } catch (IOException e) { }
-        
+       heartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+       halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
     
 }
