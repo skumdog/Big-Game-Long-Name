@@ -15,9 +15,9 @@ public interface Globals {
     public final static int GAMEBORDER=(SCREENWIDTH-GAMEWIDTH)/2;
     
     //Movement constants
-    public final static float PLAYERACCEL=.01f;
+    public final static float PLAYERACCEL=.1f;
     public final static float PLAYERMAXSPEED=1;
-    public final static float PLAYERDAMP=.2f;
+    public final static float PLAYERDAMP=.02f; //Friction coeffection
     
     //Ballistic constants
     public final static float PROJECTILESPEED=5;

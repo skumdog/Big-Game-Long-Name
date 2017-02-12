@@ -7,13 +7,12 @@ import cemeteryfuntimes.Resources.Shared.*;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.lang.System;
 
 public class Weapon implements Globals {
     
-    private ArrayList<Projectile> projectiles;
-    private boolean[] keyPressed;
-    private Player player;
+    private final ArrayList<Projectile> projectiles;
+    private final boolean[] keyPressed;
+    private final Player player;
     private long lastUpdate;
     
     
@@ -108,9 +107,9 @@ public class Weapon implements Globals {
     }
     
     public void draw(Graphics g) {
-        for (int i=0; i<projectiles.size(); i++) {
-            projectiles.get(i).draw(g);
-        }
+        projectiles.stream().forEach((projectile) -> {
+            projectile.draw(g);
+        });
     }
     
      //Retrieve private variables

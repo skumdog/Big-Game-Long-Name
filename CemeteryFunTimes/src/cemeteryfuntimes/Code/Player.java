@@ -11,7 +11,7 @@ public class Player implements Globals {
     private final PosVel posVel;
     private float xAccel;
     private float yAccel;
-    private boolean[] keysPressed;
+    private final boolean[] keysPressed;
     
     //Other
     private int health;
@@ -58,29 +58,29 @@ public class Player implements Globals {
     
     public void calcAccels() {
         //Calculate x and y accelerations
-        //If both or neither are pressed apply a small damping acceleration opposite of the current velocity
         // ^ is the Exclusive or operation
         // ? 1 : 0 casts a boolean as 1 if true and 0 if false
+        xAccel = 0;
+        yAccel = 0;
+        float xDampAccel=0;
+        float yDampAccel=0;
+        
         if( keysPressed[0] ^ keysPressed[1] ) { 
             xAccel = (keysPressed[0] ? 1 : 0)*-PLAYERACCEL + (keysPressed[1] ? 1 : 0)*PLAYERACCEL;
         }
-        else if ( posVel.xVel != 0 ) {
-            xAccel = -PLAYERDAMP * Math.signum(posVel.xVel);
-            if ( Math.abs(xAccel) > Math.abs(posVel.xVel) ) { xAccel=0; posVel.xVel=0; }
-        }
-        else {
-            xAccel = 0;
+        if ( posVel.xVel != 0 ) {
+            xDampAccel = -PLAYERDAMP * posVel.xVel;
+            if ( xAccel == 0 && (Math.abs(xDampAccel) > Math.abs(posVel.xVel)) ) { xAccel=0; posVel.xVel=0; }
         }
         if( keysPressed[2] ^ keysPressed[3] ) {
             yAccel = (keysPressed[2] ? 1 : 0)*-PLAYERACCEL + (keysPressed[3] ? 1 : 0)*PLAYERACCEL;
         }
-        else if ( posVel.yVel != 0 ) {
-            yAccel = -PLAYERDAMP * Math.signum(posVel.yVel);
-            if ( Math.abs(yAccel) > Math.abs(posVel.yVel) ) { yAccel=0; posVel.yVel=0; }
+        if ( posVel.yVel != 0 ) {
+            yDampAccel = -PLAYERDAMP *  posVel.yVel;
+            if ( yAccel == 0 && (Math.abs(yDampAccel) > Math.abs(posVel.yVel)) ) { yAccel=0; posVel.yVel=0; }
         }
-        else {
-            yAccel = 0;
-        }
+        xAccel += xDampAccel;
+        yAccel += yDampAccel;
     }
     
     public void adjustForMaxSpeed() {
@@ -91,21 +91,24 @@ public class Player implements Globals {
     }
     
     public void checkWallCollision() {
-        if (posVel.xPos + rad > GAMEWIDTH) {
-            posVel.xVel = 0;
-            posVel.xPos = GAMEWIDTH - rad;
-        }
-        else if (posVel.xPos - rad < 0) {
-            posVel.xVel = 0;
-            posVel.xPos = rad;
-        }
-        if (posVel.yPos + rad > GAMEHEIGHT) {
-            posVel.yVel = 0;
-            posVel.yPos = GAMEHEIGHT - rad;
-        }
-        else if (posVel.yPos - rad < 0) {
-            posVel.yVel = 0;
-            posVel.yPos = rad;
+        int wall=cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(posVel.xPos,rad,posVel.yPos,rad);
+        switch(wall) {
+            case RIGHTWALL:
+                posVel.xVel = 0;
+                posVel.xPos = GAMEWIDTH - rad;
+                break;
+            case LEFTWALL:
+                posVel.xVel = 0;
+                posVel.xPos = rad;
+                break;
+            case TOPWALL:
+                posVel.yVel = 0;
+                posVel.yPos = rad;
+                break;
+            case BOTTOMWALL:
+                posVel.yVel = 0;
+                posVel.yPos = GAMEHEIGHT - rad;
+                break;
         }
     }
     
