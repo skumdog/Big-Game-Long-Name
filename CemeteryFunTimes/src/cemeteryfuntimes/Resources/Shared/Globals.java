@@ -14,10 +14,10 @@ public interface Globals {
     public final static int GAMEWIDTH=800;
     public final static int GAMEBORDER=(SCREENWIDTH-GAMEWIDTH)/2;
     
-    //SHOOTment constants
+    //Movement constants
     public final static float PLAYERACCEL=.1f;
     public final static float PLAYERMAXSPEED=1;
-    public final static float PLAYERDAMP=.02f; //Friction coeffection
+    public final static float PLAYERDAMP=.02f; //Friction coeffecient
     
     //Ballistic constants
     public final static float PROJECTILESPEED=10;
@@ -69,6 +69,6 @@ public interface Globals {
     public final static int MOVEMENT=1;
     public final static int SHOOT=2;
     public final static int CHANGEWEAPON=3;
-    public final static int GAME=4;
+    public final static int GAME=4; //Place holder, things like pausing? 
     
 }

@@ -7,7 +7,7 @@ import java.awt.Graphics;
 
 public class Enemy extends PosVel implements Globals {
     
-    public int health=800;
+    public int health = 800;
     private final Player player;
     
     private final float xSide;
@@ -18,7 +18,7 @@ public class Enemy extends PosVel implements Globals {
         this.yPos = yPos;
         this.player = player;
         rad = ENEMYSIZE/2;
-        xSide = GAMEBORDER- rad;
+        xSide = GAMEBORDER - rad;
         ySide = - rad;
     }
     

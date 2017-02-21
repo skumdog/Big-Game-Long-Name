@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 
 import cemeteryfuntimes.Resources.Shared.*;
 import cemeteryfuntimes.Code.*;
-import static cemeteryfuntimes.Resources.Shared.Globals.IMAGEPATH;
 import java.awt.Dimension;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;

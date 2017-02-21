@@ -3,7 +3,6 @@ package cemeteryfuntimes;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import cemeteryfuntimes.Resources.Shared.*;
-import java.awt.Dimension;
 
 // @author David Kozloff & Tyler Law
 public class Main extends JFrame implements Globals {

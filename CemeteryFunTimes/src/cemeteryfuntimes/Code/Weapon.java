@@ -121,6 +121,8 @@ public class Weapon implements Globals {
     }
 
     private void loadWeapon(int weaponKey) {
+        //Test code for loading weapon from Weapons.xml
+        //This code should be extracted a shared file in some way
         try {
             FileInputStream fileInputStream = new FileInputStream(TEMPLATEPATH + "Weapons.xml");
             XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(fileInputStream);
