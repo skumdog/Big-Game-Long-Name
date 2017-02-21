@@ -3,7 +3,6 @@ package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Resources.Shared.*;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 
 // @author David Kozloff & Tyler Law
 public class Player extends PosVel implements Globals {
@@ -117,7 +116,7 @@ public class Player extends PosVel implements Globals {
     }
     
     public void setupImages() {
-        
+        //Setup images for player
     }
     
     public Weapon getWeapon() {

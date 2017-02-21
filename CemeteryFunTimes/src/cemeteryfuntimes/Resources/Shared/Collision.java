@@ -39,7 +39,6 @@ public class Collision implements Globals {
                 return true;
             }
         }
-        
         return false;
     }
     

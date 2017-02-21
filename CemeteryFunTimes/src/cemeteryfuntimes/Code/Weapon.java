@@ -160,7 +160,7 @@ public class Weapon implements Globals {
     }
 
     public void setupImages() {
-
+        
     }
 
     //Retrieve private variables

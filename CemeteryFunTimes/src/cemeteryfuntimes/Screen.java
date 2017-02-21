@@ -126,6 +126,7 @@ public class Screen extends JPanel implements Globals {
             this.isPressed=isPressed;
             this.actionType=actionType;
         }
+        
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (actionType) {
