@@ -31,5 +31,4 @@ public class PosVel {
     public float totalSpeed() {
         return (float) Math.sqrt(xVel*xVel + yVel*yVel);
     }
-    
 }

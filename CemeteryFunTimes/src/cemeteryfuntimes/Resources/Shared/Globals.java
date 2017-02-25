@@ -4,7 +4,6 @@ package cemeteryfuntimes.Resources.Shared;
 
 import java.awt.Color;
 
-
 public interface Globals {
     
     //Game dimensions

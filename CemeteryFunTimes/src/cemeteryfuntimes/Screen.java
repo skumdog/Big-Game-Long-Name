@@ -17,7 +17,6 @@ public class Screen extends JPanel implements Globals {
     private java.util.Timer gameUpdater; 
     private boolean gameRunning;
     
-    
     public Screen() {
         addKeyListener(new MyKeyListener());
         game = new Game();
@@ -28,7 +27,8 @@ public class Screen extends JPanel implements Globals {
     
     private class GameUpdater extends java.util.TimerTask
     {
-        public void run() //this becomes the loop
+        // This updates the game on a timer
+        public void run() 
         {     
             game.update();
             repaint();
@@ -40,6 +40,7 @@ public class Screen extends JPanel implements Globals {
         }
     }
     
+    // Game window
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -47,6 +48,7 @@ public class Screen extends JPanel implements Globals {
         game.draw(g);
     }
     
+    // Set up input listener
     private class MyKeyListener extends KeyAdapter {
 
         public void keyPressed(KeyEvent e) {

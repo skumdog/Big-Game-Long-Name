@@ -15,6 +15,7 @@ public class Projectile implements Globals {
     private float xSide;
     private float ySide;
     
+    // Give projectile initial velocity when spawned
     public Projectile(float xPos, float yPos, int direction) {
         posVel = new PosVel(xPos,yPos,0,0);
         switch( direction ) {
@@ -47,6 +48,7 @@ public class Projectile implements Globals {
         posVel.update();
     }
     
+    // Called by Weapon
     public boolean hitWall() {
         return cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(posVel.xPos,xLength/2,posVel.yPos,yLength/2) > 0;
     }
@@ -55,5 +57,4 @@ public class Projectile implements Globals {
         g.setColor(PROJECTILECOLOR);
         g.drawRect(Math.round(xSide+posVel.xPos),Math.round(ySide+posVel.yPos),xLength,yLength);
     }
-    
 }

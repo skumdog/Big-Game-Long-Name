@@ -13,6 +13,7 @@ public class Game implements Globals {
     public Weapon weapon;
     
     public Game() {
+        // Initial player position
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2);
         weapon = new Weapon(player);
     }

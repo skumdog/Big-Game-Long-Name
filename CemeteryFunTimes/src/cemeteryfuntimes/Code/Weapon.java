@@ -16,8 +16,6 @@ public class Weapon implements Globals {
     private Player player;
     private long lastUpdate;
     
-    
-    
     public Weapon(Player player) {
         this.player = player;
         projectiles = new ArrayList();
@@ -75,6 +73,8 @@ public class Weapon implements Globals {
         for (int i=0; i<projectiles.size(); i++) {
             projectiles.get(i).update();
             if (projectiles.get(i).hitWall()) {
+                
+                // If projectile hits wall, remove it from ArrayList
                 projectiles.remove(i);
                 i--;
             }
@@ -82,12 +82,14 @@ public class Weapon implements Globals {
     }
     
     public void createProjectile() {
-        //Check if enough time has passed for more projectiles to spawn
+        // Check if enough time has passed for more projectiles to spawn
         long now = System.currentTimeMillis();
-        if (now - lastUpdate < PROJECTILEDELAY) { return; }
+        if (now - lastUpdate < PROJECTILEDELAY) { 
+            return; 
+        }
         lastUpdate = now;
         
-        //Create new projectile with correct location relative to player
+        // Create new projectile with correct location relative to player
         Projectile projectile;
         if (keyPressed[0]) {
             projectile = new Projectile(player.xPos()-player.rad(),player.yPos(),MOVELEFT);
@@ -113,9 +115,8 @@ public class Weapon implements Globals {
         }
     }
     
-     //Retrieve private variables
+    //Retrieve private variables
     public ArrayList<Projectile> Projectiles() {
         return projectiles;
     }
-    
 }

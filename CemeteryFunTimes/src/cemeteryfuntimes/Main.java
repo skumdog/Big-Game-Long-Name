@@ -23,6 +23,7 @@ public class Main extends JFrame implements Globals {
     }
 
     public static void main(String[] args) {
+        
         // TODO code application logic here
         EventQueue.invokeLater(new Runnable() {
             @Override
@@ -31,5 +32,4 @@ public class Main extends JFrame implements Globals {
             }
         });
     }
-    
 }

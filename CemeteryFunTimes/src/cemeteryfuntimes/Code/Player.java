@@ -29,8 +29,9 @@ public class Player implements Globals {
     }
     
     public void keyChanged(int direction, boolean keyIsPressed) {
-        //Record which directional keys are being pressed
-        switch(direction) {
+        // Record which directional keys are being pressed
+        // A - 0, D - 1, W - 2, S - 3
+        switch (direction) {
             case KeyEvent.VK_A:
                 keysPressed[0]=keyIsPressed;
                 break;
@@ -47,7 +48,7 @@ public class Player implements Globals {
     }
     
     public void update() {
-        //Update postion and velocity
+        // Update postion and velocity
         calcAccels();
         posVel.xVel += xAccel;
         posVel.yVel += yAccel;
@@ -57,8 +58,8 @@ public class Player implements Globals {
     }
     
     public void calcAccels() {
-        //Calculate x and y accelerations
-        //If both or neither are pressed apply a small damping acceleration opposite of the current velocity
+        // Calculate x and y accelerations
+        // If both or neither are pressed apply a small damping acceleration opposite of the current velocity
         // ^ is the Exclusive or operation
         // ? 1 : 0 casts a boolean as 1 if true and 0 if false
         if( keysPressed[0] ^ keysPressed[1] ) { 
@@ -66,18 +67,36 @@ public class Player implements Globals {
         }
         else if ( posVel.xVel != 0 ) {
             xAccel = -PLAYERDAMP * Math.signum(posVel.xVel);
-            if ( Math.abs(xAccel) > Math.abs(posVel.xVel) ) { xAccel=0; posVel.xVel=0; }
+            if ( Math.abs(xAccel) > Math.abs(posVel.xVel) ) { 
+                xAccel=0; 
+                posVel.xVel=0; 
+            }
         }
         else {
             xAccel = 0;
         }
+        
+        // Y acceleration
+        // If only one of W or S is pressed
         if( keysPressed[2] ^ keysPressed[3] ) {
             yAccel = (keysPressed[2] ? 1 : 0)*-PLAYERACCEL + (keysPressed[3] ? 1 : 0)*PLAYERACCEL;
         }
+        
+        // If player is moving, and if both or neither W or S is being pressed
         else if ( posVel.yVel != 0 ) {
+            
+            // xAccel is set to damping constant if the if statement isn't executed
             yAccel = -PLAYERDAMP * Math.signum(posVel.yVel);
-            if ( Math.abs(yAccel) > Math.abs(posVel.yVel) ) { yAccel=0; posVel.yVel=0; }
+            
+            // If current velocity is larger than damp constant
+            // Why wouldn't the player just instantly stop if going sufficiently fast?
+            if ( Math.abs(yAccel) > Math.abs(posVel.yVel) ) { 
+                yAccel=0; 
+                posVel.yVel=0; 
+            }
         }
+        
+        // If player is not moving and W and S not pressed (or both are pressed)
         else {
             yAccel = 0;
         }
@@ -99,6 +118,7 @@ public class Player implements Globals {
             posVel.xVel = 0;
             posVel.xPos = rad;
         }
+        
         if (posVel.yPos + rad > GAMEHEIGHT) {
             posVel.yVel = 0;
             posVel.yPos = GAMEHEIGHT - rad;
@@ -130,5 +150,4 @@ public class Player implements Globals {
     public int rad() {
         return Math.round(rad);
     }
-    
 }
