@@ -14,7 +14,11 @@ public class Player extends PosVel implements Globals {
     
     //Other
     public int health;
+    public long hurtTimer;
     private Weapon weapon;
+    public Weapon getWeapon() {
+        return weapon;
+    }
     
     //Dimensional constants
     private final float xSide;
@@ -23,7 +27,7 @@ public class Player extends PosVel implements Globals {
     public Player(int xPos, int yPos, int weaponKey) {
         keysPressed = new boolean [4];
         health = 6;
-        rad = PLAYERSIZE/2;
+        rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
         this.weapon = new Weapon(this, weaponKey);
@@ -62,6 +66,8 @@ public class Player extends PosVel implements Globals {
         xPos += xVel;
         yPos += yVel;
         checkWallCollision();
+        //Stop invincibility frames after a certain amount of time
+        if (System.currentTimeMillis() - hurtTimer > INVFRAMES) {hurtTimer = 0;}
     }
     
     public void calcAccels() {
@@ -109,18 +115,24 @@ public class Player extends PosVel implements Globals {
         }
     }
     
+    public void enemyCollide(Enemy enemy, int side) {
+        //If player is not currently in invincibility frames handle collision
+        if (hurtTimer == 0) {
+            hurtTimer = System.currentTimeMillis();
+            health -= enemy.Damage();
+            //Maybe add in some sort of knockback on collision?
+        }
+    }
+    
     public void draw(Graphics g) {
         weapon.draw(g);
-        g.setColor(PLAYERCOLOR);
+        if (hurtTimer != 0) {g.setColor(PLAYERHURTCOLOR);}
+        else {g.setColor(PLAYERCOLOR);}
         g.fillRect(Math.round(xSide+xPos),Math.round(ySide+yPos),PLAYERSIZE,PLAYERSIZE);
     }
     
     public void setupImages() {
         //Setup images for player
-    }
-    
-    public Weapon getWeapon() {
-        return weapon;
     }
     
 }

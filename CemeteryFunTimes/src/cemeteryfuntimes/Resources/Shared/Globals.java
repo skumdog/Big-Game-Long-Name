@@ -18,6 +18,7 @@ public interface Globals {
     public final static float PLAYERACCEL=.1f;
     public final static float PLAYERMAXSPEED=1;
     public final static float PLAYERDAMP=.02f; //Friction coeffecient
+    public final static float ENEMYSPEED=3;
     
     //Ballistic constants
     public final static float PROJECTILESPEED=10;
@@ -32,6 +33,7 @@ public interface Globals {
     
     //Colors
     public final static Color PLAYERCOLOR=Color.YELLOW;
+    public final static Color PLAYERHURTCOLOR=Color.RED;
     public final static Color PROJECTILECOLOR=Color.ORANGE;
     public final static Color ENEMYCOLOR=Color.BLUE;
     
@@ -47,6 +49,7 @@ public interface Globals {
     
     //Other
     public final static int TIMERDELAY=10;
+    public final static long INVFRAMES=1000;
     public final static int LEFTWALL=0;
     public final static int RIGHTWALL=1;
     public final static int TOPWALL=2;

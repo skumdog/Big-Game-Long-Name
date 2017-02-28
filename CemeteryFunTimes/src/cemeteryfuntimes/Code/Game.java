@@ -24,6 +24,7 @@ public class Game implements Globals {
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
         enemies = new ArrayList();
         enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
+        enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
         setupImages();
     }
     
@@ -33,6 +34,11 @@ public class Game implements Globals {
             enemie.update();
         });
         cemeteryfuntimes.Resources.Shared.Collision.checkCollisions(player, enemies);
+        if (enemies.isEmpty()) {
+            //Temporarily add in a new test enemy, when the first one is killed
+            enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
+            enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
+        }
     }
     
     public void draw(Graphics g) {
@@ -49,9 +55,9 @@ public class Game implements Globals {
             g.drawImage(heartContainer,(i/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
         }
         //Check if player has half a heart
-        if (true) {
+        /*if (player.health % 2 != 0) {
             g.drawImage(halfHeartContainer,((player.health-1)/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
-        }
+        }*/
     }
     
     public void movementAction(int keyCode, boolean isPressed) {
@@ -65,7 +71,7 @@ public class Game implements Globals {
     private void setupImages() {
        //Initialize always relevent images images
        heartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-       halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+       //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
     
 }

@@ -16,12 +16,18 @@ public class Weapon implements Globals {
 
     //Member variables
     private final ArrayList<Projectile> projectiles;
+    public ArrayList<Projectile> Projectiles() {
+        return projectiles;
+    }
     private final boolean[] keyPressed;
     private final Player player;
     private long lastUpdate;
 
     //Gun definition
     private int damage;
+    public int Damage() {
+        return damage;
+    }
     private String name;
     private float weaponLength;
     private float projectileSpeed;
@@ -30,12 +36,17 @@ public class Weapon implements Globals {
     private int projectileType;
     private BufferedImage projectileImage;
     protected BufferedImage playerImage;
+    public BufferedImage PlayerImage() {
+        return playerImage;
+    }
 
     public Weapon(Player player, int weaponKey) {
         this.player = player;
         loadWeapon(weaponKey);
         projectiles = new ArrayList();
         keyPressed = new boolean[4];
+        
+        damage = 1;
     }
 
     public void keyPressed(int direction) {
@@ -161,19 +172,6 @@ public class Weapon implements Globals {
 
     public void setupImages() {
         
-    }
-
-    //Retrieve private variables
-    public ArrayList<Projectile> Projectiles() {
-        return projectiles;
-    }
-
-    public int Damage() {
-        return damage;
-    }
-
-    public BufferedImage PlayerImage() {
-        return playerImage;
     }
 
 }

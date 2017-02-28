@@ -4,6 +4,7 @@ package cemeteryfuntimes.Resources.Shared;
 
 import cemeteryfuntimes.Code.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Collision implements Globals {
     
@@ -11,35 +12,59 @@ public class Collision implements Globals {
         //Check for collisions between Player and player projectiles with enemies
         //As well as enemy and enemy projectile collision with player
         //Update accordingly
-        
+        checkBallisticCollisions(player,enemies);
+        checkEnemyEnemyCollision(enemies);
+        checkEnemyPlayerCollision(player,enemies);
+    }
+    
+    public static void checkBallisticCollisions(Player player, ArrayList<Enemy> enemies) {
         Enemy enemy;
+        Projectile projectile;
         Weapon playerWeapon = player.getWeapon();
         ArrayList<Projectile> projectiles = playerWeapon.Projectiles();
+        int damage = playerWeapon.Damage();
         
         //Check player projectiles collision with enemies
-        for (int i=0; i<projectiles.size(); i++) {
+        Iterator<Projectile> projectileIt = projectiles.iterator();
+        while (projectileIt.hasNext()) {
+            projectile =projectileIt.next();
             for (int j=0; j<enemies.size(); j++) {
                 enemy = enemies.get(j);
-                if (enemyProjectileCollide(enemy,projectiles.get(i))) {
-                    enemy.health -= playerWeapon.Damage();
-                    if (enemy.health <= 0) {
-                        enemies.remove(j); j--;
-                    }
-                    projectiles.remove(i); i--;
+                if (enemy.collide(projectile)) {
+                    enemy.health -= damage;
+                    if (enemy.health <= 0) {enemies.remove(j); j--;}
+                    projectileIt.remove();
                 }
+            }
+        }
+        
+        //Check enemy projectiles collision with player
+    }
+    
+    public static void checkEnemyPlayerCollision(Player player, ArrayList<Enemy> enemies) {
+        int sideCollided;
+        for (Enemy enemy : enemies) {
+            if (player.collide(enemy)) {
+                //If the enemy and player have collided adjust the enemy's position to be on the edge of the player
+                sideCollided = player.sideCollided(enemy);
+                enemy.collide(sideCollided);
+                player.enemyCollide(enemy,sideCollided);
             }
         }
     }
     
-    public static boolean enemyProjectileCollide(Enemy enemy, Projectile projectile) {
-        //Check if a projectile hits an enemy return true if so
-        
-        if (Math.abs(projectile.xPos - enemy.xPos) < projectile.xRad + enemy.rad) {
-            if (Math.abs(projectile.yPos - enemy.yPos) < projectile.yRad + enemy.rad) {
-                return true;
+    public static void checkEnemyEnemyCollision(ArrayList<Enemy> enemies) {
+        Enemy enemyOne;
+        Enemy enemyTwo;
+        for (int i=0; i < enemies.size(); i++) {
+            enemyOne = enemies.get(i);
+            for (int j=i+1; j < enemies.size(); j++) {
+                enemyTwo = enemies.get(j);
+                if (enemyOne.collide(enemyTwo)) {
+                    enemyOne.collide(enemyOne.sideCollided(enemies.get(j)));
+                }
             }
         }
-        return false;
     }
     
     public static boolean hitWall(float xPos, float xRad, float yPos, float yRad) {
