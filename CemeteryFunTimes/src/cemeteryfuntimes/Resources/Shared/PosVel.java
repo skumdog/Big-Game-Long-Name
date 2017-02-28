@@ -11,6 +11,8 @@ public class PosVel implements Globals {
     protected float xRad;
     protected float yRad;
     protected float rad;
+    protected float xSide;
+    protected float ySide;
     
     public float xPos() {
         return xPos;

@@ -13,6 +13,7 @@ public class Game implements Globals {
     
     private final Player player;
     private final ArrayList<Enemy> enemies;
+    private final ArrayList<Pickup> pickups;
     private BufferedImage heartContainer=null;
     private BufferedImage halfHeartContainer=null;
     
@@ -23,9 +24,17 @@ public class Game implements Globals {
     public Game() {
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
         enemies = new ArrayList();
-        enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
-        enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
+        pickups = new ArrayList();
+        test();
         setupImages();
+    }
+    
+    public void test() {
+        pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 0));
+        pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
+        pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
+        //enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
+        //enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
     }
     
     public void update() {
@@ -33,12 +42,12 @@ public class Game implements Globals {
         enemies.stream().forEach((enemie) -> {
             enemie.update();
         });
-        cemeteryfuntimes.Resources.Shared.Collision.checkCollisions(player, enemies);
-        if (enemies.isEmpty()) {
+        cemeteryfuntimes.Resources.Shared.Collision.checkCollisions(player, enemies,pickups);
+        /*if (enemies.isEmpty()) {
             //Temporarily add in a new test enemy, when the first one is killed
             enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
             enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
-        }
+        }*/
     }
     
     public void draw(Graphics g) {
@@ -46,6 +55,9 @@ public class Game implements Globals {
         player.draw(g);
         enemies.stream().forEach((enemy) -> {
             enemy.draw(g);
+        });
+        pickups.stream().forEach((pickup) -> {
+            pickup.draw(g);
         });
     }
     

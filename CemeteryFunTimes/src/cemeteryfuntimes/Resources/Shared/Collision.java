@@ -8,13 +8,14 @@ import java.util.Iterator;
 
 public class Collision implements Globals {
     
-    public static void checkCollisions(Player player, ArrayList<Enemy> enemies) {
+    public static void checkCollisions(Player player, ArrayList<Enemy> enemies, ArrayList<Pickup> pickups) {
         //Check for collisions between Player and player projectiles with enemies
         //As well as enemy and enemy projectile collision with player
         //Update accordingly
         checkBallisticCollisions(player,enemies);
         checkEnemyEnemyCollision(enemies);
         checkEnemyPlayerCollision(player,enemies);
+        checkPickupCollision(player,pickups);
     }
     
     public static void checkBallisticCollisions(Player player, ArrayList<Enemy> enemies) {
@@ -63,6 +64,16 @@ public class Collision implements Globals {
                 if (enemyOne.collide(enemyTwo)) {
                     enemyOne.collide(enemyOne.sideCollided(enemies.get(j)));
                 }
+            }
+        }
+    }
+    
+    public static void checkPickupCollision(Player player, ArrayList<Pickup> pickups) {
+        for (int i = 0; i < pickups.size(); i++) {
+            if (player.collide(pickups.get(i))) {
+                // TODO: behavior for what to do upon receiving pickup
+                pickups.remove(i); 
+                i--;
             }
         }
     }
