@@ -1,60 +1,65 @@
 package cemeteryfuntimes.Code;
 
-import cemeteryfuntimes.Resources.Shared.*;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
+import cemeteryfuntimes.Code.Shared.PosVel;
+import cemeteryfuntimes.Code.Shared.Globals;
+import static cemeteryfuntimes.Code.Shared.Globals.IMAGEPATH;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
 // @author David Kozloff & Tyler Law
 public class Player extends PosVel implements Globals {
     
-    //MOVEment based variables
+    //Movement based variables
     private float xAccel;
     private float yAccel;
     private final boolean[] keysPressed;
     
     //Other
+    private final int[] shootDirection = {
+        0,180,90,270
+    };    
+    private BufferedImage playerImage;
+    private int currentRotation;
     public int health;
     public long hurtTimer;
-    private Weapon weapon;
+    private final Weapon weapon;
     public Weapon getWeapon() {
         return weapon;
     }
     
-    //Dimensional constants
-    private final float xSide;
-    private final float ySide;
-    
     public Player(int xPos, int yPos, int weaponKey) {
         keysPressed = new boolean [4];
         health = 6;
+        this.xPos = xPos;
+        this.yPos = yPos;
         rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
         this.weapon = new Weapon(this, weaponKey);
+        playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
     
     public void movementKeyChanged(int direction, boolean keyIsPressed) {
         //Record which directional keys are being pressed
-        switch(direction) {
-            case KeyEvent.VK_A:
-                keysPressed[MOVELEFT]=keyIsPressed;
-                break;
-            case KeyEvent.VK_D:
-                keysPressed[MOVERIGHT]=keyIsPressed;
-                break;
-            case KeyEvent.VK_W:
-                keysPressed[MOVEUP]=keyIsPressed;
-                break;
-            case KeyEvent.VK_S:
-                keysPressed[MOVEDOWN]=keyIsPressed;
-                break;
-        }
+        keysPressed[direction] = keyIsPressed;
     }
     
     public void shootKeyChanged(int direction, boolean keyIsPressed) {
         //If an arrow key was pressed, pass event to weapon
-        if (keyIsPressed) { weapon.keyPressed(direction); }
+        if (keyIsPressed) { 
+            weapon.keyPressed(direction); 
+            //Also rotate the image of the player
+            rotatePlayerImage(direction);
+        }
         else { weapon.keyReleased(direction); }
+    }
+    
+    public void rotatePlayerImage(int direction) {
+        //Rotate the image of the player
+        int rotationAngle = shootDirection[direction];
+        playerImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(playerImage,Math.toRadians(rotationAngle - currentRotation));
+        currentRotation = rotationAngle;
     }
     
     public void update() {
@@ -96,12 +101,12 @@ public class Player extends PosVel implements Globals {
     }
     
     public void checkWallCollision() {
-        boolean[] wall=cemeteryfuntimes.Resources.Shared.Collision.checkWallCollision(xPos,rad,yPos,rad);
+        boolean[] wall=cemeteryfuntimes.Code.Shared.Collision.checkWallCollision(xPos,rad,yPos,rad);
         if (wall[RIGHTWALL]) {
             xVel = 0;
             xPos = GAMEWIDTH - rad;
         }
-        if (wall[LEFTWALL]) {
+        else if (wall[LEFTWALL]) {
             xVel = 0;
             xPos = rad;
         }
@@ -109,7 +114,7 @@ public class Player extends PosVel implements Globals {
             yVel = 0;
             yPos = rad;
         }
-        if (wall[BOTTOMWALL]) {
+        else if (wall[BOTTOMWALL]) {
             yVel = 0;
             yPos = GAMEHEIGHT - rad;
         }
@@ -124,15 +129,12 @@ public class Player extends PosVel implements Globals {
         }
     }
     
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         weapon.draw(g);
-        if (hurtTimer != 0) {g.setColor(PLAYERHURTCOLOR);}
-        else {g.setColor(PLAYERCOLOR);}
-        g.fillRect(Math.round(xSide+xPos),Math.round(ySide+yPos),PLAYERSIZE,PLAYERSIZE);
-    }
-    
-    public void setupImages() {
-        //Setup images for player
+        if (hurtTimer != 0) {
+            //Different drawing / animation of player when injured?
+        }
+        g.drawImage(playerImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null);
     }
     
 }

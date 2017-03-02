@@ -1,15 +1,30 @@
-package cemeteryfuntimes.Resources.Shared;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cemeteryfuntimes.Code.Shared;
+
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 // @author David Kozloff & Tyler Law
 
-public class Other {
+public class Utilities implements Globals {
     
       /**
      * Convenience method that returns a scaled instance of the
@@ -87,4 +102,49 @@ public class Other {
 
         return ret;
     }
+    
+    public static BufferedImage rotateImage(BufferedImage image, double radians) {
+        //Rotate the given image by the angle
+        AffineTransform at = AffineTransform.getRotateInstance(radians,image.getWidth()/2,image.getHeight()/2);
+        AffineTransformOp atOp = new AffineTransformOp(at,AffineTransformOp.TYPE_BILINEAR);
+        return atOp.filter(image,null);
+    }
+    
+    public static NamedNodeMap loadTemplate(String file, String elementStart, int key) {
+        //Loads the contents of an xml template
+         try {	
+            File inputFile = new File(TEMPLATEPATH + file);
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+            NodeList nList = doc.getElementsByTagName(elementStart);
+         
+            for (int i = 0; i < nList.getLength(); i++) {
+                Node nNode = nList.item(i); 
+                Element template = (Element) nNode;
+                if (key == Integer.parseInt(template.getAttribute("Key"))) {
+                    return template.getAttributes();
+                }
+            }
+        } catch (Exception ex) {
+        }
+        return null;
+    }
+    
+     public static int otherSide(int side) {
+        switch(side) {
+            case RIGHTWALL:
+                return LEFTWALL;
+            case LEFTWALL:
+                return RIGHTWALL;
+            case TOPWALL:
+                return BOTTOMWALL;
+            case BOTTOMWALL:
+                return TOPWALL;
+            
+        }
+        return -1;
+    }
+    
 }

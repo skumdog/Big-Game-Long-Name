@@ -1,10 +1,10 @@
 package cemeteryfuntimes;
 
+import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.awt.event.KeyEvent;
 
-import cemeteryfuntimes.Resources.Shared.*;
 import cemeteryfuntimes.Code.*;
 import java.awt.Dimension;
 import java.awt.RenderingHints;
@@ -32,15 +32,17 @@ public class Screen extends JPanel implements Globals {
     
     private enum Action {
         //This enum is for storing all keyboard events that map to specific game actions
-        MOVEUP(KeyEvent.VK_W,MOVEMENT),MOVEDOWN(KeyEvent.VK_S,MOVEMENT),MOVELEFT(KeyEvent.VK_A,MOVEMENT),MOVERIGHT(KeyEvent.VK_D,MOVEMENT),
-        SHOOTUP(KeyEvent.VK_UP,SHOOT),SHOOTDOWN(KeyEvent.VK_DOWN,SHOOT),SHOOTLEFT(KeyEvent.VK_LEFT,SHOOT),SHOOTRIGHT(KeyEvent.VK_RIGHT,SHOOT);
+        UPMOVEMENT(KeyEvent.VK_W,MOVEMENT,MOVEUP),DOWNMOVEMENT(KeyEvent.VK_S,MOVEMENT,MOVEDOWN),LEFTMOVEMENT(KeyEvent.VK_A,MOVEMENT,MOVELEFT),RIGHTMOVEMENT(KeyEvent.VK_D,MOVEMENT,MOVERIGHT),
+        SHOOTINGUP(KeyEvent.VK_UP,SHOOT,SHOOTUP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,SHOOTDOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,SHOOTLEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,SHOOTRIGHT);
         
         private final int keyCode;
         private final int actionType;
+        private final int gameCode;
         
-        private Action(int keyCode, int actionType) {
+        private Action(int keyCode, int actionType, int gameCode) {
             this.keyCode = keyCode;
             this.actionType=actionType;
+            this.gameCode=gameCode;
         }
         
         public int getKeyCode() {
@@ -49,6 +51,10 @@ public class Screen extends JPanel implements Globals {
         
         public int getActionType() {
             return actionType;
+        }
+        
+        public int getGameCode() {
+            return gameCode;
         }
     }
     
@@ -103,26 +109,28 @@ public class Screen extends JPanel implements Globals {
         ActionMap actMap = getActionMap();
         int keyCode;
         int actionType;
+        int gameCode;
         for (final Action gameAction : Action.values()) {
             keyCode = gameAction.getKeyCode();
             actionType = gameAction.getActionType();
+            gameCode = gameAction.getGameCode();
             KeyStroke pressed = KeyStroke.getKeyStroke(keyCode, 0, false);
             KeyStroke released = KeyStroke.getKeyStroke(keyCode, 0, true);
             inMap.put(pressed,keyCode+"pressed");
             inMap.put(released,keyCode+"released");
-            actMap.put(keyCode+"pressed", new GameAction(keyCode,actionType,true));
-            actMap.put(keyCode+"released",new GameAction(keyCode,actionType,false));
+            actMap.put(keyCode+"pressed", new GameAction(gameCode,actionType,true));
+            actMap.put(keyCode+"released",new GameAction(gameCode,actionType,false));
         }
     }
     
     private class GameAction extends AbstractAction {
         //This class is to perform actions when a key is pressed
-        int keyCode; //Unique integer mapped to a key see KeyEvent.VK_BLANK
+        int gameCode; //Unique integer mapped to a key see KeyEvent.VK_BLANK
         boolean isPressed; //True if this action is for key pressed false if for key released
         int actionType;
         
-        GameAction(int keyCode, int actionType, boolean isPressed) {
-            this.keyCode=keyCode;
+        GameAction(int gameCode, int actionType, boolean isPressed) {
+            this.gameCode=gameCode;
             this.isPressed=isPressed;
             this.actionType=actionType;
         }
@@ -131,18 +139,18 @@ public class Screen extends JPanel implements Globals {
         public void actionPerformed(ActionEvent e) {
             switch (actionType) {
                 case MOVEMENT:
-                    game.movementAction(keyCode, isPressed);
+                    game.movementAction(gameCode, isPressed);
                     break;
                 case SHOOT:
-                    game.shootAction(keyCode, isPressed);
+                    game.shootAction(gameCode, isPressed);
                     break;
             }
         }
     }
     
     private void setupImages() {
-        backgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/background.jpg",SCREENWIDTH,SCREENHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-        gameBackgroundImage = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/gameBackground.jpg",GAMEWIDTH,GAMEHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        backgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/background.jpg",SCREENWIDTH,SCREENHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        gameBackgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/gameBackground.jpg",GAMEWIDTH,GAMEHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
     
 }

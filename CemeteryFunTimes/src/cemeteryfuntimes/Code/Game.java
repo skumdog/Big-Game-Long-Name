@@ -1,10 +1,11 @@
 package cemeteryfuntimes.Code;
 
-import cemeteryfuntimes.Resources.Shared.*;
+import cemeteryfuntimes.Code.Shared.Globals;
 
 // @author David Kozloff & Tyler Law
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class Game implements Globals {
     private final ArrayList<Enemy> enemies;
     private final ArrayList<Pickup> pickups;
     private BufferedImage heartContainer=null;
-    private BufferedImage halfHeartContainer=null;
+    //private BufferedImage halfHeartContainer=null;
     
     //Constants
     private final static int HEARTSIZE=40;
@@ -33,31 +34,38 @@ public class Game implements Globals {
         pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 0));
         pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
         pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
+        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
+        enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2,1));
+        enemies.add(new Enemy(player,GAMEWIDTH/2+200,GAMEHEIGHT/2,1));
     }
     
     public void update() {
         player.update();
+        //Calculate new velocities for all enemies
+        enemies.stream().forEach((enemie) -> {
+            enemie.calcVels();
+        });
+        //Check for all collisions
+        cemeteryfuntimes.Code.Shared.Collision.checkCollisions(player, enemies,pickups);
         enemies.stream().forEach((enemie) -> {
             enemie.update();
         });
-        cemeteryfuntimes.Resources.Shared.Collision.checkCollisions(player, enemies,pickups);
-        /*if (enemies.isEmpty()) {
+        if (enemies.isEmpty()) {
             //Temporarily add in a new test enemy, when the first one is killed
-            enemies.add(new Enemy(player,GAMEWIDTH/2-ENEMYSIZE/2,GAMEHEIGHT/2-ENEMYSIZE/2));
-            enemies.add(new Enemy(player,GAMEWIDTH/2+ENEMYSIZE/2,GAMEHEIGHT/2+ENEMYSIZE/2));
-        }*/
+            enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
+            enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2-200,1));
+        }
     }
     
     public void draw(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
         drawHUD(g);
-        player.draw(g);
+        player.draw(g2d);
         enemies.stream().forEach((enemy) -> {
-            enemy.draw(g);
+            enemy.draw(g2d);
         });
         pickups.stream().forEach((pickup) -> {
-            pickup.draw(g);
+            pickup.draw(g2d);
         });
     }
     
@@ -72,17 +80,19 @@ public class Game implements Globals {
         }*/
     }
     
-    public void movementAction(int keyCode, boolean isPressed) {
-        player.movementKeyChanged(keyCode, isPressed);
+    public void movementAction(int gameCode, boolean isPressed) {
+        //Game code is the relevant global in the "Player Commands" section of globals
+        player.movementKeyChanged(gameCode, isPressed);
     }
     
-    public void shootAction(int keyCode, boolean isPressed) {
-        player.shootKeyChanged(keyCode, isPressed);
+    public void shootAction(int gameCode, boolean isPressed) {
+        //Game code is the relevant global in the "Player Commands" section of globals
+        player.shootKeyChanged(gameCode, isPressed);
     }
     
     private void setupImages() {
        //Initialize always relevent images images
-       heartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
     

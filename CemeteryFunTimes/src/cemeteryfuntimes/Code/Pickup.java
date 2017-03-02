@@ -1,5 +1,6 @@
 package cemeteryfuntimes.Code;
-import cemeteryfuntimes.Resources.Shared.*;
+import cemeteryfuntimes.Code.Shared.PosVel;
+import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -18,7 +19,7 @@ public class Pickup extends PosVel implements Globals {
         this.player = player;
         xPos = x;
         yPos = y;
-        rad = HEARTSIZE/2;
+        rad = HEARTSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER - rad;
         ySide = - rad;
         setupImages();
@@ -30,6 +31,6 @@ public class Pickup extends PosVel implements Globals {
     
     private void setupImages() {
        // Make this a shared method?
-       heartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
 }

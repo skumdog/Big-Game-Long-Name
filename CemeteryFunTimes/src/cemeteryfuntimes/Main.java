@@ -1,8 +1,8 @@
 package cemeteryfuntimes;
 
+import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
-import cemeteryfuntimes.Resources.Shared.*;
 
 // @author David Kozloff & Tyler Law
 public class Main extends JFrame implements Globals {

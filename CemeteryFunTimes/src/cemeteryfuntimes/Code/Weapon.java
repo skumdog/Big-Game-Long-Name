@@ -1,16 +1,16 @@
 package cemeteryfuntimes.Code;
 
-import cemeteryfuntimes.Resources.Shared.*;
+import cemeteryfuntimes.Code.Shared.Globals;
+import static cemeteryfuntimes.Code.Shared.Globals.IMAGEPATH;
 
 // @author David Kozloff & Tyler Law
-import java.awt.Graphics;
+
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
+import org.w3c.dom.NamedNodeMap;
 
 public class Weapon implements Globals {
 
@@ -29,15 +29,29 @@ public class Weapon implements Globals {
         return damage;
     }
     private String name;
-    private float weaponLength;
+    private int weaponLength;
     private float projectileSpeed;
+    public float ProjectileSpeed() {
+        return projectileSpeed;
+    }
     private int projectileWidth;
+    public int ProjectileWidth() {
+        return projectileWidth;
+    }
     private int projectileHeight;
+    public int ProjectileHeight() {
+        return projectileHeight;
+    }
     private int projectileType;
+    private int projectileDelay;
+    private int projectileOffset;
+    public int ProjectileOffset() {
+        return projectileOffset;
+    }
     private BufferedImage projectileImage;
-    protected BufferedImage playerImage;
-    public BufferedImage PlayerImage() {
-        return playerImage;
+    private String playerImagePath;
+    public String PlayerImagePath() {
+        return playerImagePath;
     }
 
     public Weapon(Player player, int weaponKey) {
@@ -45,54 +59,18 @@ public class Weapon implements Globals {
         loadWeapon(weaponKey);
         projectiles = new ArrayList();
         keyPressed = new boolean[4];
-        
-        damage = 1;
     }
 
     public void keyPressed(int direction) {
-        switch (direction) {
-            case KeyEvent.VK_LEFT:
-                keyPressed[SHOOTLEFT] = true;
-                keyPressed[SHOOTRIGHT] = false;
-                keyPressed[SHOOTUP] = false;
-                keyPressed[SHOOTDOWN] = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                keyPressed[SHOOTLEFT] = false;
-                keyPressed[SHOOTRIGHT] = true;
-                keyPressed[SHOOTUP] = false;
-                keyPressed[SHOOTDOWN] = false;
-                break;
-            case KeyEvent.VK_UP:
-                keyPressed[SHOOTLEFT] = false;
-                keyPressed[SHOOTRIGHT] = false;
-                keyPressed[SHOOTUP] = true;
-                keyPressed[SHOOTDOWN] = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                keyPressed[SHOOTLEFT] = false;
-                keyPressed[SHOOTRIGHT] = false;
-                keyPressed[SHOOTUP] = false;
-                keyPressed[SHOOTDOWN] = true;
-                break;
-        }
+        keyPressed[SHOOTLEFT] = false;
+        keyPressed[SHOOTRIGHT] = false;
+        keyPressed[SHOOTUP] = false;
+        keyPressed[SHOOTDOWN] = false;
+        keyPressed[direction] = true;
     }
 
     public void keyReleased(int direction) {
-        switch (direction) {
-            case KeyEvent.VK_LEFT:
-                keyPressed[SHOOTLEFT] = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                keyPressed[SHOOTRIGHT] = false;
-                break;
-            case KeyEvent.VK_UP:
-                keyPressed[SHOOTUP] = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                keyPressed[SHOOTDOWN] = false;
-                break;
-        }
+        keyPressed[direction] = false;
     }
 
     public void update() {
@@ -109,7 +87,7 @@ public class Weapon implements Globals {
     public void createProjectile() {
         //Check if enough time has passed for more projectiles to spawn
         long now = System.currentTimeMillis();
-        if (now - lastUpdate < PROJECTILEDELAY) {
+        if (now - lastUpdate < projectileDelay) {
             return;
         }
         lastUpdate = now;
@@ -118,60 +96,33 @@ public class Weapon implements Globals {
         for (int i = 0; i < 4; i++) {
             if (keyPressed[i]) {
                 //If a key is currently pressed generate a projectile moving in that direction
-                Projectile projectile = new Projectile(player, i);
+                Projectile projectile = new Projectile(player, i, projectileImage, this);
                 projectiles.add(projectile);
                 return;
             }
         }
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         projectiles.stream().forEach((projectile) -> {
             projectile.draw(g);
         });
     }
 
     private void loadWeapon(int weaponKey) {
-        //Test code for loading weapon from Weapons.xml
-        //This code should be extracted a shared file in some way
-        try {
-            FileInputStream fileInputStream = new FileInputStream(TEMPLATEPATH + "Weapons.xml");
-            XMLStreamReader xmlStreamReader = XMLInputFactory.newInstance().createXMLStreamReader(fileInputStream);
-            int eventCode;
-            while (xmlStreamReader.hasNext()) {
-                eventCode = xmlStreamReader.next();
-                if ((XMLStreamConstants.START_ELEMENT == eventCode)&& xmlStreamReader.getLocalName().equalsIgnoreCase("weapons")) {
-                    while (xmlStreamReader.hasNext()) {
-                        eventCode = xmlStreamReader.next();
-                        if ((XMLStreamConstants.END_ELEMENT == eventCode)&& xmlStreamReader.getLocalName().equalsIgnoreCase("weapons")) {
-                            break;
-                        }
-                        if ((XMLStreamConstants.START_ELEMENT == eventCode) && xmlStreamReader.getLocalName().equalsIgnoreCase("weapon")) {
-                            int key = Integer.parseInt(xmlStreamReader.getAttributeValue(0));
-                            if (key == weaponKey) {
-                                int attributesCount = xmlStreamReader.getAttributeCount();
-                                for (int i = 1; i < attributesCount; i++) {
-                                    switch (xmlStreamReader.getAttributeLocalName(i)) {
-                                        case "Damage":
-                                            damage = Integer.parseInt(xmlStreamReader.getAttributeValue(i));
-                                            break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            //Look through Weapons.xml until you find weapon with ID = weaponKey
-        } catch (Exception ex) {
-            System.out.printf("UHOH");
-        }
-        setupImages();
-    }
-
-    public void setupImages() {
-        
+        //Load the weapon definition from Weapons.xml
+        NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Weapons.xml","Weapon",weaponKey);
+        damage = Integer.parseInt(attributes.getNamedItem("Damage").getNodeValue());
+        name = attributes.getNamedItem("Name").getNodeValue();
+        weaponLength = Integer.parseInt(attributes.getNamedItem("WeaponLength").getNodeValue());
+        projectileSpeed = Float.parseFloat(attributes.getNamedItem("ProjectileSpeed").getNodeValue());
+        projectileWidth = Integer.parseInt(attributes.getNamedItem("ProjectileWidth").getNodeValue());
+        projectileHeight= Integer.parseInt(attributes.getNamedItem("ProjectileHeight").getNodeValue());
+        projectileType = Integer.parseInt(attributes.getNamedItem("ProjectileType").getNodeValue());
+        projectileDelay = Integer.parseInt(attributes.getNamedItem("ProjectileDelay").getNodeValue());
+        projectileOffset = Integer.parseInt(attributes.getNamedItem("ProjectileOffset").getNodeValue());
+        playerImagePath = attributes.getNamedItem("PlayerImage").getNodeValue();
+        projectileImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+attributes.getNamedItem("ProjectileImage").getNodeValue(),projectileHeight,projectileWidth,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
     }
 
 }

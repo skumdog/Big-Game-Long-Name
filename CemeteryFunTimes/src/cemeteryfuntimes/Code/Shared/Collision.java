@@ -1,4 +1,4 @@
-package cemeteryfuntimes.Resources.Shared;
+package cemeteryfuntimes.Code.Shared;
 
 // @author David Kozloff & Tyler Law
 
@@ -38,34 +38,71 @@ public class Collision implements Globals {
                 }
             }
         }
-        
         //Check enemy projectiles collision with player
     }
     
     public static void checkEnemyPlayerCollision(Player player, ArrayList<Enemy> enemies) {
-        int sideCollided;
         for (Enemy enemy : enemies) {
             if (player.collide(enemy)) {
-                //If the enemy and player have collided adjust the enemy's position to be on the edge of the player
-                sideCollided = player.sideCollided(enemy);
-                enemy.collide(sideCollided);
-                player.enemyCollide(enemy,sideCollided);
+                handleEnemyPlayerCollision(player, enemy);
             }
         }
+    }
+    
+    public static void handleEnemyPlayerCollision(Player player, Enemy enemy) {
+        int side = player.sideCollided(enemy);
+        // Positive is equal to 1 if player has the greater x or y coordinate on the side of the collision else -1
+        int positive = (side == LEFTWALL || side == TOPWALL) ? 1 : -1;
+        // Horizontal is equal to 1 if collision was on left or right wall else 0
+        // same equivalent thing for vertical
+        boolean horizontal = (side == LEFTWALL || side == RIGHTWALL);
+        boolean vertical = (side == TOPWALL || side == BOTTOMWALL);
+        
+        //Adjust the position of the enemy to be right next to the player on the side of the collision
+        //Also set the enemy's speed to 0 in the direction of the collision
+        if (horizontal) {enemy.xPos = player.xPos() - positive * (player.rad() + enemy.rad()); enemy.xVel=0;}
+        if (vertical) {enemy.yPos =  player.yPos() - positive * (player.rad() + enemy.rad()); enemy.yVel=0;}
     }
     
     public static void checkEnemyEnemyCollision(ArrayList<Enemy> enemies) {
         Enemy enemyOne;
         Enemy enemyTwo;
+        int side;
         for (int i=0; i < enemies.size(); i++) {
             enemyOne = enemies.get(i);
             for (int j=i+1; j < enemies.size(); j++) {
                 enemyTwo = enemies.get(j);
                 if (enemyOne.collide(enemyTwo)) {
-                    enemyOne.collide(enemyOne.sideCollided(enemies.get(j)));
+                    handleEnemyEnemyCollision(enemyOne, enemyTwo);
                 }
             }
         }
+    }
+    
+    public static void handleEnemyEnemyCollision(Enemy enemyOne, Enemy enemyTwo) {
+        int side = enemyOne.sideCollided(enemyTwo);
+        float overlap;
+        // Horizontal is equal to 1 if collision was on left or right wall else 0
+        // same equivalent thing for vertical
+        int horizontal = (side == LEFTWALL || side == RIGHTWALL) ? 1 : 0;
+        int vertical = (side == TOPWALL || side == BOTTOMWALL) ? 1 : 0;
+        // Positive is equal to 1 if enemyOne has the greater x or y coordinate on the side of the collision else -1
+        int positive = (side == LEFTWALL || side == TOPWALL) ? 1 : -1;
+        
+        //Calculate the overlapping region between the two enemies
+        overlap = enemyOne.rad + enemyTwo.rad - Math.abs(horizontal * (enemyOne.xPos - enemyTwo.xPos)) - Math.abs(vertical * (enemyOne.yPos - enemyTwo.yPos));
+        
+        //Update the position to no longer be overlapping
+        enemyOne.xPos = enemyOne.xPos + horizontal * (positive * overlap/2); 
+        enemyTwo.xPos = enemyTwo.xPos - horizontal * (positive * overlap/2); 
+        enemyOne.yPos = enemyOne.yPos + vertical * (positive * overlap/2); 
+        enemyTwo.yPos = enemyTwo.yPos - vertical * (positive * overlap/2); 
+        
+        //Update the velocities so they are no longer moving into each other
+        enemyOne.xVel = Math.signum(enemyOne.xVel) * vertical * enemyOne.Speed();
+        enemyTwo.xVel = Math.signum(enemyTwo.xVel) * vertical * enemyTwo.Speed();
+        enemyOne.yVel = Math.signum(enemyOne.yVel) * horizontal * enemyOne.Speed();
+        enemyTwo.yVel = Math.signum(enemyTwo.yVel) * horizontal * enemyTwo.Speed();
     }
     
     public static void checkPickupCollision(Player player, ArrayList<Pickup> pickups) {

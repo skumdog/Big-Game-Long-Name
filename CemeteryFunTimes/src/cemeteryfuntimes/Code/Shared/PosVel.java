@@ -1,4 +1,4 @@
-package cemeteryfuntimes.Resources.Shared;
+package cemeteryfuntimes.Code.Shared;
 
 // @author David Kozloff & Tyler Law
 
@@ -8,11 +8,11 @@ public class PosVel implements Globals {
     protected float yPos;
     protected float xVel;
     protected float yVel;
-    protected float xRad;
-    protected float yRad;
-    protected float rad;
-    protected float xSide;
-    protected float ySide;
+    protected int xRad;
+    protected int yRad;
+    protected int rad;
+    protected int xSide;
+    protected int ySide;
     
     public float xPos() {
         return xPos;
@@ -26,13 +26,13 @@ public class PosVel implements Globals {
     public float yVel() {
         return yVel;
     }
-    public float xRad() {
+    public int xRad() {
         return xRad;
     }
-    public float yRad() {
+    public int yRad() {
         return yRad;
     }
-    public float rad() {
+    public int rad() {
         return rad;
     }
     
