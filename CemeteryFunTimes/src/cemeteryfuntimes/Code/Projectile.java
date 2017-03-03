@@ -11,6 +11,10 @@ import java.awt.image.BufferedImage;
 public class Projectile extends PosVel implements Globals {
     
     private final BufferedImage projectileImage;
+    private final int damage;
+    public int damage() {
+        return damage;
+    }
     
     public Projectile(Player player, int direction, BufferedImage projectileImage, Weapon weapon) {
         float speed = weapon.ProjectileSpeed();
@@ -60,16 +64,12 @@ public class Projectile extends PosVel implements Globals {
         xSide = GAMEBORDER - xRad;
         ySide = - yRad;
         this.projectileImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(projectileImage, Math.toRadians(rotation));
+        damage = weapon.Damage();
     }
     
     public void update() {
         xPos += xVel;
         yPos += yVel;
-    }
-    
-    public boolean hitWall() {
-        //Return true if projectile has collidd with a wall
-        return cemeteryfuntimes.Code.Shared.Collision.hitWall(xPos,xRad,yPos,yRad);
     }
     
     public void draw(Graphics2D g) {

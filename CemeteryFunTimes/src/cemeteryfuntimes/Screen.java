@@ -32,7 +32,9 @@ public class Screen extends JPanel implements Globals {
     
     private enum Action {
         //This enum is for storing all keyboard events that map to specific game actions
+        //These are the movement key events i.e. arrow keys
         UPMOVEMENT(KeyEvent.VK_W,MOVEMENT,MOVEUP),DOWNMOVEMENT(KeyEvent.VK_S,MOVEMENT,MOVEDOWN),LEFTMOVEMENT(KeyEvent.VK_A,MOVEMENT,MOVELEFT),RIGHTMOVEMENT(KeyEvent.VK_D,MOVEMENT,MOVERIGHT),
+        //These are the shooting key events i.e. wasd
         SHOOTINGUP(KeyEvent.VK_UP,SHOOT,SHOOTUP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,SHOOTDOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,SHOOTLEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,SHOOTRIGHT);
         
         private final int keyCode;
@@ -125,9 +127,9 @@ public class Screen extends JPanel implements Globals {
     
     private class GameAction extends AbstractAction {
         //This class is to perform actions when a key is pressed
-        int gameCode; //Unique integer mapped to a key see KeyEvent.VK_BLANK
+        int gameCode; //Integer that correspond to specific actions see "Player Commands" in Globals
         boolean isPressed; //True if this action is for key pressed false if for key released
-        int actionType;
+        int actionType; //Type of action performed see "Action Types" in globals
         
         GameAction(int gameCode, int actionType, boolean isPressed) {
             this.gameCode=gameCode;

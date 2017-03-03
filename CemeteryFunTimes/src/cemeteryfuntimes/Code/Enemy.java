@@ -1,7 +1,6 @@
 package cemeteryfuntimes.Code;
 
-import cemeteryfuntimes.Code.Shared.PosVel;
-import cemeteryfuntimes.Code.Shared.Globals;
+import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -27,8 +26,13 @@ public class Enemy extends PosVel implements Globals {
     private int enemyType;
     private String name;
     private BufferedImage enemyImage;
+    private final BufferedImage sourceEnemyImage;
     private AffineTransform rotation;
     private double currentRotation;
+    private final Weapon weapon;
+    public Weapon getWeapon() {
+        return weapon;
+    }
     
     public Enemy(Player player, int xPos, int yPos, int key) {
         this.xPos = xPos;
@@ -39,18 +43,21 @@ public class Enemy extends PosVel implements Globals {
         xSide = GAMEBORDER - rad;
         ySide = - rad;
         
-        damage = 2;
+        sourceEnemyImage = enemyImage;
+        weapon = null; //Some enemies will have weapons I assume
     }
     
     public void update() {
         xPos += xVel;
         yPos += yVel;
-        //rotateEnemyImage();
     }
     
     public void calcVels() {
         //Calculates what the current velocity of the enemy should be
         //Find the vector pointing from the enemy to the player
+        if (xVel ==0 && yVel==0) {
+            int x = 6;
+        }
         float xDist = player.xPos() - xPos ;
         float yDist = player.yPos() - yPos;
         float totDist = (float) Math.sqrt(xDist*xDist + yDist*yDist);
@@ -58,13 +65,26 @@ public class Enemy extends PosVel implements Globals {
         //Scale the vector to be the length of enemy speed to get speed
         xVel = speed * (xDist / totDist);
         yVel = speed * (yDist / totDist);
+        rotateEnemyImage();
     }
     
+    /*public void damaged(PosVel posVel, int type) {
+        switch(type) {
+            case PROJECTILEDAMAGE:
+                Projectile projectile = (Projectile) posVel;
+                health -= projectile.damage();
+                break;
+            case CONTACTDAMAGE:
+                break;
+        }
+    }*/
+    
     public void rotateEnemyImage() {
-        double radians = Math.asin(xVel/Math.sqrt((yVel*yVel+xVel*xVel)));
+        if (xVel == 0 && yVel == 0) {return;}
+        double radians = Math.PI - Math.atan2(xVel, yVel);
         if (Math.abs(currentRotation - radians) > MINIMUMROTATION) {
-            enemyImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(enemyImage, radians - currentRotation);
             currentRotation = radians;
+            enemyImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(sourceEnemyImage, currentRotation);
         }
     }
     

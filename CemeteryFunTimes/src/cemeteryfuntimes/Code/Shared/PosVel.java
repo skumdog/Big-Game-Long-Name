@@ -38,8 +38,8 @@ public class PosVel implements Globals {
     
     public boolean collide(PosVel other) {
         //Return true if the two PosVels are overlapping
-        if (Math.abs(other.xPos - xPos) < other.xRad + xRad) {
-            if (Math.abs(other.yPos - yPos) < other.yRad + yRad) {
+        if (Math.abs(other.xPos+other.xVel - (xPos+xVel)) < other.xRad + xRad) {
+            if (Math.abs(other.yPos+other.yVel - (yPos+yVel)) < other.yRad + yRad) {
                 return true;
             }
         }
@@ -62,5 +62,7 @@ public class PosVel implements Globals {
            else return TOPWALL;
         }
     }
+    
+    //public abstract void damaged(PosVel posVel, int type);
     
 }

@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.w3c.dom.NamedNodeMap;
 
 public class Weapon implements Globals {
@@ -75,13 +76,9 @@ public class Weapon implements Globals {
 
     public void update() {
         createProjectile();
-        for (int i = 0; i < projectiles.size(); i++) {
-            projectiles.get(i).update();
-            if (projectiles.get(i).hitWall()) {
-                projectiles.remove(i);
-                i--;
-            }
-        }
+        projectiles.stream().forEach((projectile) -> {
+            projectile.update();
+        });
     }
 
     public void createProjectile() {
@@ -104,9 +101,9 @@ public class Weapon implements Globals {
     }
 
     public void draw(Graphics2D g) {
-        projectiles.stream().forEach((projectile) -> {
-            projectile.draw(g);
-        });
+        for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
+            projectileIt.next().draw(g);
+        }
     }
 
     private void loadWeapon(int weaponKey) {

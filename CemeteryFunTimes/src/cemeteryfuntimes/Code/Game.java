@@ -17,6 +17,7 @@ public class Game implements Globals {
     private final ArrayList<Pickup> pickups;
     private BufferedImage heartContainer=null;
     //private BufferedImage halfHeartContainer=null;
+    private Test testOne; //just a debugging thingy
     
     //Constants
     private final static int HEARTSIZE=40;
@@ -34,9 +35,10 @@ public class Game implements Globals {
         pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 0));
         pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
         pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
-        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
+        //enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
         enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2,1));
         enemies.add(new Enemy(player,GAMEWIDTH/2+200,GAMEHEIGHT/2,1));
+        //testOne = new Test();
     }
     
     public void update() {
@@ -50,11 +52,13 @@ public class Game implements Globals {
         enemies.stream().forEach((enemie) -> {
             enemie.update();
         });
-        if (enemies.isEmpty()) {
+        /*if (enemies.isEmpty()) {
             //Temporarily add in a new test enemy, when the first one is killed
             enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
             enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2-200,1));
-        }
+        }*/
+        //testOne.update();
+        
     }
     
     public void draw(Graphics g) {
@@ -67,6 +71,7 @@ public class Game implements Globals {
         pickups.stream().forEach((pickup) -> {
             pickup.draw(g2d);
         });
+        //testOne.draw(g2d);
     }
     
     public void drawHUD(Graphics g) {

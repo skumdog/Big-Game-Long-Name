@@ -2,9 +2,6 @@ package cemeteryfuntimes.Code.Shared;
 
 // @author David Kozloff & Tyler Law
 
-import java.awt.Color;
-
-
 public interface Globals {
     
     //Game dimensions
@@ -62,5 +59,9 @@ public interface Globals {
     public final static int SHOOT=2;
     public final static int CHANGEWEAPON=3;
     public final static int GAME=4; //Place holder, things like pausing? 
+    
+    /*//Damage Type
+    public final static int CONTACTDAMAGE=1;
+    public final static int PROJECTILEDAMAGE=2;*/
     
 }
