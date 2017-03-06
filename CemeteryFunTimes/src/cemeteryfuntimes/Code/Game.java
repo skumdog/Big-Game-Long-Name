@@ -15,6 +15,7 @@ public class Game implements Globals {
     private final Player player;
     private final ArrayList<Enemy> enemies;
     private final ArrayList<Pickup> pickups;
+    private final Level level;
     private BufferedImage heartContainer=null;
     //private BufferedImage halfHeartContainer=null;
     private Test testOne; //just a debugging thingy
@@ -25,10 +26,18 @@ public class Game implements Globals {
     
     public Game() {
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
-        enemies = new ArrayList();
-        pickups = new ArrayList();
-        test();
+        level = new Level(player, 1);
+        
+        // Enemies and pickups in the current room (Remove final keyword later).
+        
+        enemies = level.getStartNode().room.getEnemies();
+        pickups = level.getStartNode().room.getPickups();
+        
+        // Image setup.
+        
         setupImages();
+        
+        // TODO: Logic for loading new room/level as the player progresses.
     }
     
     public void test() {
@@ -36,8 +45,8 @@ public class Game implements Globals {
         pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
         pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
         //enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
-        enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2,1));
-        enemies.add(new Enemy(player,GAMEWIDTH/2+200,GAMEHEIGHT/2,1));
+        //enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2,1));
+        //enemies.add(new Enemy(player,GAMEWIDTH/2+200,GAMEHEIGHT/2,1));
         //testOne = new Test();
     }
     

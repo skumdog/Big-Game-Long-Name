@@ -39,7 +39,7 @@ public interface Globals {
     public final static int RIGHTWALL=1;
     public final static int TOPWALL=2;
     public final static int BOTTOMWALL=3;
-    public final static double MINIMUMROTATION=0.0698132; //4 degrees in radians
+    public final static double MINIMUMROTATION=0.0174533; //1 degrees in radians
     public final static String IMAGEPATH="src/cemeteryfuntimes/Resources/Images/";
     public final static String TEMPLATEPATH="src/cemeteryfuntimes/Resources/Templates/";
     
