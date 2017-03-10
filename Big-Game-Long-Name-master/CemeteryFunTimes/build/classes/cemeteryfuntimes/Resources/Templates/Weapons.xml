@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML weapon template
+    This template contains the base properties of an ingame weapon
+    
+    <Weapon Key="1" Unique ID that is used to look up the weapon
+        Name="Pistol" Name of the weapon
+        ProjectileType="1" Type of weapon:
+                                1 - Regular linear ballistic (i.e. pistol, machine gun, sniper)
+                                2 - ???
+        Damage="1" Damage per projectile
+        WeaponLength="20" Length of the weapon (maybe used to draw projectiles?
+        ProjectileSpeed="5" Speed of the projectiles
+        ProjectileDelay="300" Minimum time between firing of the projectiles
+        ProjectileOffset="20" Drawing offset for projectiles (i.e. weapon is slightly to the left of character
+        ProjectileHeight="20" Height of the projectile
+        ProjectileWidth="10" Width of the projectile
+        PlayerImage="Player/PlayerWithHandgun/player.png" Filepath for the image of the player holding the weapon
+        ProjectileImage="Weapons/Handgun/bullet.png" Filepath for the image of the projectile
+        
+        -More will be added especially with weirder weapon types
+        -But my plan is that the use of these variables will be conditional on the weapon type
+        -So its fine to leave certain fields empty or not included on certain weapon types
+    />
+-->
+<Weapons>
+    <Weapon Key="1" 
+        Name="Pistol" 
+        ProjectileType="1"
+        Damage="1" 
+        WeaponLength="20"
+        ProjectileSpeed="5"
+        ProjectileDelay="300"
+        ProjectileOffset="20"
+        ProjectileHeight="20"
+        ProjectileWidth="10"
+        PlayerImage="Player/PlayerWithHandgun/player.png"
+        ProjectileImage="Weapons/Handgun/bullet.png"
+    />
+    <Weapon Key="2"
+    />
+    <Weapon Key="3"
+    />
+</Weapons>
