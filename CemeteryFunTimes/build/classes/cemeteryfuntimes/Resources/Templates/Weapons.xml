@@ -6,8 +6,8 @@
         Name="Pistol" Name of the weapon
         ProjectileType="1" Type of weapon:
                                 1 - Regular linear ballistic (i.e. pistol, machine gun, sniper)
-                                2 - ???
-        Damage="1" Damage per projectile
+                                2 - Singlular ballistic (i.e. flamethrower, laser)
+        Damage="1" Damage per projectile, or damage per timestep
         WeaponLength="20" Length of the weapon (maybe used to draw projectiles?
         ProjectileSpeed="5" Speed of the projectiles
         ProjectileDelay="300" Minimum time between firing of the projectiles
@@ -25,7 +25,7 @@
 <Weapons>
     <Weapon Key="1" 
         Name="Pistol" 
-        ProjectileType="1"
+        Type="1"
         Damage="1" 
         WeaponLength="20"
         ProjectileSpeed="5"
@@ -39,5 +39,27 @@
     <Weapon Key="2"
     />
     <Weapon Key="3"
+    />
+    <Weapon Key="5" 
+        Name="Flamethrower" 
+        Type="2"
+        Damage=".02" 
+        WeaponLength="20"
+        ProjectileOffset="20"
+        ProjectileHeight="200"
+        ProjectileWidth="50"
+        PlayerImage="Player/PlayerWithFlamethrower/player.png"
+        ProjectileImage="Weapons/Flamethrower/flame.png"
+    />
+    <Weapon Key="6" 
+        Name="Laser" 
+        Type="2"
+        Damage=".01" 
+        WeaponLength="20"
+        ProjectileOffset="20"
+        ProjectileHeight="1000"
+        ProjectileWidth="15"
+        PlayerImage="Player/PlayerWithFlamethrower/player.png"
+        ProjectileImage="Weapons/Laser/laserbeam.png"
     />
 </Weapons>

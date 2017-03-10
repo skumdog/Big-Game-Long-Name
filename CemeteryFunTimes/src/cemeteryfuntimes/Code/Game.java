@@ -6,7 +6,6 @@ import cemeteryfuntimes.Code.Shared.Globals;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -18,14 +17,13 @@ public class Game implements Globals {
     private final Level level;
     private BufferedImage heartContainer=null;
     //private BufferedImage halfHeartContainer=null;
-    private Test testOne; //just a debugging thingy
     
     //Constants
     private final static int HEARTSIZE=40;
     private final static int HEARTPADDING=10;
     
     public Game() {
-        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
+        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,FLAMETHROWER);
         level = new Level(player, 1);
         
         // Enemies and pickups in the current room (Remove final keyword later).
@@ -73,13 +71,13 @@ public class Game implements Globals {
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         drawHUD(g);
-        player.draw(g2d);
         enemies.stream().forEach((enemy) -> {
             enemy.draw(g2d);
         });
         pickups.stream().forEach((pickup) -> {
             pickup.draw(g2d);
         });
+        player.draw(g2d);
         //testOne.draw(g2d);
     }
     
@@ -106,8 +104,8 @@ public class Game implements Globals {
     
     private void setupImages() {
        //Initialize always relevent images images
-       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-       //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE);
+       //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
     
 }

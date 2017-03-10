@@ -2,6 +2,8 @@ package cemeteryfuntimes.Code.Shared;
 
 // @author David Kozloff & Tyler Law
 
+import cemeteryfuntimes.Code.Weapons.Projectile;
+import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,7 +28,7 @@ public class Collision implements Globals {
         Projectile projectile;
         Weapon playerWeapon = player.getWeapon();
         ArrayList<Projectile> projectiles = playerWeapon.Projectiles();
-        int damage = playerWeapon.Damage();
+        float damage = playerWeapon.Damage();
         
         //Check player projectiles collision with enemies
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
@@ -38,7 +40,7 @@ public class Collision implements Globals {
                     if (enemy.health <= 0) {
                         enemyIt.remove();
                     }
-                    projectileIt.remove();
+                    projectile.collide = true;
                 }
             }
         }
@@ -88,6 +90,8 @@ public class Collision implements Globals {
         // same equivalent thing for vertical
         boolean horizontal = (side == LEFTWALL || side == RIGHTWALL);
         boolean vertical = (side == TOPWALL || side == BOTTOMWALL);
+        
+        player.enemyCollide(enemy, positive, horizontal, vertical);
         
         //Adjust the position of the enemy to be right next to the player on the side of the collision
         //Also set the enemy's speed to 0 in the direction of the collision
@@ -188,7 +192,7 @@ public class Collision implements Globals {
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
             projectile =projectileIt.next();
             if (hitWall(projectile)) {
-                projectileIt.remove();
+                projectile.collide = true;
             }
         }
     }

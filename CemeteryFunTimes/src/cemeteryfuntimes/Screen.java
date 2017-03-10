@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 
 import cemeteryfuntimes.Code.*;
 import java.awt.Dimension;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
@@ -151,8 +150,8 @@ public class Screen extends JPanel implements Globals {
     }
     
     private void setupImages() {
-        backgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/background.jpg",SCREENWIDTH,SCREENHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-        gameBackgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/gameBackground.jpg",GAMEWIDTH,GAMEHEIGHT,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        backgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/background.jpg",SCREENWIDTH,SCREENHEIGHT);
+        gameBackgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/gameBackground.jpg",GAMEWIDTH,GAMEHEIGHT);
     }
     
 }

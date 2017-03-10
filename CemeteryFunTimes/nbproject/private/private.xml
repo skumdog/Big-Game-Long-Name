@@ -8,17 +8,15 @@
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/Collision.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Player.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Projectile.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Pickup.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/Globals.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Main.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Images/Player/PlayerWithHandgun/player.png</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Images/Weapons/Handgun/muzzleFlash.png</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Room.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/PosVel.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Images/Weapons/Handgun/pistol.png</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Templates/Weapons.xml</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Level.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Enemy.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Screen.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Templates/Weapons.xml</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Templates/Enemies.xml</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Screen.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Test.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Game.java</file>
         </group>

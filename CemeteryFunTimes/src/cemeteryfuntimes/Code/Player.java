@@ -1,26 +1,27 @@
 package cemeteryfuntimes.Code;
 
+import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 // @author David Kozloff & Tyler Law
-public class Player extends PosVel implements Globals {
+public class Player extends PosVel {
     
     //Movement based variables
     private float xAccel;
     private float yAccel;
     private final boolean[] keysPressed;
     
-    //Other
-    private final double[] shootDirection = {
-        0,Math.PI,Math.PI/2,3*Math.PI/2
-    };    
+    //Other  
+    private double rotation;
+    public double Rotation() {
+        return rotation;
+    }
     private BufferedImage playerImage;
     private double currentRotation; //Current player orientation in radians
     public int health;
-    public long hurtTimer;
+    public long invincTimer = 0;
     private final Weapon weapon;
     public Weapon getWeapon() {
         return weapon;
@@ -35,8 +36,7 @@ public class Player extends PosVel implements Globals {
         xSide = GAMEBORDER-rad;
         ySide = -rad;
         this.weapon = new Weapon(this, weaponKey);
-        playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
-
+        playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2);
     }
     
     public void movementKeyChanged(int direction, boolean keyIsPressed) {
@@ -56,7 +56,7 @@ public class Player extends PosVel implements Globals {
     
     public void rotatePlayerImage(int direction) {
         //Rotate the image of the player
-        double rotation = shootDirection[direction];
+        rotation = ROTATION[direction];
         playerImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(playerImage,rotation - currentRotation);
         currentRotation = rotation;
     }
@@ -70,7 +70,7 @@ public class Player extends PosVel implements Globals {
         xPos += xVel;
         yPos += yVel;
         //Stop invincibility frames after a certain amount of time
-        if (System.currentTimeMillis() - hurtTimer > INVFRAMES) {hurtTimer = 0;}
+        if (System.currentTimeMillis() - invincTimer > INVINCFRAMES) {invincTimer = 0;}
     }
     
     public void calcAccels() {
@@ -98,11 +98,19 @@ public class Player extends PosVel implements Globals {
         yAccel += -PLAYERDAMP *  yVel;
     }
     
-    public void enemyCollide(Enemy enemy, int side) {
-        //If player is not currently in invincibility frames handle collision
-        if (hurtTimer == 0) {
-            hurtTimer = System.currentTimeMillis();
-            health -= enemy.Damage();
+    /**
+    *If player is not currently in invincibility frames handle collision
+    *@param enemy The enemy the player collided with
+    *@param negative -1 if collision on the top or left side of the player
+    *@param horizontal True if collision was in the horizontal direction else false
+    *@param vertical True if collision was in the vertical direction else false
+    */
+    public void enemyCollide(Enemy enemy, int negative, boolean horizontal, boolean vertical) {
+        if (invincTimer == 0) {
+            invincTimer = System.currentTimeMillis();
+            health -= enemy.ContactDamage();
+            if (horizontal) { xVel = PLAYERCOLLISIONVEL * negative; }
+            if (vertical) { yVel = PLAYERCOLLISIONVEL * negative; }
             //Maybe add in some sort of knockback on collision?
         }
     }
@@ -113,7 +121,7 @@ public class Player extends PosVel implements Globals {
     
     public void draw(Graphics2D g) {
         weapon.draw(g);
-        if (hurtTimer != 0) {
+        if (invincTimer != 0) {
             //Different drawing / animation of player when injured?
         }
         g.drawImage(playerImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null);

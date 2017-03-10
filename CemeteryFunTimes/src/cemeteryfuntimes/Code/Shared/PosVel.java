@@ -2,8 +2,9 @@ package cemeteryfuntimes.Code.Shared;
 
 // @author David Kozloff & Tyler Law
 
-public class PosVel implements Globals {
+public abstract class PosVel implements Globals {
   
+    //Member variables
     protected float xPos;   
     protected float yPos;
     protected float xVel;
@@ -11,9 +12,10 @@ public class PosVel implements Globals {
     protected int xRad;
     protected int yRad;
     protected int rad;
-    protected int xSide;
-    protected int ySide;
+    protected float xSide;
+    protected float ySide;
     
+    //Getters 
     public float xPos() {
         return xPos;
     }

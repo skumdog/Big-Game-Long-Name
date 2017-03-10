@@ -15,6 +15,7 @@ public interface Globals {
     public final static float PLAYERACCEL=.2f;
     public final static float PLAYERMAXSPEED=1;
     public final static float PLAYERDAMP=.05f; //Friction coeffecient
+    public final static float PLAYERCOLLISIONVEL=3f; //Player accel upon enemy collision
     
     //Ballistic constants
     public final static float PROJECTILEPLAYERBOOST=.25f;  //This constant represents the fraction of the players velocity that is added to the projectile speed
@@ -22,7 +23,15 @@ public interface Globals {
     //Creature dimensions
     public final static int PLAYERSIZE=100;
     
-    //Player commands //IS THIS NECESSARY? OR SHOULD WE STICK WITH THE KEYEVENTS
+    //Player commands
+    public final static int LEFT=0;
+    public final static int RIGHT=1;
+    public final static int UP=2;
+    public final static int DOWN=3;
+    public final static double[] ROTATION = {
+        0,Math.PI,Math.PI/2,3*Math.PI/2
+    };  
+    // probably delete all of these... switch to just using LEFT RIGHT UP and DOWN
     public final static int MOVELEFT=0;
     public final static int MOVERIGHT=1;
     public final static int MOVEUP=2;
@@ -34,7 +43,7 @@ public interface Globals {
     
     //Other
     public final static int TIMERDELAY=10;
-    public final static long INVFRAMES=1000;
+    public final static long INVINCFRAMES=1000;
     public final static int LEFTWALL=0;
     public final static int RIGHTWALL=1;
     public final static int TOPWALL=2;
@@ -47,11 +56,13 @@ public interface Globals {
     public final static int PISTOL=1;
     public final static int MACHINEGUN=2;
     public final static int SHOTGUN=3;
-    public final static int FLAMETHROWER=4;
-    public final static int ROCKETLAUNCHER=5;
+    public final static int ROCKETLAUNCHER=4;
+    public final static int FLAMETHROWER=5;
+    public final static int LASER=6;
     
     //Weapon Types
     public final static int REGULARBALLISTIC=1; //Simple firearms: pistol, machinegun, etc.
+    public final static int SINGLEBULLET=2; //Firearms that only have one projectile: flamethrower, single solid laser
     
     //Action Types
     //These represent the various actions that a user can do in the game

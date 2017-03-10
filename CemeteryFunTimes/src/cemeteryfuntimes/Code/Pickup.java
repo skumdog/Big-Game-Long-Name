@@ -2,12 +2,11 @@ package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Shared.PosVel;
 import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 // @author David Kozloff & Tyler Law
 
-public class Pickup extends PosVel implements Globals {
+public class Pickup extends PosVel {
     
     private final Player player;
     
@@ -31,6 +30,6 @@ public class Pickup extends PosVel implements Globals {
     
     private void setupImages() {
        // Make this a shared method?
-       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE);
     }
 }

@@ -1,23 +1,26 @@
 package cemeteryfuntimes.Code;
 
+import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import org.w3c.dom.NamedNodeMap;
 
 // @author David Kozloff & Tyler Law
 
-public class Enemy extends PosVel implements Globals {
+public class Enemy extends PosVel {
     
-    public int health = 3;
+    //Member variables
+    public float health;
     private final Player player;
+    private float xImagePad;
+    private float yImagePad;
     
     //Enemy definition
-    private int damage;
-    public int Damage() {
-        return damage;
+    private int contactDamage;
+    public int ContactDamage() {
+        return contactDamage;
     }
     private float speed;
     public float Speed() {
@@ -40,10 +43,12 @@ public class Enemy extends PosVel implements Globals {
         this.player = player;
         loadEnemy(key);
         xRad = rad; yRad = rad;
-        xSide = GAMEBORDER - rad;
-        ySide = - rad;
+        xSide = GAMEBORDER;
+        ySide = 0;
         
         sourceEnemyImage = enemyImage;
+        xImagePad = enemyImage.getWidth()/2;
+        yImagePad = enemyImage.getHeight()/2;
         weapon = null; //Some enemies will have weapons I assume
     }
     
@@ -58,7 +63,7 @@ public class Enemy extends PosVel implements Globals {
         if (xVel ==0 && yVel==0) {
             int x = 6;
         }
-        float xDist = player.xPos() - xPos ;
+        float xDist = player.xPos() - xPos;
         float yDist = player.yPos() - yPos;
         float totDist = (float) Math.sqrt(xDist*xDist + yDist*yDist);
         
@@ -85,21 +90,24 @@ public class Enemy extends PosVel implements Globals {
         if (Math.abs(currentRotation - radians) > MINIMUMROTATION) {
             currentRotation = radians;
             enemyImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(sourceEnemyImage, currentRotation);
+            xImagePad = enemyImage.getWidth()/2;
+            yImagePad = enemyImage.getHeight()/2;
         }
     }
     
     private void loadEnemy(int enemyKey) {
         NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Enemies.xml","Enemy",enemyKey);
-        damage = Integer.parseInt(attributes.getNamedItem("Damage").getNodeValue());
+        contactDamage = Integer.parseInt(attributes.getNamedItem("ContactDamage").getNodeValue());
+        health = Integer.parseInt(attributes.getNamedItem("Health").getNodeValue());
         name = attributes.getNamedItem("Name").getNodeValue();
         speed = Float.parseFloat(attributes.getNamedItem("EnemySpeed").getNodeValue());
         rad = Integer.parseInt(attributes.getNamedItem("EnemySize").getNodeValue());
         enemyType = Integer.parseInt(attributes.getNamedItem("EnemyType").getNodeValue());
-        enemyImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+attributes.getNamedItem("EnemyImage").getNodeValue(),rad*2,rad*2,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR,false);
+        enemyImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+attributes.getNamedItem("EnemyImage").getNodeValue(),rad*2,rad*2);
     }
     
     public void draw(Graphics2D g) {
-        g.drawImage(enemyImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null);
+        g.drawImage(enemyImage, Math.round(xSide+xPos-xImagePad), Math.round(ySide+yPos-yImagePad), null);
     }
     
 }
