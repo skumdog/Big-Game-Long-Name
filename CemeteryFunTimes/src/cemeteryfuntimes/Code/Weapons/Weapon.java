@@ -65,10 +65,10 @@ public class Weapon implements Globals {
     }
 
     public void keyPressed(int direction) {
-        keyPressed[SHOOTLEFT] = false;
-        keyPressed[SHOOTRIGHT] = false;
-        keyPressed[SHOOTUP] = false;
-        keyPressed[SHOOTDOWN] = false;
+        keyPressed[LEFT] = false;
+        keyPressed[RIGHT] = false;
+        keyPressed[UP] = false;
+        keyPressed[DOWN] = false;
         keyPressed[direction] = true;
     }
 

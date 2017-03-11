@@ -31,15 +31,6 @@ public interface Globals {
     public final static double[] ROTATION = {
         0,Math.PI,Math.PI/2,3*Math.PI/2
     };  
-    // probably delete all of these... switch to just using LEFT RIGHT UP and DOWN
-    public final static int MOVELEFT=0;
-    public final static int MOVERIGHT=1;
-    public final static int MOVEUP=2;
-    public final static int MOVEDOWN=3;
-    public final static int SHOOTLEFT=0;
-    public final static int SHOOTRIGHT=1;
-    public final static int SHOOTUP=2;
-    public final static int SHOOTDOWN=3;
     
     //Other
     public final static int TIMERDELAY=10;

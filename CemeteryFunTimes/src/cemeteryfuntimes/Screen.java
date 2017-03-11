@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 
 import cemeteryfuntimes.Code.*;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
@@ -32,9 +33,11 @@ public class Screen extends JPanel implements Globals {
     private enum Action {
         //This enum is for storing all keyboard events that map to specific game actions
         //These are the movement key events i.e. arrow keys
-        UPMOVEMENT(KeyEvent.VK_W,MOVEMENT,MOVEUP),DOWNMOVEMENT(KeyEvent.VK_S,MOVEMENT,MOVEDOWN),LEFTMOVEMENT(KeyEvent.VK_A,MOVEMENT,MOVELEFT),RIGHTMOVEMENT(KeyEvent.VK_D,MOVEMENT,MOVERIGHT),
+        UPMOVEMENT(KeyEvent.VK_W,MOVEMENT,UP),DOWNMOVEMENT(KeyEvent.VK_S,MOVEMENT,DOWN),LEFTMOVEMENT(KeyEvent.VK_A,MOVEMENT,LEFT),RIGHTMOVEMENT(KeyEvent.VK_D,MOVEMENT,RIGHT),
         //These are the shooting key events i.e. wasd
-        SHOOTINGUP(KeyEvent.VK_UP,SHOOT,SHOOTUP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,SHOOTDOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,SHOOTLEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,SHOOTRIGHT);
+        SHOOTINGUP(KeyEvent.VK_UP,SHOOT,UP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,DOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,LEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,RIGHT),
+        //These are the changing weapon key events
+        PREVIOUSWEAPON(KeyEvent.VK_Q,CHANGEWEAPON,LEFT),NEXTWEAPON(KeyEvent.VK_E,CHANGEWEAPON,RIGHT);
         
         private final int keyCode;
         private final int actionType;
@@ -95,7 +98,8 @@ public class Screen extends JPanel implements Globals {
         g.fillRect(GAMEBORDER, 0, GAMEHEIGHT, GAMEWIDTH);
         g.setColor(Color.BLACK);
         g.drawRect(GAMEBORDER, 0, GAMEHEIGHT, GAMEWIDTH);*/
-        game.draw(g);
+        Graphics2D g2d = (Graphics2D) g;
+        game.draw(g2d);
     }
     
     @Override
@@ -145,6 +149,10 @@ public class Screen extends JPanel implements Globals {
                 case SHOOT:
                     game.shootAction(gameCode, isPressed);
                     break;
+                case CHANGEWEAPON:
+                    game.changeWeaponAction(gameCode,isPressed);
+                    break;
+
             }
         }
     }

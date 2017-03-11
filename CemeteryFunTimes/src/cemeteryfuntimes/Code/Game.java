@@ -1,11 +1,13 @@
 package cemeteryfuntimes.Code;
 
 import cemeteryfuntimes.Code.Shared.Globals;
+import java.awt.BasicStroke;
+import java.awt.Color;
 
 // @author David Kozloff & Tyler Law
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -15,37 +17,33 @@ public class Game implements Globals {
     private final ArrayList<Enemy> enemies;
     private final ArrayList<Pickup> pickups;
     private final Level level;
-    private BufferedImage heartContainer=null;
+    private final Room room;
+    private BufferedImage heartContainer;
     //private BufferedImage halfHeartContainer=null;
     
     //Constants
     private final static int HEARTSIZE=40;
     private final static int HEARTPADDING=10;
-    
+    private final static int MAPPADDING=10;
+    private final static int MAPBORDER=GAMEBORDER+GAMEWIDTH+MAPPADDING;
+    private final static float MAPLENGTH=SCREENWIDTH-MAPBORDER-2*MAPPADDING;
+    private final static float MAPELEMENT=(MAPLENGTH-4*MAPPADDING)/3;
+  
     public Game() {
-        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,FLAMETHROWER);
+        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
         level = new Level(player, 1);
+        room = level.getCurrentRoom();
         
         // Enemies and pickups in the current room (Remove final keyword later).
         
-        enemies = level.getStartNode().room.getEnemies();
-        pickups = level.getStartNode().room.getPickups();
+        enemies = room.getEnemies();
+        pickups = room.getPickups();
         
         // Image setup.
         
         setupImages();
         
         // TODO: Logic for loading new room/level as the player progresses.
-    }
-    
-    public void test() {
-        pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 0));
-        pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
-        pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2,1));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2+200,GAMEHEIGHT/2,1));
-        //testOne = new Test();
     }
     
     public void update() {
@@ -68,20 +66,19 @@ public class Game implements Globals {
         
     }
     
-    public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
+    public void draw(Graphics2D g) {
         drawHUD(g);
         enemies.stream().forEach((enemy) -> {
-            enemy.draw(g2d);
+            enemy.draw(g);
         });
         pickups.stream().forEach((pickup) -> {
-            pickup.draw(g2d);
+            pickup.draw(g);
         });
-        player.draw(g2d);
+        player.draw(g);
         //testOne.draw(g2d);
     }
     
-    public void drawHUD(Graphics g) {
+    public void drawHUD(Graphics2D g) {
         //Draw players heart containers
         for (int i=0; i<player.health; i=i+2) {
             g.drawImage(heartContainer,(i/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
@@ -90,6 +87,27 @@ public class Game implements Globals {
         /*if (player.health % 2 != 0) {
             g.drawImage(halfHeartContainer,((player.health-1)/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
         }*/
+        //Draw map
+        // TODO Finish this and maybe move it into level?
+        Object[][] map = level.GetMap();
+        Room room;
+        Stroke oldStroke = g.getStroke();
+        g.setStroke(new BasicStroke(3));
+        Color mapBackground = new Color(255,255,255,127); //50% transparent white
+        g.setColor(mapBackground);
+        g.fillRect(MAPBORDER, MAPPADDING, (int) MAPLENGTH , (int) MAPLENGTH); 
+        for (int x=-1;x<2;x++) {
+            for (int y=-1;y<2;y++) {
+                room = (Room) map[level.xCord()+x][level.yCord()+y];
+                if (room != null && room.visited) {
+                    g.setColor(Color.BLACK);
+                    g.drawRect(MAPBORDER+(int)((x+1)*(MAPELEMENT+MAPPADDING))+MAPPADDING,
+                        (int)((1+y)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING),
+                        (int)MAPELEMENT,(int)MAPELEMENT);
+                }
+            }
+        }
+        g.setStroke(oldStroke);
     }
     
     public void movementAction(int gameCode, boolean isPressed) {
@@ -100,6 +118,11 @@ public class Game implements Globals {
     public void shootAction(int gameCode, boolean isPressed) {
         //Game code is the relevant global in the "Player Commands" section of globals
         player.shootKeyChanged(gameCode, isPressed);
+    }
+    
+    public void changeWeaponAction(int gameCode, boolean isPressed) {
+        //Game code is the relevant global in the "Player Commands" section of globals
+        player.changeWeaponKeyChanged(gameCode,isPressed);
     }
     
     private void setupImages() {

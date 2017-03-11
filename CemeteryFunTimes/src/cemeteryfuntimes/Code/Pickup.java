@@ -1,6 +1,5 @@
 package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Shared.PosVel;
-import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 

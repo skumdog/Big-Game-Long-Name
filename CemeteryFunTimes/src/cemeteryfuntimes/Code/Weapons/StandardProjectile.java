@@ -16,7 +16,6 @@ public class StandardProjectile extends Projectile {
         int height = weapon.ProjectileHeight();
         int width = weapon.ProjectileWidth();
         int offset = weapon.ProjectileOffset();
-        int rotation = 0;
         float playerRad = player.rad();
         this.projectileImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(projectileImage, ROTATION[direction]);
  

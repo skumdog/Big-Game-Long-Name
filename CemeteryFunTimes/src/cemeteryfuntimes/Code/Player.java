@@ -4,6 +4,7 @@ import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 // @author David Kozloff & Tyler Law
 public class Player extends PosVel {
@@ -22,6 +23,7 @@ public class Player extends PosVel {
     private double currentRotation; //Current player orientation in radians
     public int health;
     public long invincTimer = 0;
+    private ArrayList<Integer> weaponKeys;
     private final Weapon weapon;
     public Weapon getWeapon() {
         return weapon;
@@ -36,6 +38,10 @@ public class Player extends PosVel {
         xSide = GAMEBORDER-rad;
         ySide = -rad;
         this.weapon = new Weapon(this, weaponKey);
+        weaponKeys = new ArrayList();
+        weaponKeys.add(PISTOL);
+        weaponKeys.add(MACHINEGUN);
+        weaponKeys.add(FLAMETHROWER);
         playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2);
     }
     
@@ -52,6 +58,13 @@ public class Player extends PosVel {
             rotatePlayerImage(direction);
         }
         else { weapon.keyReleased(direction); }
+    }
+    
+    public void changeWeaponKeyChanged(int gameCode, boolean keyIsPressed) {
+        // Check if any shoot keys are currently pressed.
+        if (keyIsPressed) {
+            
+        }
     }
     
     public void rotatePlayerImage(int direction) {
@@ -81,11 +94,11 @@ public class Player extends PosVel {
         yAccel = 0;
         
         //If only one of the x directional keys is pressed apply an acceleration in that direction
-        if( keysPressed[MOVELEFT] ^ keysPressed[MOVERIGHT] ) { 
-            xAccel = (keysPressed[MOVELEFT] ? 1 : 0)* -PLAYERACCEL + (keysPressed[MOVERIGHT] ? 1 : 0)*PLAYERACCEL;
+        if( keysPressed[LEFT] ^ keysPressed[RIGHT] ) { 
+            xAccel = (keysPressed[LEFT] ? 1 : 0)* -PLAYERACCEL + (keysPressed[RIGHT] ? 1 : 0)*PLAYERACCEL;
         }
-        if( keysPressed[MOVEUP] ^ keysPressed[MOVEDOWN] ) {
-            yAccel = (keysPressed[MOVEUP] ? 1 : 0)* -PLAYERACCEL + (keysPressed[MOVEDOWN] ? 1 : 0)*PLAYERACCEL;
+        if( keysPressed[UP] ^ keysPressed[DOWN] ) {
+            yAccel = (keysPressed[UP] ? 1 : 0)* -PLAYERACCEL + (keysPressed[DOWN] ? 1 : 0)*PLAYERACCEL;
         }
         if (xAccel != 0 && yAccel != 0) {
             //If moving in two directions divide both accels by square root of 2
