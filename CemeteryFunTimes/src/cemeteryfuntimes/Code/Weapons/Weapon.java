@@ -27,6 +27,10 @@ public class Weapon implements Globals {
     public float Damage() {
         return damage;
     }
+    private final int key;
+    public int Key() {
+        return key;
+    }
     private String name;
     private int weaponLength;
     private float projectileSpeed;
@@ -59,6 +63,7 @@ public class Weapon implements Globals {
     public Weapon(Player player, int weaponKey) {
         this.player = player;
         loadWeapon(weaponKey);
+        key = weaponKey;
         projectiles = new ArrayList();
         keyPressed = new boolean[4];
         if (type == SINGLEBULLET) { projectiles.add(new SingleProjectile(player,projectileImage,this)); }

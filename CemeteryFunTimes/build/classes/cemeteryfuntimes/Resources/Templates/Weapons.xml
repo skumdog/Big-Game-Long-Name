@@ -37,6 +37,17 @@
         ProjectileImage="Weapons/Handgun/bullet.png"
     />
     <Weapon Key="2"
+        Name="Machinegun"
+        Type="1"
+        Damage="1"
+        WeaponLength="20"
+        ProjectileSpeed="5"
+        ProjectileDelay="100"
+        ProjectileOffset="28"
+        ProjectileHeight="20"
+        ProjectileWidth="10"
+        PlayerImage="Player/PlayerWithHandgun/player.png"
+        ProjectileImage="Weapons/Handgun/bullet.png"
     />
     <Weapon Key="3"
     />

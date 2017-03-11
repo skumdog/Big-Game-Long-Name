@@ -31,6 +31,8 @@ public interface Globals {
     public final static double[] ROTATION = {
         0,Math.PI,Math.PI/2,3*Math.PI/2
     };  
+    public final static int NEXTWEAPON=1;
+    public final static int PREVIOUSWEAPON=-1;
     
     //Other
     public final static int TIMERDELAY=10;
@@ -61,6 +63,10 @@ public interface Globals {
     public final static int SHOOT=2;
     public final static int CHANGEWEAPON=3;
     public final static int GAME=4; //Place holder, things like pausing? 
+    
+    //Enemies
+    public final static int ZOMBIE=1;
+    public final static int BAT=2;
     
     /*//Damage Type
     public final static int CONTACTDAMAGE=1;

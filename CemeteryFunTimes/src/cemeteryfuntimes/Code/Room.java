@@ -36,8 +36,8 @@ public final class Room implements Globals {
         //pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 0));
         //pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
         //pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
-        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
-        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
+        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,ZOMBIE));
+        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,BAT));
     }
 
     public ArrayList<Enemy> getEnemies() {

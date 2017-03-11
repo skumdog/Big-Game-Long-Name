@@ -12,8 +12,10 @@ public class Player extends PosVel {
     //Movement based variables
     private float xAccel;
     private float yAccel;
-    private final boolean[] keysPressed;
-    
+    private final boolean[] moveKeysPressed;
+    private final boolean[] shootKeysPressed;
+    private int lastShotDirection;
+
     //Other  
     private double rotation;
     public double Rotation() {
@@ -23,47 +25,75 @@ public class Player extends PosVel {
     private double currentRotation; //Current player orientation in radians
     public int health;
     public long invincTimer = 0;
-    private ArrayList<Integer> weaponKeys;
-    private final Weapon weapon;
+    private final ArrayList<Weapon> weapons;
+    private int weaponIndex; // Index into currently equipped weapon.
     public Weapon getWeapon() {
-        return weapon;
+        return weapons.get(weaponIndex);
     }
     
     public Player(int xPos, int yPos, int weaponKey) {
-        keysPressed = new boolean [4];
+        moveKeysPressed = new boolean [4];
+        shootKeysPressed = new boolean [4];
         health = 6;
         this.xPos = xPos;
         this.yPos = yPos;
         rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
-        this.weapon = new Weapon(this, weaponKey);
-        weaponKeys = new ArrayList();
-        weaponKeys.add(PISTOL);
-        weaponKeys.add(MACHINEGUN);
-        weaponKeys.add(FLAMETHROWER);
-        playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2);
+        weaponIndex = 0;
+        this.weapons = new ArrayList();
+        this.weapons.add(new Weapon(this, weaponKey));
+        this.weapons.add(new Weapon(this, MACHINEGUN));
+        this.weapons.add(new Weapon(this, FLAMETHROWER));
+        playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapons.get(weaponIndex).PlayerImagePath(),rad*2,rad*2);
     }
     
     public void movementKeyChanged(int direction, boolean keyIsPressed) {
         //Record which directional keys are being pressed
-        keysPressed[direction] = keyIsPressed;
+        moveKeysPressed[direction] = keyIsPressed;
     }
     
     public void shootKeyChanged(int direction, boolean keyIsPressed) {
         //If an arrow key was pressed, pass event to weapon
-        if (keyIsPressed) { 
-            weapon.keyPressed(direction); 
+        if (keyIsPressed) {
+            weapons.get(weaponIndex).keyPressed(direction); 
             //Also rotate the image of the player
             rotatePlayerImage(direction);
+            //Record last shot direction, used in changeWeaponKeyChanged.
+            lastShotDirection = direction;
+        } else { 
+            weapons.get(weaponIndex).keyReleased(direction); 
         }
-        else { weapon.keyReleased(direction); }
+        //Record which shoot keys are being pressed, used in changeWeaponKeyChanged.
+        shootKeysPressed[direction] = keyIsPressed;
     }
     
     public void changeWeaponKeyChanged(int gameCode, boolean keyIsPressed) {
         // Check if any shoot keys are currently pressed.
+        boolean shooting = false;
+        for (int i=0; i<4; i++) {
+            if (shootKeysPressed[i] == true) {
+                shooting = true;
+            }
+        }
+        // If change weapon key pressed, change the weapon index.
         if (keyIsPressed) {
-            
+            // If change weapon key is pressed while a shoot key is being held,
+            // stop shooting the old weapon.
+            if (shooting) {
+                weapons.get(weaponIndex).keyReleased(lastShotDirection);
+            }
+            // Change weapon index.
+            if (weaponIndex == weapons.size() - 1) {
+                weaponIndex = 0;
+            } else {
+                weaponIndex++;
+            }
+            // If change weapon key is pressed while a shoot key is being held,
+            // start shooting the new weapon.
+            if (shooting) {
+                weapons.get(weaponIndex).keyPressed(lastShotDirection);
+            }
         }
     }
     
@@ -76,7 +106,9 @@ public class Player extends PosVel {
     
     public void update() {
         //Update postion and velocity
-        weapon.update();
+        weapons.stream().forEach((weapon) -> {
+            weapon.update();
+        });
         calcAccels();
         xVel += xAccel;
         yVel += yAccel;
@@ -94,11 +126,11 @@ public class Player extends PosVel {
         yAccel = 0;
         
         //If only one of the x directional keys is pressed apply an acceleration in that direction
-        if( keysPressed[LEFT] ^ keysPressed[RIGHT] ) { 
-            xAccel = (keysPressed[LEFT] ? 1 : 0)* -PLAYERACCEL + (keysPressed[RIGHT] ? 1 : 0)*PLAYERACCEL;
+        if( moveKeysPressed[LEFT] ^ moveKeysPressed[RIGHT] ) { 
+            xAccel = (moveKeysPressed[LEFT] ? 1 : 0)* -PLAYERACCEL + (moveKeysPressed[RIGHT] ? 1 : 0)*PLAYERACCEL;
         }
-        if( keysPressed[UP] ^ keysPressed[DOWN] ) {
-            yAccel = (keysPressed[UP] ? 1 : 0)* -PLAYERACCEL + (keysPressed[DOWN] ? 1 : 0)*PLAYERACCEL;
+        if( moveKeysPressed[UP] ^ moveKeysPressed[DOWN] ) {
+            yAccel = (moveKeysPressed[UP] ? 1 : 0)* -PLAYERACCEL + (moveKeysPressed[DOWN] ? 1 : 0)*PLAYERACCEL;
         }
         if (xAccel != 0 && yAccel != 0) {
             //If moving in two directions divide both accels by square root of 2
@@ -133,11 +165,12 @@ public class Player extends PosVel {
     }*/
     
     public void draw(Graphics2D g) {
-        weapon.draw(g);
+        weapons.stream().forEach((weapon) -> {
+            weapon.draw(g);
+        });
         if (invincTimer != 0) {
             //Different drawing / animation of player when injured?
         }
         g.drawImage(playerImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null);
     }
-    
 }

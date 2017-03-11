@@ -15,6 +15,10 @@ public abstract class Projectile extends PosVel {
     public float damage() {
         return damage;
     }
+    protected int key;
+    public int key() {
+        return key;
+    }
     
     public Projectile() {}
     public void update() {}

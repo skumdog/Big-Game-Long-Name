@@ -37,7 +37,7 @@ public class Screen extends JPanel implements Globals {
         //These are the shooting key events i.e. wasd
         SHOOTINGUP(KeyEvent.VK_UP,SHOOT,UP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,DOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,LEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,RIGHT),
         //These are the changing weapon key events
-        PREVIOUSWEAPON(KeyEvent.VK_Q,CHANGEWEAPON,LEFT),NEXTWEAPON(KeyEvent.VK_E,CHANGEWEAPON,RIGHT);
+        WEAPONPREV(KeyEvent.VK_Q,CHANGEWEAPON,PREVIOUSWEAPON),WEAPONNEXT(KeyEvent.VK_E,CHANGEWEAPON,NEXTWEAPON);
         
         private final int keyCode;
         private final int actionType;

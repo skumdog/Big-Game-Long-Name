@@ -6,16 +6,19 @@ import cemeteryfuntimes.Code.Player;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 public class StandardProjectile extends Projectile {
     
     public StandardProjectile(Player player, int direction, BufferedImage projectileImage, Weapon weapon) {
         damage = weapon.Damage();
+        key = weapon.Key();
         
         float speed = weapon.ProjectileSpeed();
         int height = weapon.ProjectileHeight();
         int width = weapon.ProjectileWidth();
         int offset = weapon.ProjectileOffset();
+        int rotation = 0;
         float playerRad = player.rad();
         this.projectileImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(projectileImage, ROTATION[direction]);
  
@@ -30,6 +33,15 @@ public class StandardProjectile extends Projectile {
         yPos = player.yPos() + positive * (vertical * playerRad + horizontal * offset);
         xVel = horizontal * (PROJECTILEPLAYERBOOST * player.xVel() + positive * speed);
         yVel = vertical * (PROJECTILEPLAYERBOOST * player.yVel() + positive * speed);
+        
+        // If the weapon is a machine gun, add some random spread.
+        if (key == MACHINEGUN) {
+            Random random = new Random();
+            double randomness = (random.nextFloat() - 0.5) / 1.25;
+            xVel += (float)randomness;
+            yVel += (float)randomness;
+        }
+        
         xRad = horizontal * height / 2 + vertical * width / 2;
         yRad = vertical * height / 2 + horizontal * width / 2;
         int xImagePad = projectileImage.getWidth()/2;
@@ -38,11 +50,13 @@ public class StandardProjectile extends Projectile {
         ySide = - yImagePad;
     }
     
+    @Override
     public void update() {
         xPos += xVel;
         yPos += yVel;
     }
     
+    @Override
     public void draw(Graphics2D g) {
         g.drawImage(projectileImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null);
     }
