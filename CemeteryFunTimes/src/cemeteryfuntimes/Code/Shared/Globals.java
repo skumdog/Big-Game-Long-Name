@@ -18,7 +18,7 @@ public interface Globals {
     public final static float PLAYERCOLLISIONVEL=3f; //Player accel upon enemy collision
     
     //Ballistic constants
-    public final static float PROJECTILEPLAYERBOOST=.25f;  //This constant represents the fraction of the players velocity that is added to the projectile speed
+    public final static float PROJECTILEBOOST=.25f;  //This constant represents the fraction of the players velocity that is added to the projectile speed
     
     //Creature dimensions
     public final static int PLAYERSIZE=100;
@@ -28,11 +28,13 @@ public interface Globals {
     public final static int RIGHT=1;
     public final static int UP=2;
     public final static int DOWN=3;
+    public final static int HORIZONTAL=0;
+    public final static int VERTICAL=1;
     public final static double[] ROTATION = {
         0,Math.PI,Math.PI/2,3*Math.PI/2
     };  
     public final static int NEXTWEAPON=1;
-    public final static int PREVIOUSWEAPON=-1;
+    public final static int PREVIOUSWEAPON=0;
     
     //Other
     public final static int TIMERDELAY=10;
@@ -45,7 +47,7 @@ public interface Globals {
     public final static String IMAGEPATH="src/cemeteryfuntimes/Resources/Images/";
     public final static String TEMPLATEPATH="src/cemeteryfuntimes/Resources/Templates/";
     
-    //Weapons
+    //Player Weapons
     public final static int PISTOL=1;
     public final static int MACHINEGUN=2;
     public final static int SHOTGUN=3;
@@ -53,20 +55,28 @@ public interface Globals {
     public final static int FLAMETHROWER=5;
     public final static int LASER=6;
     
+    //Enemy Weapons 
+    public final static int BLOATERBALL=20;
+    
     //Weapon Types
     public final static int REGULARBALLISTIC=1; //Simple firearms: pistol, machinegun, etc.
     public final static int SINGLEBULLET=2; //Firearms that only have one projectile: flamethrower, single solid laser
     
+    //Enemy Types
+    public final static int MELEEENEMY=1;
+    public final static int PROJECTILEENEMY=2;
+    
     //Action Types
     //These represent the various actions that a user can do in the game
-    public final static int MOVEMENT=1;
-    public final static int SHOOT=2;
-    public final static int CHANGEWEAPON=3;
-    public final static int GAME=4; //Place holder, things like pausing? 
+    public final static int MOVEMENT=0;
+    public final static int SHOOT=1;
+    public final static int CHANGEWEAPON=2;
+    public final static int GAME=3; //Place holder, things like pausing? 
     
     //Enemies
     public final static int ZOMBIE=1;
     public final static int BAT=2;
+    public final static int BLOATER=3;
     
     /*//Damage Type
     public final static int CONTACTDAMAGE=1;

@@ -1,15 +1,13 @@
 package cemeteryfuntimes.Code;
 
-import cemeteryfuntimes.Code.Shared.Globals;
-import java.awt.BasicStroke;
-import java.awt.Color;
-
 // @author David Kozloff & Tyler Law
 
+import cemeteryfuntimes.Code.Enemies.Enemy;
+import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Game implements Globals {
     
@@ -24,14 +22,10 @@ public class Game implements Globals {
     //Constants
     private final static int HEARTSIZE=40;
     private final static int HEARTPADDING=10;
-    private final static int MAPPADDING=10;
-    private final static int MAPBORDER=GAMEBORDER+GAMEWIDTH+MAPPADDING;
-    private final static float MAPLENGTH=SCREENWIDTH-MAPBORDER-2*MAPPADDING;
-    private final static float MAPELEMENT=(MAPLENGTH-4*MAPPADDING)/3;
   
     public Game() {
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
-        level = new Level(player, 1);
+        level = new Level(player);
         room = level.getCurrentRoom();
         
         // Enemies and pickups in the current room (Remove final keyword later).
@@ -55,14 +49,16 @@ public class Game implements Globals {
             });
             //Check for all collisions
             cemeteryfuntimes.Code.Shared.Collision.checkCollisions(player, enemies,pickups);
-            enemies.stream().forEach((enemie) -> {
-                enemie.update();
-            });
+            Enemy enemy;
+            for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
+                enemy = enemyIt.next();
+                if (enemy.health <= 0) { enemyIt.remove(); break;}
+                enemy.update();
+            }
         }
         else {
             int door = cemeteryfuntimes.Code.Shared.Collision.checkRoomClearCollisions(player);
-            if (door >= 0) {
-                level.changeRoom(door);
+            if (door >= 0 && level.changeRoom(door)) {
                 room = level.getCurrentRoom();
                 enemies = room.getEnemies();
                 pickups = room.getPickups();
@@ -82,6 +78,7 @@ public class Game implements Globals {
         }
         player.draw(g);
         room.draw(g);
+        level.draw(g);
         //testOne.draw(g2d);
     }
     
@@ -94,31 +91,6 @@ public class Game implements Globals {
         /*if (player.health % 2 != 0) {
             g.drawImage(halfHeartContainer,((player.health-1)/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
         }*/
-        //Draw map
-        // TODO Finish this and maybe move it into level?
-        Object[][] map = level.GetMap();
-        Room room;
-        Stroke oldStroke = g.getStroke();
-        g.setStroke(new BasicStroke(3));
-        Color mapBackground = new Color(255,255,255,127); //50% transparent white
-        g.setColor(mapBackground);
-        g.fillRect(MAPBORDER, MAPPADDING, (int) MAPLENGTH , (int) MAPLENGTH); 
-        for (int x=-1;x<2;x++) {
-            if (level.xCord() + x >= 0 && level.xCord() + x < map.length) {
-                for (int y=-1;y<2;y++) {
-                    if (level.yCord() + y >= 0 && level.yCord() + y < map.length) {
-                        room = (Room) map[level.xCord()+x][level.yCord()+y];
-                        if (room != null && room.visited) {
-                            g.setColor(Color.BLACK);
-                            g.drawRect(MAPBORDER+(int)((x+1)*(MAPELEMENT+MAPPADDING))+MAPPADDING,
-                            (int)((1+y)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING),
-                            (int)MAPELEMENT,(int)MAPELEMENT);
-                        }
-                    }
-                }
-            }
-        }
-        g.setStroke(oldStroke);
     }
     
     public void movementAction(int gameCode, boolean isPressed) {

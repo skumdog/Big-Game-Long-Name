@@ -8,6 +8,7 @@
                                 1 - Regular linear ballistic (i.e. pistol, machine gun, sniper)
                                 2 - Singlular ballistic (i.e. flamethrower, laser)
         Damage="1" Damage per projectile, or damage per timestep
+        EnemyWeapon="True" True if this weapon is for enemies and not the player
         WeaponLength="20" Length of the weapon (maybe used to draw projectiles?
         ProjectileSpeed="5" Speed of the projectiles
         ProjectileDelay="300" Minimum time between firing of the projectiles
@@ -28,6 +29,7 @@
         Name="Pistol" 
         Type="1"
         Damage="1" 
+        EnemyWeapon="False"
         WeaponLength="20"
         ProjectileSpeed="5"
         ProjectileDelay="300"
@@ -42,6 +44,7 @@
         Name="Machinegun"
         Type="1"
         Damage="1"
+        EnemyWeapon="False"
         WeaponLength="20"
         ProjectileSpeed="5"
         ProjectileDelay="100"
@@ -58,6 +61,7 @@
         Name="Flamethrower" 
         Type="2"
         Damage=".02" 
+        EnemyWeapon="False"
         WeaponLength="20"
         ProjectileOffset="20"
         ProjectileHeight="200"
@@ -69,11 +73,26 @@
         Name="Laser" 
         Type="2"
         Damage=".01" 
+        EnemyWeapon="False"
         WeaponLength="20"
         ProjectileOffset="20"
         ProjectileHeight="1000"
         ProjectileWidth="15"
         PlayerImage="Player/PlayerWithFlamethrower/player.png"
         ProjectileImage="Weapons/Laser/laserbeam.png"
+    />
+    <Weapon Key="20"
+        Name="Bloater Ball"
+        Type="1"
+        Damage="1"
+        EnemyWeapon="True"
+        WeaponLength="20"
+        ProjectileSpeed="3"
+        ProjectileDelay="1000"
+        ProjectileOffset="28"
+        ProjectileHeight="20"
+        ProjectileWidth="20"
+        ProjectileSpread="0"
+        ProjectileImage="Weapons/BloaterBall/ball.png"
     />
 </Weapons>

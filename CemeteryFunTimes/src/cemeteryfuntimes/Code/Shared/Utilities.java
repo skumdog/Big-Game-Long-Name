@@ -160,4 +160,12 @@ public class Utilities implements Globals {
         return -1;
     }
     
+    public static int[] getHorizontalVertical(int side) {
+        int[] horizontalVertical = new int[2];
+        int positive = (side == RIGHT || side == DOWN) ? 1 : -1;
+        horizontalVertical[HORIZONTAL] = positive * ((side == LEFT || side == RIGHT) ? 1 : 0);
+        horizontalVertical[VERTICAL] = positive * ((side == UP || side == DOWN) ? 1 : 0);
+        return horizontalVertical;
+    }
+    
 }

@@ -1,7 +1,7 @@
 package cemeteryfuntimes.Code.Weapons;
 
-import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.Globals;
+import cemeteryfuntimes.Code.Shared.PosVel;
 
 // @author David Kozloff & Tyler Law
 
@@ -19,7 +19,7 @@ public class Weapon implements Globals {
         return projectiles;
     }
     private final boolean[] keyPressed;
-    private final Player player;
+    private final PosVel posVel;
     private long lastUpdate;
 
     //Gun definition
@@ -59,14 +59,18 @@ public class Weapon implements Globals {
         return projectileOffset;
     }
     private BufferedImage projectileImage;
+    private boolean enemyWeapon;
+    public boolean EnemyWeapon() {
+        return enemyWeapon;
+    }
     private String playerImagePath;
     public String PlayerImagePath() {
         return playerImagePath;
     }
     private SingleProjectile singleProjectile;
 
-    public Weapon(Player player, int weaponKey) {
-        this.player = player;
+    public Weapon(PosVel posVel, int weaponKey) {
+        this.posVel = posVel;
         loadWeapon(weaponKey);
         key = weaponKey;
         projectiles = new ArrayList();
@@ -105,10 +109,10 @@ public class Weapon implements Globals {
         }
         lastUpdate = now;
 
-        //Create new projectile with correct location relative to player
+        //Create new projectile with correct location relative to posVel
         int direction = shootDirection();
         if (direction >= 0) {
-            Projectile projectile = new StandardProjectile(player, direction, projectileImage, this);
+            Projectile projectile = new StandardProjectile(posVel, direction, projectileImage, this);
             projectiles.add(projectile);
         }
     }
@@ -135,13 +139,16 @@ public class Weapon implements Globals {
         damage = Float.parseFloat(attributes.getNamedItem("Damage").getNodeValue());
         name = attributes.getNamedItem("Name").getNodeValue();
         type = Integer.parseInt(attributes.getNamedItem("Type").getNodeValue());
+        enemyWeapon = Boolean.parseBoolean(attributes.getNamedItem("EnemyWeapon").getNodeValue());
         weaponLength = Integer.parseInt(attributes.getNamedItem("WeaponLength").getNodeValue());
         projectileWidth = Integer.parseInt(attributes.getNamedItem("ProjectileWidth").getNodeValue());
         projectileHeight= Integer.parseInt(attributes.getNamedItem("ProjectileHeight").getNodeValue());
         projectileOffset = Integer.parseInt(attributes.getNamedItem("ProjectileOffset").getNodeValue());
-        playerImagePath = attributes.getNamedItem("PlayerImage").getNodeValue();
         projectileImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+attributes.getNamedItem("ProjectileImage").getNodeValue(),projectileHeight,projectileWidth);
         //Load variables that are type dependent
+        if (!enemyWeapon) {
+            playerImagePath = attributes.getNamedItem("PlayerImage").getNodeValue();
+        }
         if (type != SINGLEBULLET) { 
             projectileSpeed = Float.parseFloat(attributes.getNamedItem("ProjectileSpeed").getNodeValue());
             projectileDelay = Integer.parseInt(attributes.getNamedItem("ProjectileDelay").getNodeValue());
@@ -149,7 +156,7 @@ public class Weapon implements Globals {
             if (singleProjectile != null) { projectiles.remove(singleProjectile); singleProjectile = null;}
         }
         if (type == SINGLEBULLET) {
-            singleProjectile = new SingleProjectile(player,projectileImage,this);
+            singleProjectile = new SingleProjectile(posVel,projectileImage,this);
             projectiles.add(singleProjectile); 
         }
         key = weaponKey;

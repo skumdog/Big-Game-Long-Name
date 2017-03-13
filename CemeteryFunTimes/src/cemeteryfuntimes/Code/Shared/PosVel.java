@@ -14,6 +14,7 @@ public abstract class PosVel implements Globals {
     protected int rad;
     protected float xSide;
     protected float ySide;
+    protected double rotation;
     
     //Getters 
     public float xPos() {
@@ -37,6 +38,9 @@ public abstract class PosVel implements Globals {
     public int rad() {
         return rad;
     }
+    public double rotation() {
+        return rotation;
+    }
     
     public boolean collide(PosVel other) {
         //Return true if the two PosVels are overlapping
@@ -47,6 +51,8 @@ public abstract class PosVel implements Globals {
         }
         return false;
     }
+    
+    public void damaged(float damage) {}
     
     public int sideCollided(PosVel other) {
         //Return an integer representing which wall is was the collision point

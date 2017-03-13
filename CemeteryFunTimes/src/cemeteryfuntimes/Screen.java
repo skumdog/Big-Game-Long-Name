@@ -10,6 +10,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Timer;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -29,6 +31,9 @@ public class Screen extends JPanel implements Globals {
     
     private BufferedImage backgroundImage;
     private BufferedImage gameBackgroundImage;
+    
+    //This is used to stop the repeatedly firing pressed events
+    private final int[][] keysReleased;
     
     private enum Action {
         //This enum is for storing all keyboard events that map to specific game actions
@@ -63,6 +68,10 @@ public class Screen extends JPanel implements Globals {
     }
     
     public Screen() {
+        keysReleased = new int[3][4];
+        for (int i = 0; i < keysReleased.length; i++)
+            for (int j = 0; j < keysReleased[0].length; j++)
+                keysReleased[i][j] = 1;
         setKeyBindings();
         setupImages();
         game = new Game();
@@ -133,27 +142,40 @@ public class Screen extends JPanel implements Globals {
         int gameCode; //Integer that correspond to specific actions see "Player Commands" in Globals
         boolean isPressed; //True if this action is for key pressed false if for key released
         int actionType; //Type of action performed see "Action Types" in globals
+        Method action = null;
+        
         
         GameAction(int gameCode, int actionType, boolean isPressed) {
             this.gameCode=gameCode;
             this.isPressed=isPressed;
             this.actionType=actionType;
+            String methodName = "";
+            switch (actionType) {
+                case MOVEMENT:
+                    methodName = "movementAction";
+                    break;
+                case SHOOT:
+                    methodName = "shootAction";
+                    break;
+                case CHANGEWEAPON:
+                    methodName = "changeWeaponAction";
+                    break;
+            }
+            try {
+                action = Game.class.getMethod(methodName,Integer.TYPE,Boolean.TYPE);
+            }
+            catch(NoSuchMethodException ex) {}
         }
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            switch (actionType) {
-                case MOVEMENT:
-                    game.movementAction(gameCode, isPressed);
-                    break;
-                case SHOOT:
-                    game.shootAction(gameCode, isPressed);
-                    break;
-                case CHANGEWEAPON:
-                    game.changeWeaponAction(gameCode,isPressed);
-                    break;
-
+            if (!isPressed) { keysReleased[actionType][gameCode] = 1; }
+            else if (isPressed && keysReleased[actionType][gameCode]==0) { return; }
+            else { keysReleased[actionType][gameCode] = 0; }
+            try {
+                action.invoke(game,gameCode,isPressed);
             }
+            catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {}
         }
     }
     

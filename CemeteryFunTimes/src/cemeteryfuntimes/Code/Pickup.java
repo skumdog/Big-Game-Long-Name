@@ -31,4 +31,5 @@ public class Pickup extends PosVel {
        // Make this a shared method?
        heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE);
     }
+    
 }

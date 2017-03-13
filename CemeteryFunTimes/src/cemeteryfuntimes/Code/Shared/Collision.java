@@ -2,6 +2,7 @@ package cemeteryfuntimes.Code.Shared;
 
 // @author David Kozloff & Tyler Law
 
+import cemeteryfuntimes.Code.Enemies.Enemy;
 import cemeteryfuntimes.Code.Weapons.Projectile;
 import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.*;
@@ -37,48 +38,25 @@ public class Collision implements Globals {
         float damage = playerWeapon.Damage();
         
         //Check player projectiles collision with enemies
-        for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
-            projectile =projectileIt.next();
-            for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-                enemy = enemyIt.next();
-                if (enemy.collide(projectile)) {
-                    enemy.health -= projectile.damage();
-                    if (enemy.health <= 0) {
-                        enemyIt.remove();
-                    }
-                    projectile.collide = true;
-                }
+        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
+            enemy = enemyIt.next();
+            handleBallisticCollisions(projectiles,enemy);
+            if (enemy.getWeapon() != null) {
+                handleBallisticCollisions(enemy.getWeapon().Projectiles(),player);
             }
         }
-        //Check enemy projectiles collision with player
-        /*for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-            enemy = enemyIt.next();
-            if (enemy.getWeapon() != null) {
-                handleBallisticCollisions(enemy.getWeapon().Projectiles(),null,player);
-            }
-        }*/
     }
     
-    /*public static void handleBallisticCollisions(ArrayList<Projectile> projectiles, ArrayList<Enemy> targets, PosVel singleTarget) {
+    public static void handleBallisticCollisions(ArrayList<Projectile> projectiles, PosVel target) {
         Projectile projectile;
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
             projectile =projectileIt.next();
-            if (targets != null) {
-                for (Enemy target : targets) {
-                    if (target.collide(projectile)) {
-                        target.damaged(projectile,PROJECTILEDAMAGE);
-                        projectileIt.remove();
-                    }
-                }
-            }
-            if (singleTarget != null) {
-                if (singleTarget.collide(projectile)) {
-                    singleTarget.damaged(projectile,PROJECTILEDAMAGE);
-                    projectileIt.remove();
-                }
+            if (target.collide(projectile)) {
+                target.damaged(projectile.damage());
+                projectile.collide = true;
             }
         }
-    }*/
+    }
     
     public static void checkEnemyPlayerCollision(Player player, ArrayList<Enemy> enemies) {
         for (Enemy enemy : enemies) {
@@ -91,21 +69,18 @@ public class Collision implements Globals {
     public static void handleEnemyPlayerCollision(Player player, Enemy enemy) {
         int side = player.sideCollided(enemy);
         // Positive is equal to 1 if player has the greater x or y coordinate on the side of the collision else -1
-        int positive = (side == LEFTWALL || side == TOPWALL) ? 1 : -1;
-        // Horizontal is equal to 1 if collision was on left or right wall else 0
-        // same equivalent thing for vertical
-        boolean horizontal = (side == LEFTWALL || side == RIGHTWALL);
-        boolean vertical = (side == TOPWALL || side == BOTTOMWALL);
+        int[] horVert = cemeteryfuntimes.Code.Shared.Utilities.getHorizontalVertical(side);
         
-        player.enemyCollide(enemy, positive, horizontal, vertical);
+        player.enemyCollide(enemy, horVert);
         
         //Adjust the position of the enemy to be right next to the player on the side of the collision
         //Also set the enemy's speed to 0 in the direction of the collision
-        if (horizontal) {
-            enemy.xPos = player.xPos() - positive * (player.rad() + enemy.rad()); 
+        
+        if (horVert[HORIZONTAL] != 0) {
+            enemy.xPos = player.xPos() + horVert[HORIZONTAL] * (player.rad() + enemy.rad()); 
         }
-        if (vertical) {
-            enemy.yPos =  player.yPos() - positive * (player.rad() + enemy.rad()); 
+        else {
+            enemy.yPos =  player.yPos() + horVert[VERTICAL] * (player.rad() + enemy.rad()); 
         }
         enemy.xVel=0; 
         enemy.yVel=0; 
@@ -131,19 +106,16 @@ public class Collision implements Globals {
         float overlap;
         // Horizontal is equal to 1 if collision was on left or right wall else 0
         // same equivalent thing for vertical
-        int horizontal = (side == LEFTWALL || side == RIGHTWALL) ? 1 : 0;
-        int vertical = (side == TOPWALL || side == BOTTOMWALL) ? 1 : 0;
-        // Positive is equal to 1 if enemyOne has the greater x or y coordinate on the side of the collision else -1
-        int positive = (side == LEFTWALL || side == TOPWALL) ? 1 : -1;
+        int[] horVert = cemeteryfuntimes.Code.Shared.Utilities.getHorizontalVertical(side);
         
         //Calculate the overlapping region between the two enemies
-        overlap = enemyOne.rad + enemyTwo.rad - Math.abs(horizontal * (enemyOne.xPos - enemyTwo.xPos)) - Math.abs(vertical * (enemyOne.yPos - enemyTwo.yPos));
+        overlap = enemyOne.rad + enemyTwo.rad - Math.abs(horVert[HORIZONTAL] * (enemyOne.xPos - enemyTwo.xPos)) - Math.abs(horVert[VERTICAL] * (enemyOne.yPos - enemyTwo.yPos));
         
         //Update the position to no longer be overlapping
-        enemyOne.xPos = enemyOne.xPos + horizontal * (positive * overlap/2); 
-        enemyTwo.xPos = enemyTwo.xPos - horizontal * (positive * overlap/2); 
-        enemyOne.yPos = enemyOne.yPos + vertical * (positive * overlap/2); 
-        enemyTwo.yPos = enemyTwo.yPos - vertical * (positive * overlap/2); 
+        enemyOne.xPos = enemyOne.xPos - horVert[HORIZONTAL] * overlap/2; 
+        enemyTwo.xPos = enemyTwo.xPos + horVert[HORIZONTAL] * overlap/2; 
+        enemyOne.yPos = enemyOne.yPos - horVert[VERTICAL] * overlap/2; 
+        enemyTwo.yPos = enemyTwo.yPos + horVert[VERTICAL] * overlap/2; 
         /*
         //Update the velocities so they are no longer moving into each other
         enemyOne.xVel = Math.signum(enemyOne.xVel) * vertical * enemyOne.Speed();

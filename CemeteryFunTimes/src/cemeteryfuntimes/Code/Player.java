@@ -1,5 +1,6 @@
 package cemeteryfuntimes.Code;
 
+import cemeteryfuntimes.Code.Enemies.Enemy;
 import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
@@ -15,11 +16,11 @@ public class Player extends PosVel {
     private final boolean[] moveKeysPressed;
 
     //Other
-    private double rotation;
     public double Rotation() {
         return rotation;
     }
     private BufferedImage playerImage;
+    private BufferedImage sourcePlayerImage;
     private double currentRotation; //Current player orientation in radians
     public int health;
     public long invincTimer = 0;
@@ -44,7 +45,7 @@ public class Player extends PosVel {
         this.weaponKeys.add(weaponKey);
         this.weaponKeys.add(MACHINEGUN);
         this.weaponKeys.add(FLAMETHROWER);
-        playerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2);
+        changePlayerImage();
     }
 
     public void changeRoom(int side) {
@@ -92,27 +93,31 @@ public class Player extends PosVel {
             if (currentIndex == weaponKeys.size() - 1) {
                 newWeaponKey = weaponKeys.get(0);
             } else {
-                newWeaponKey = weaponKeys.get(currentIndex+1);
+                newWeaponKey = weaponKeys.get(currentIndex+((gameCode == 1)?1:-1));
             }
             currentWeaponKey = newWeaponKey;
             this.weapon.loadWeapon(currentWeaponKey);
             if (lastShotDirection > -1) {
                 weapon.keyPressed(lastShotDirection);
             }
+            changePlayerImage();
         }
+    }
+    
+    private void changePlayerImage() {
+        sourcePlayerImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+weapon.PlayerImagePath(),rad*2,rad*2);
+        playerImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(sourcePlayerImage,rotation);
     }
 
     public void rotatePlayerImage(int direction) {
         //Rotate the image of the player
         rotation = ROTATION[direction];
-        playerImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(playerImage,rotation - currentRotation);
-        currentRotation = rotation;
+        playerImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(sourcePlayerImage,rotation);
     }
 
     public void update() {
         //Update postion and velocity
         weapon.update();
-
         calcAccels();
         xVel += xAccel;
         yVel += yAccel;
@@ -150,23 +155,22 @@ public class Player extends PosVel {
     /**
     *If player is not currently in invincibility frames handle collision
     *@param enemy The enemy the player collided with
-    *@param negative -1 if collision on the top or left side of the player
-    *@param horizontal True if collision was in the horizontal direction else false
-    *@param vertical True if collision was in the vertical direction else false
+    *@param horVert Array storing info on which side the collision was
     */
-    public void enemyCollide(Enemy enemy, int negative, boolean horizontal, boolean vertical) {
+    public void enemyCollide(Enemy enemy, int[] horVert) {
         if (invincTimer == 0) {
             invincTimer = System.currentTimeMillis();
             health -= enemy.ContactDamage();
-            if (horizontal) { xVel = PLAYERCOLLISIONVEL * negative; }
-            if (vertical) { yVel = PLAYERCOLLISIONVEL * negative; }
+            xVel = - PLAYERCOLLISIONVEL * horVert[HORIZONTAL];
+            yVel = - PLAYERCOLLISIONVEL * horVert[VERTICAL];
             //Maybe add in some sort of knockback on collision?
         }
     }
 
-    /*public void damaged(PosVel posVel, int type) {
-
-    }*/
+    @Override
+    public void damaged(float damage) {
+        health -= damage;
+    }
 
     public void draw(Graphics2D g) {
         weapon.draw(g);

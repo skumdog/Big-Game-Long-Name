@@ -6,8 +6,8 @@
 -->
 <Enemies>
     <Enemy Key="1" 
-        Name="Zombie" 
-        EnemyType="1"
+        Name="Zombie"
+        Type="1"
         Health="3"
         ContactDamage="2" 
         EnemySpeed="1"
@@ -16,7 +16,7 @@
     />
     <Enemy Key="2"
         Name="Bat" 
-        EnemyType="1"
+        Type="1"
         Health="1"
         ContactDamage="1" 
         EnemySpeed="2"
@@ -24,5 +24,13 @@
         EnemyImage="Enemies/Bat/bat.png"
     />
     <Enemy Key="3"
+        Name=""
+        Type="2"
+        Health="4"
+        ContactDamage="3"
+        EnemySpeed=".5"
+        EnemySize="50"
+        EnemyImage="Enemies/Bloater/bloater.png"
+        WeaponKey="20"
     />
 </Enemies>

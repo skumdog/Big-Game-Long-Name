@@ -1,12 +1,16 @@
 package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Shared.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import java.util.Random;
 
 // @author David Kozloff & Tyler Law
 
 public final class Level implements Globals {
     
     private final Player player;
-    private final int id;
     private Room currentRoom;
     public Room getCurrentRoom() {
         return currentRoom;
@@ -15,6 +19,7 @@ public final class Level implements Globals {
     public Object[][] GetMap() {
         return map;
     }
+    private int[][] intMap;
     private int xCord;
     public int xCord() {
         return xCord;
@@ -25,65 +30,65 @@ public final class Level implements Globals {
     }
     
     //Level creation constants
-    private static final int totalRooms=10;
-    private static final double roomCreationProb=1/3;
-    private static final double doorCreationProb=1/3;
-    private static final double noRoomProb=1/3;
+    private static final int totalRooms=15;
+    private int numberOfRooms;
+    private static final double roomCreationProb=1d/2d;
+    private static final double doorCreationProb=1d/3d;
+    private static final double noRoomProb=1d/3d;
     
-    public Level(Player player, int levelID) {
-        id = levelID;
+    //Map drawing constants
+    private final static int MAPPADDING=10;
+    private final static int MAPBORDER=GAMEBORDER+GAMEWIDTH+MAPPADDING;
+    private final static float MAPLENGTH=SCREENWIDTH-MAPBORDER-2*MAPPADDING;
+    private final static int MAPELEMENT=(int)((MAPLENGTH-4*MAPPADDING)/3d);
+    private final static int MAPDOORWIDTH=5;
+    
+    public Level(Player player) {
         this.player = player;
         createMap();
         // TODO: Logic for retrieving specific level graph from parser.
     }
     
     private void createMap() {
-        currentRoom = new Room(player,1); currentRoom.visited=true;
+        currentRoom = new Room(player); currentRoom.visited=true;
         map = new Object[5][5];
-        int[][] intMap = new int[][] {
-            {1,0,0,0,1},
-            {1,1,0,1,1},
-            {0,1,1,1,0},
-            {1,1,0,1,1},
-            {1,0,0,0,1}
-        };
-        /* TODO Add code to intelligently and randomly generate the map array
-        while (numberRooms < totalRooms) {
-            for (int i=0; i<4; i++) {
-                
-            }
-        }*/
-        createRooms(currentRoom,intMap, 2, 2);
+        intMap = new int[5][5];
+        // TODO Add code to intelligently and randomly generate the map array
+        createRooms(currentRoom, 2, 2);
         xCord = 2; yCord = 2;
     }
     
-    private void createRooms(Room room, int[][] intMap, int x, int y) {
+    private void createRooms(Room room, int x, int y) {
         int length = map.length-1;
+        numberOfRooms++;
         map[x][y] = room;
+        intMap[x][y] = 1;
+        if (numberOfRooms >= totalRooms) {return;}
+        Random random = new Random();
         Room neighbor;
-        if (x > 0 && intMap[x-1][y] == 1 && room.GetNeighbor(LEFT) == null) {
-            neighbor = new Room(player,1);
-            neighbor.SetNeighbor(room,cemeteryfuntimes.Code.Shared.Utilities.otherSide(LEFT));
+        if (x > 0 && intMap[x-1][y] != 1 && random.nextFloat() <= roomCreationProb ) {
+            neighbor = new Room(player);
+            neighbor.SetNeighbor(room,RIGHT);
             room.SetNeighbor(neighbor, LEFT);
-            createRooms(neighbor,intMap,x-1,y);
+            createRooms(neighbor,x-1,y);
         }
-        if (x < length && intMap[x+1][y] == 1 && room.GetNeighbor(RIGHT) == null) {
-            neighbor = new Room(player,1);
-            neighbor.SetNeighbor(room,cemeteryfuntimes.Code.Shared.Utilities.otherSide(RIGHT));
+        if (x < length && intMap[x+1][y] != 1 && random.nextFloat() <= roomCreationProb ) {
+            neighbor = new Room(player);
+            neighbor.SetNeighbor(room,LEFT);
             room.SetNeighbor(neighbor, RIGHT);
-            createRooms(neighbor,intMap,x+1,y);
+            createRooms(neighbor,x+1,y);
         }
-        if (y > 0 && intMap[x][y-1] == 1 && room.GetNeighbor(UP) == null) {
-            neighbor = new Room(player,1);
-            neighbor.SetNeighbor(room,cemeteryfuntimes.Code.Shared.Utilities.otherSide(UP));
+        if (y > 0 && intMap[x][y-1] != 1 && random.nextFloat() <= roomCreationProb ) {
+            neighbor = new Room(player);
+            neighbor.SetNeighbor(room,DOWN);
             room.SetNeighbor(neighbor, UP);
-            createRooms(neighbor,intMap,x,y-1);
+            createRooms(neighbor,x,y-1);
         }
-        if (y < length && intMap[x][y+1] == 1 && room.GetNeighbor(DOWN) == null) {
-            neighbor = new Room(player,1);
-            neighbor.SetNeighbor(room,cemeteryfuntimes.Code.Shared.Utilities.otherSide(DOWN));
+        if (y < length && intMap[x][y+1] != 1 && random.nextFloat() <= roomCreationProb ) {
+            neighbor = new Room(player);
+            neighbor.SetNeighbor(room,UP);
             room.SetNeighbor(neighbor, DOWN);
-            createRooms(neighbor,intMap,x,y+1);
+            createRooms(neighbor,x,y+1);
         }
         //populateNeighbors();
     }
@@ -107,8 +112,10 @@ public final class Level implements Globals {
         return true;
     }*/
     
-    public void changeRoom(int side) {
-        currentRoom = currentRoom.GetNeighbor(side);
+    public boolean changeRoom(int side) {
+        Room newRoom = currentRoom.GetNeighbor(side);
+        if (newRoom == null) {return false;}
+        currentRoom = newRoom;
         currentRoom.visited = true;
         player.changeRoom(side);
         int horizontal = (side == LEFT || side == RIGHT) ? 1 : 0;
@@ -116,10 +123,62 @@ public final class Level implements Globals {
         int positive = (side == DOWN || side == RIGHT) ? 1 : -1;
         xCord = xCord + horizontal * positive;
         yCord = yCord + vertical * positive;
+        return true;
     }
     
     private void populateNeighbors(Room room, int x, int y) {
-        //TODO populate neighbors of a node correctly correctly
+        //TODO populate neighbors of a node correctly - primarily necessary when we add in doors
+    }
+    
+    public void draw(Graphics2D g) {
+        //Draw the level map in top right corner of screen
+        Room mapRoom;
+        int roomX; int roomY;
+        int doorX; int doorY;
+        Stroke oldStroke = g.getStroke();
+        g.setStroke(new BasicStroke(3));
+        Color mapBackground = new Color(255,255,255,127); //50% transparent white
+        g.setColor(mapBackground);
+        g.fillRect(MAPBORDER, MAPPADDING, (int) MAPLENGTH , (int) MAPLENGTH); 
+        for (int x=-1;x<2;x++) {
+            //Loop through all rooms centered around current room
+            if (xCord + x >= 0 && xCord + x < map.length) {
+                for (int y=-1;y<2;y++) {
+                    if (yCord + y >= 0 && yCord + y < map.length) {
+                        mapRoom = (Room) map[xCord+x][yCord+y];
+                        if (mapRoom != null && mapRoom.visited) {
+                            //Draw room
+                            g.setColor(Color.BLACK);
+                            roomX = MAPBORDER+(int)((x+1)*(MAPELEMENT+MAPPADDING))+MAPPADDING;
+                            roomY = (int)((1+y)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING);
+                            g.drawRect(roomX,roomY,MAPELEMENT,MAPELEMENT);
+                            //Draw doors of the current room
+                            if (mapRoom.GetNeighbor(LEFT) != null) {
+                                doorX = roomX - MAPPADDING;
+                                doorY = roomY + (int)(MAPELEMENT/2d);
+                                g.fillRect(doorX,doorY,MAPPADDING, MAPDOORWIDTH);
+                            }
+                            if (mapRoom.GetNeighbor(RIGHT) != null ) {
+                                doorX = roomX + MAPELEMENT;
+                                doorY = roomY + (int)(MAPELEMENT/2d);
+                                g.fillRect(doorX,doorY,MAPPADDING, MAPDOORWIDTH);
+                            }
+                            if (mapRoom.GetNeighbor(UP) != null) {
+                                doorX = roomX + (int)(MAPELEMENT/2d);
+                                doorY = roomY - MAPPADDING;
+                                g.fillRect(doorX,doorY,MAPDOORWIDTH,MAPPADDING);
+                            }
+                            if (mapRoom.GetNeighbor(DOWN) != null ) {
+                                doorX = roomX + (int)(MAPELEMENT/2d);
+                                doorY = roomY + MAPELEMENT;
+                                g.fillRect(doorX,doorY,MAPDOORWIDTH,MAPPADDING);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        g.setStroke(oldStroke);
     }
     
 }
