@@ -27,7 +27,7 @@ public class Weapon implements Globals {
     public float Damage() {
         return damage;
     }
-    private final int key;
+    private int key;
     public int Key() {
         return key;
     }
@@ -45,6 +45,10 @@ public class Weapon implements Globals {
     public int ProjectileHeight() {
         return projectileHeight;
     }
+    private int projectileSpread;
+    public int ProjectileSpread() {
+        return projectileSpread;
+    }
     private int type;
     public int Type() {
         return type;
@@ -59,6 +63,7 @@ public class Weapon implements Globals {
     public String PlayerImagePath() {
         return playerImagePath;
     }
+    private SingleProjectile singleProjectile;
 
     public Weapon(Player player, int weaponKey) {
         this.player = player;
@@ -66,7 +71,6 @@ public class Weapon implements Globals {
         key = weaponKey;
         projectiles = new ArrayList();
         keyPressed = new boolean[4];
-        if (type == SINGLEBULLET) { projectiles.add(new SingleProjectile(player,projectileImage,this)); }
     }
 
     public void keyPressed(int direction) {
@@ -82,11 +86,13 @@ public class Weapon implements Globals {
     }
 
     public void update() {
-        if (type != 2) {createProjectile();}
+        if (type != 2) {
+            createProjectile();
+        }
         Projectile projectile;
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
-            projectile =projectileIt.next();
-            if (type != 2 && projectile.collide) { projectileIt.remove(); break; }
+            projectile = projectileIt.next();
+            if (projectile.type() != 2 && projectile.collide) { projectileIt.remove(); break; }
             projectile.update();
         }
     }
@@ -122,7 +128,7 @@ public class Weapon implements Globals {
         }
     }
 
-    private void loadWeapon(int weaponKey) {
+    public void loadWeapon(int weaponKey) {
         //Load the weapon definition from Weapons.xml
         NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Weapons.xml","Weapon",weaponKey);
         //Load variables that are universal to all weapon types
@@ -136,10 +142,16 @@ public class Weapon implements Globals {
         playerImagePath = attributes.getNamedItem("PlayerImage").getNodeValue();
         projectileImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+attributes.getNamedItem("ProjectileImage").getNodeValue(),projectileHeight,projectileWidth);
         //Load variables that are type dependent
-        if (type !=SINGLEBULLET) { 
+        if (type != SINGLEBULLET) { 
             projectileSpeed = Float.parseFloat(attributes.getNamedItem("ProjectileSpeed").getNodeValue());
             projectileDelay = Integer.parseInt(attributes.getNamedItem("ProjectileDelay").getNodeValue());
+            projectileSpread = Integer.parseInt(attributes.getNamedItem("ProjectileSpread").getNodeValue());
+            if (singleProjectile != null) { projectiles.remove(singleProjectile); singleProjectile = null;}
         }
+        if (type == SINGLEBULLET) {
+            singleProjectile = new SingleProjectile(player,projectileImage,this);
+            projectiles.add(singleProjectile); 
+        }
+        key = weaponKey;
     }
-
 }

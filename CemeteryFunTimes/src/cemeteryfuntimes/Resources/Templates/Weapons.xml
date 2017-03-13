@@ -14,6 +14,7 @@
         ProjectileOffset="20" Drawing offset for projectiles (i.e. weapon is slightly to the left of character
         ProjectileHeight="20" Height of the projectile
         ProjectileWidth="10" Width of the projectile
+        ProjectileSpread="20" Angular spread of projectiles
         PlayerImage="Player/PlayerWithHandgun/player.png" Filepath for the image of the player holding the weapon
         ProjectileImage="Weapons/Handgun/bullet.png" Filepath for the image of the projectile
         
@@ -33,6 +34,7 @@
         ProjectileOffset="20"
         ProjectileHeight="20"
         ProjectileWidth="10"
+        ProjectileSpread="0"
         PlayerImage="Player/PlayerWithHandgun/player.png"
         ProjectileImage="Weapons/Handgun/bullet.png"
     />
@@ -46,6 +48,7 @@
         ProjectileOffset="28"
         ProjectileHeight="20"
         ProjectileWidth="10"
+        ProjectileSpread="10"
         PlayerImage="Player/PlayerWithHandgun/player.png"
         ProjectileImage="Weapons/Handgun/bullet.png"
     />

@@ -23,6 +23,12 @@ public class Collision implements Globals {
         checkPickupCollision(player,pickups);
     }
     
+    public static int checkRoomClearCollisions(Player player) {
+        ballisticWallCollisionLoop(player.getWeapon().Projectiles());
+        boolean[] wall = checkPlayerWallCollision(player);
+        return checkPlayerDoorCollision(player,wall);
+    }
+    
     public static void checkBallisticCollisions(Player player, ArrayList<Enemy> enemies) {
         Enemy enemy;
         Projectile projectile;
@@ -157,24 +163,41 @@ public class Collision implements Globals {
         }
     }
     
-    public static void checkPlayerWallCollision(Player player) {
+    public static boolean[] checkPlayerWallCollision(Player player) {
         boolean[] wall=checkWallCollision(player);
-        if (wall[RIGHTWALL]) {
+        if (wall[RIGHT]) {
             player.xVel = 0;
             player.xPos = GAMEWIDTH - player.rad;
         }
-        else if (wall[LEFTWALL]) {
+        else if (wall[LEFT]) {
             player.xVel = 0;
             player.xPos = player.rad;
         }
-        if (wall[TOPWALL]) {
+        if (wall[UP]) {
             player.yVel = 0;
             player.yPos = player.rad;
         }
-        else if (wall[BOTTOMWALL]) {
+        else if (wall[DOWN]) {
             player.yVel = 0;
             player.yPos = GAMEHEIGHT - player.rad;
         }
+        return wall;
+    }
+    
+    public static int checkPlayerDoorCollision(Player player, boolean[] wall) {
+        if (wall[RIGHT] && player.yPos <= GAMEHEIGHT/2 + 50 && player.yPos >= GAMEHEIGHT/2 - 50) {
+            return RIGHT;
+        }
+        else if (wall[LEFT] && player.yPos <= GAMEHEIGHT/2 + 50 && player.yPos >= GAMEHEIGHT/2 - 50) {
+            return LEFT;
+        }
+        else if (wall[UP] && player.xPos <= GAMEWIDTH/2 + 50 && player.xPos >= GAMEWIDTH/2 - 50) {
+            return UP;
+        }
+        else if (wall[DOWN] && player.xPos <= GAMEWIDTH/2 + 50 && player.xPos >= GAMEWIDTH/2 - 50) {
+            return DOWN;
+        }
+        return -1;
     }
     
     public static void checkBallisticWallCollisions(Player player, ArrayList<Enemy> enemies) {

@@ -14,10 +14,10 @@ import java.util.ArrayList;
 public class Game implements Globals {
     
     private final Player player;
-    private final ArrayList<Enemy> enemies;
-    private final ArrayList<Pickup> pickups;
+    private ArrayList<Enemy> enemies;
+    private ArrayList<Pickup> pickups;
     private final Level level;
-    private final Room room;
+    private Room room;
     private BufferedImage heartContainer;
     //private BufferedImage halfHeartContainer=null;
     
@@ -48,33 +48,40 @@ public class Game implements Globals {
     
     public void update() {
         player.update();
-        //Calculate new velocities for all enemies
-        enemies.stream().forEach((enemie) -> {
-            enemie.calcVels();
-        });
-        //Check for all collisions
-        cemeteryfuntimes.Code.Shared.Collision.checkCollisions(player, enemies,pickups);
-        enemies.stream().forEach((enemie) -> {
-            enemie.update();
-        });
-        /*if (enemies.isEmpty()) {
-            //Temporarily add in a new test enemy, when the first one is killed
-            enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,1));
-            enemies.add(new Enemy(player,GAMEWIDTH/2-200,GAMEHEIGHT/2-200,1));
-        }*/
-        //testOne.update();
-        
+        if (!room.RoomClear()) {
+            //Calculate new velocities for all enemies
+            enemies.stream().forEach((enemie) -> {
+                enemie.calcVels();
+            });
+            //Check for all collisions
+            cemeteryfuntimes.Code.Shared.Collision.checkCollisions(player, enemies,pickups);
+            enemies.stream().forEach((enemie) -> {
+                enemie.update();
+            });
+        }
+        else {
+            int door = cemeteryfuntimes.Code.Shared.Collision.checkRoomClearCollisions(player);
+            if (door >= 0) {
+                level.changeRoom(door);
+                room = level.getCurrentRoom();
+                enemies = room.getEnemies();
+                pickups = room.getPickups();
+            }
+        }
     }
     
     public void draw(Graphics2D g) {
         drawHUD(g);
-        enemies.stream().forEach((enemy) -> {
-            enemy.draw(g);
-        });
-        pickups.stream().forEach((pickup) -> {
-            pickup.draw(g);
-        });
+        if (!room.RoomClear()) {
+            enemies.stream().forEach((enemy) -> {
+                enemy.draw(g);
+            });
+            pickups.stream().forEach((pickup) -> {
+                pickup.draw(g);
+            });
+        }
         player.draw(g);
+        room.draw(g);
         //testOne.draw(g2d);
     }
     
@@ -97,13 +104,17 @@ public class Game implements Globals {
         g.setColor(mapBackground);
         g.fillRect(MAPBORDER, MAPPADDING, (int) MAPLENGTH , (int) MAPLENGTH); 
         for (int x=-1;x<2;x++) {
-            for (int y=-1;y<2;y++) {
-                room = (Room) map[level.xCord()+x][level.yCord()+y];
-                if (room != null && room.visited) {
-                    g.setColor(Color.BLACK);
-                    g.drawRect(MAPBORDER+(int)((x+1)*(MAPELEMENT+MAPPADDING))+MAPPADDING,
-                        (int)((1+y)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING),
-                        (int)MAPELEMENT,(int)MAPELEMENT);
+            if (level.xCord() + x >= 0 && level.xCord() + x < map.length) {
+                for (int y=-1;y<2;y++) {
+                    if (level.yCord() + y >= 0 && level.yCord() + y < map.length) {
+                        room = (Room) map[level.xCord()+x][level.yCord()+y];
+                        if (room != null && room.visited) {
+                            g.setColor(Color.BLACK);
+                            g.drawRect(MAPBORDER+(int)((x+1)*(MAPELEMENT+MAPPADDING))+MAPPADDING,
+                            (int)((1+y)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING),
+                            (int)MAPELEMENT,(int)MAPELEMENT);
+                        }
+                    }
                 }
             }
         }

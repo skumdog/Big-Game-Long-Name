@@ -12,14 +12,15 @@ public class StandardProjectile extends Projectile {
     
     public StandardProjectile(Player player, int direction, BufferedImage projectileImage, Weapon weapon) {
         damage = weapon.Damage();
-        key = weapon.Key();
+        type = weapon.Type();
         
         float speed = weapon.ProjectileSpeed();
         int height = weapon.ProjectileHeight();
         int width = weapon.ProjectileWidth();
         int offset = weapon.ProjectileOffset();
-        int rotation = 0;
+        double spread = weapon.ProjectileSpread();
         float playerRad = player.rad();
+        double rotation = ROTATION[direction];
         this.projectileImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(projectileImage, ROTATION[direction]);
  
         //Create projectile
@@ -35,15 +36,25 @@ public class StandardProjectile extends Projectile {
         yVel = vertical * (PROJECTILEPLAYERBOOST * player.yVel() + positive * speed);
         
         // If the weapon is a machine gun, add some random spread.
-        if (key == MACHINEGUN) {
+        if (spread != 0) {
             Random random = new Random();
-            double randomness = (random.nextFloat() - 0.5) / 1.25;
-            xVel += (float)randomness;
-            yVel += (float)randomness;
+            int sign = random.nextFloat() < 0.5 ? -1 : 1;
+            spread = Math.toRadians(sign * random.nextFloat() * spread);
+            if (horizontal == 1) {
+                yVel = (float) Math.sin(spread) * xVel;
+                xVel = (float) Math.cos(spread) * xVel;
+                rotation += spread;
+            }
+            else {
+                xVel = (float) Math.sin(spread) * yVel;
+                yVel = (float) Math.cos(spread) * yVel;
+                rotation -= spread;
+            }
         }
         
         xRad = horizontal * height / 2 + vertical * width / 2;
         yRad = vertical * height / 2 + horizontal * width / 2;
+        this.projectileImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(projectileImage, rotation);
         int xImagePad = projectileImage.getWidth()/2;
         int yImagePad = projectileImage.getHeight()/2;
         xSide = GAMEBORDER - xImagePad;

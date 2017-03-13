@@ -107,6 +107,17 @@ public final class Level implements Globals {
         return true;
     }*/
     
+    public void changeRoom(int side) {
+        currentRoom = currentRoom.GetNeighbor(side);
+        currentRoom.visited = true;
+        player.changeRoom(side);
+        int horizontal = (side == LEFT || side == RIGHT) ? 1 : 0;
+        int vertical = (side == UP || side == DOWN) ? 1 : 0;
+        int positive = (side == DOWN || side == RIGHT) ? 1 : -1;
+        xCord = xCord + horizontal * positive;
+        yCord = yCord + vertical * positive;
+    }
+    
     private void populateNeighbors(Room room, int x, int y) {
         //TODO populate neighbors of a node correctly correctly
     }

@@ -32,6 +32,7 @@ public class SingleProjectile extends Projectile {
         
         height = weapon.ProjectileHeight();
         width = weapon.ProjectileWidth();
+        type = weapon.Type();
         
         //Cannot properly set xSide and ySide as the direction of the bullet shifts
         xSide = GAMEBORDER;
