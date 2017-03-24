@@ -34,7 +34,6 @@ public class StandardProjectile extends Projectile {
         int yImagePad = projectileImage.getHeight()/2;
         xSide = GAMEBORDER - xImagePad;
         ySide = -yImagePad;
-        
     }
     /**
     * Initializes the projectile if the player is firing it.
@@ -69,7 +68,7 @@ public class StandardProjectile extends Projectile {
         Enemy enemy = (Enemy) posVel;
         float speed = weapon.ProjectileSpeed();
         //TODO use offset: int offset = weapon.ProjectileOffset();
-        float playerRad = posVel.rad();
+        float enemyRad = posVel.rad();
   
         //Create projectile
         //Decide starting position by player position and direction projectile is being fired
@@ -113,6 +112,6 @@ public class StandardProjectile extends Projectile {
             yVel = (float) (xVel * Math.sin(spread) + yVel * Math.cos(spread));
             rotation += spread;
         }
-     }
+    }
     
 }

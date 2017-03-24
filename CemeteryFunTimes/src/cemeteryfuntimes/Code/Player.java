@@ -145,7 +145,7 @@ public class Player extends PosVel {
             // Load the new weapon provided from the above logic,
             // as long as the new weapon is a different weapon.
             if (newWeaponKey != currentWeaponKey) {
-                this.weapon.loadWeapon(currentWeaponKey);
+                this.weapon.loadWeapon(newWeaponKey);
                 currentWeaponKey = newWeaponKey;
             }
             // Start shooting the new weapon.

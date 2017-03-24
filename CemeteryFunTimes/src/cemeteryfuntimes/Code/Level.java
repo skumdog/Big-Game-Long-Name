@@ -33,8 +33,8 @@ public final class Level implements Globals {
     }
     
     //Level creation constants
-    private static final int totalRooms=15;
     private int numberOfRooms;
+    private static final int totalRooms=15;
     private static final double roomCreationProb=1d/2d;
     private static final double doorCreationProb=1d/3d;
     private static final double noRoomProb=1d/3d;
@@ -62,7 +62,7 @@ public final class Level implements Globals {
         currentRoom = new Room(player); currentRoom.visited=true;
         map = new Object[5][5];
         intMap = new int[5][5];
-        // TODO Add code to intelligently and randomly generate the map array
+        // TODO guarantee number of rooms = totalRooms
         createRooms(currentRoom, 2, 2);
         xCord = 2; yCord = 2;
     }
@@ -199,5 +199,4 @@ public final class Level implements Globals {
         }
         g.setStroke(oldStroke);
     }
-    
 }
