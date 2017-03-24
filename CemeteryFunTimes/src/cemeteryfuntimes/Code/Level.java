@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.util.Random;
-
-// @author David Kozloff & Tyler Law
+/**
+* Level class contains variables and methods related to levels.
+* Levels are represented as two-dimensional arrays of rooms.
+* @author David Kozloff & Tyler Law
+*/
 
 public final class Level implements Globals {
     
@@ -42,13 +45,19 @@ public final class Level implements Globals {
     private final static float MAPLENGTH=SCREENWIDTH-MAPBORDER-2*MAPPADDING;
     private final static int MAPELEMENT=(int)((MAPLENGTH-4*MAPPADDING)/3d);
     private final static int MAPDOORWIDTH=5;
-    
+    /**
+    * Level constructor initializes variables related to levels.
+    * 
+    * @param player  The player.
+    */
     public Level(Player player) {
         this.player = player;
         createMap();
         // TODO: Logic for retrieving specific level graph from parser.
     }
-    
+    /**
+    * Initializes the level map.
+    */
     private void createMap() {
         currentRoom = new Room(player); currentRoom.visited=true;
         map = new Object[5][5];
@@ -57,7 +66,13 @@ public final class Level implements Globals {
         createRooms(currentRoom, 2, 2);
         xCord = 2; yCord = 2;
     }
-    
+    /**
+    * Create a room and assign it to a coordinate on the level map.
+    * 
+    * @param room   The room.
+    * @param x      The x-coordinate of the room.
+    * @param y      The y-coordinate of the room.
+    */
     private void createRooms(Room room, int x, int y) {
         int length = map.length-1;
         numberOfRooms++;
@@ -111,25 +126,29 @@ public final class Level implements Globals {
         }
         return true;
     }*/
-    
+    /**
+     * Changes the current room and updates the new room to be visited.
+     * 
+     * @param side The direction of the new room.
+     * @return If there is no neighbor on that side of current room return false.
+     *         Else if room change succeeded return true.
+     */
     public boolean changeRoom(int side) {
         Room newRoom = currentRoom.GetNeighbor(side);
         if (newRoom == null) {return false;}
         currentRoom = newRoom;
         currentRoom.visited = true;
         player.changeRoom(side);
-        int horizontal = (side == LEFT || side == RIGHT) ? 1 : 0;
-        int vertical = (side == UP || side == DOWN) ? 1 : 0;
-        int positive = (side == DOWN || side == RIGHT) ? 1 : -1;
-        xCord = xCord + horizontal * positive;
-        yCord = yCord + vertical * positive;
+        int[] horVert = Utilities.getHorizontalVertical(side);
+        xCord = xCord + horVert[HORIZONTAL];
+        yCord = yCord + horVert[VERTICAL];
         return true;
     }
-    
-    private void populateNeighbors(Room room, int x, int y) {
-        //TODO populate neighbors of a node correctly - primarily necessary when we add in doors
-    }
-    
+    /**
+    * Renders the map.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
+    */
     public void draw(Graphics2D g) {
         //Draw the level map in top right corner of screen
         Room mapRoom;

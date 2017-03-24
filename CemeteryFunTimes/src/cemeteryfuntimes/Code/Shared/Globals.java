@@ -1,7 +1,9 @@
 package cemeteryfuntimes.Code.Shared;
 
-// @author David Kozloff & Tyler Law
-
+/**
+* Globals interface contains global constants.
+* @author David Kozloff & Tyler Law
+*/
 public interface Globals {
     
     //Game dimensions
@@ -33,8 +35,8 @@ public interface Globals {
     public final static double[] ROTATION = {
         0,Math.PI,Math.PI/2,3*Math.PI/2
     };  
-    public final static int NEXTWEAPON=1;
-    public final static int PREVIOUSWEAPON=0;
+    public final static int NEXTWEAPON=-1;
+    public final static int PREVIOUSWEAPON=-3;
     
     //Other
     public final static int TIMERDELAY=10;
@@ -55,16 +57,9 @@ public interface Globals {
     public final static int FLAMETHROWER=5;
     public final static int LASER=6;
     
-    //Enemy Weapons 
-    public final static int BLOATERBALL=20;
-    
     //Weapon Types
     public final static int REGULARBALLISTIC=1; //Simple firearms: pistol, machinegun, etc.
     public final static int SINGLEBULLET=2; //Firearms that only have one projectile: flamethrower, single solid laser
-    
-    //Enemy Types
-    public final static int MELEEENEMY=1;
-    public final static int PROJECTILEENEMY=2;
     
     //Action Types
     //These represent the various actions that a user can do in the game
@@ -73,13 +68,21 @@ public interface Globals {
     public final static int CHANGEWEAPON=2;
     public final static int GAME=3; //Place holder, things like pausing? 
     
-    //Enemies
+    //Enemy Globals:
+    //Enemy Types
+    public final static int MELEEENEMY=1;
+    public final static int PROJECTILEENEMY=2;
+    //Enemy Movement Types
+    public final static int STDTOWARDPLAYER=1;
+    public final static int STDRANDOM=2;
+    
+    //Enemy Keys
     public final static int ZOMBIE=1;
     public final static int BAT=2;
     public final static int BLOATER=3;
-    
-    /*//Damage Type
-    public final static int CONTACTDAMAGE=1;
-    public final static int PROJECTILEDAMAGE=2;*/
+    public final static int CULTIST=4;
+    //Enemy Weapons 
+    public final static int BLOATERBALL=20;
+    public final static int FIREBALL=21;
     
 }

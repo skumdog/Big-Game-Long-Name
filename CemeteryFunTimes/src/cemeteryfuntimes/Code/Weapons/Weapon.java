@@ -1,16 +1,14 @@
 package cemeteryfuntimes.Code.Weapons;
 
-import cemeteryfuntimes.Code.Shared.Globals;
-import cemeteryfuntimes.Code.Shared.PosVel;
-
-// @author David Kozloff & Tyler Law
-
+import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.w3c.dom.NamedNodeMap;
-
+/**
+* Weapon class contains variables and methods related to weapons.
+* @author David Kozloff & Tyler Law
+*/
 public class Weapon implements Globals {
 
     //Member variables
@@ -58,7 +56,7 @@ public class Weapon implements Globals {
     public int ProjectileOffset() {
         return projectileOffset;
     }
-    private BufferedImage projectileImage;
+    private String projectileImagePath;
     private boolean enemyWeapon;
     public boolean EnemyWeapon() {
         return enemyWeapon;
@@ -68,15 +66,25 @@ public class Weapon implements Globals {
         return playerImagePath;
     }
     private SingleProjectile singleProjectile;
-
+    
+    /**
+    * Weapon class constructor initializes variables related to weapons.
+    * 
+    * @param posVel    The player or enemy this weapon belongs to.
+    * @param weaponKey The key corresponding to a specific weapon type.
+    */
     public Weapon(PosVel posVel, int weaponKey) {
         this.posVel = posVel;
-        loadWeapon(weaponKey);
-        key = weaponKey;
         projectiles = new ArrayList();
         keyPressed = new boolean[4];
+        loadWeapon(weaponKey);
+        key = weaponKey;
     }
-
+    /**
+    * Records which shooting keys are currently being pressed, represented as a boolean array.
+    * 
+    * @param direction The shooting direction.
+    */
     public void keyPressed(int direction) {
         keyPressed[LEFT] = false;
         keyPressed[RIGHT] = false;
@@ -84,11 +92,17 @@ public class Weapon implements Globals {
         keyPressed[DOWN] = false;
         keyPressed[direction] = true;
     }
-
+    /**
+    * Records when a shooting key has been released.
+    * 
+    * @param direction The shooting direction.
+    */
     public void keyReleased(int direction) {
         keyPressed[direction] = false;
     }
-
+    /**
+    * Updates the weapon.
+    */
     public void update() {
         if (type != 2) {
             createProjectile();
@@ -99,8 +113,11 @@ public class Weapon implements Globals {
             if (projectile.type() != 2 && projectile.collide) { projectileIt.remove(); break; }
             projectile.update();
         }
+        if (singleProjectile != null) { singleProjectile.update(); }
     }
-
+    /**
+    * Spawns a new projectile.
+    */
     public void createProjectile() {
         //Check if enough time has passed for more projectiles to spawn
         long now = System.currentTimeMillis();
@@ -112,11 +129,15 @@ public class Weapon implements Globals {
         //Create new projectile with correct location relative to posVel
         int direction = shootDirection();
         if (direction >= 0) {
-            Projectile projectile = new StandardProjectile(posVel, direction, projectileImage, this);
+            Projectile projectile = new StandardProjectile(posVel, direction, projectileImagePath, this);
             projectiles.add(projectile);
         }
     }
-    
+    /**
+    * Returns the direction in which the player is shooting, represented as an integer.
+    * 
+    * @return The direction in which the player is shooting, represented as an integer.
+    */
     public int shootDirection() {
         for (int i = 0; i < 4; i++) {
             if (keyPressed[i]) {
@@ -125,13 +146,21 @@ public class Weapon implements Globals {
         }
         return -1;
     }
-
+    /**
+    * Renders the weapon.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
+    */
     public void draw(Graphics2D g) {
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
             projectileIt.next().draw(g);
         }
     }
-
+    /**
+    * Loads the weapon data for a specified weapon variant from an xml file.
+    * 
+    * @param weaponKey The key corresponding to a specific weapon type.
+    */
     public void loadWeapon(int weaponKey) {
         //Load the weapon definition from Weapons.xml
         NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Weapons.xml","Weapon",weaponKey);
@@ -140,11 +169,13 @@ public class Weapon implements Globals {
         name = attributes.getNamedItem("Name").getNodeValue();
         type = Integer.parseInt(attributes.getNamedItem("Type").getNodeValue());
         enemyWeapon = Boolean.parseBoolean(attributes.getNamedItem("EnemyWeapon").getNodeValue());
+        if (enemyWeapon) { keyPressed[0] = true; }
         weaponLength = Integer.parseInt(attributes.getNamedItem("WeaponLength").getNodeValue());
         projectileWidth = Integer.parseInt(attributes.getNamedItem("ProjectileWidth").getNodeValue());
         projectileHeight= Integer.parseInt(attributes.getNamedItem("ProjectileHeight").getNodeValue());
         projectileOffset = Integer.parseInt(attributes.getNamedItem("ProjectileOffset").getNodeValue());
-        projectileImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+attributes.getNamedItem("ProjectileImage").getNodeValue(),projectileHeight,projectileWidth);
+        projectileImagePath = attributes.getNamedItem("ProjectileImage").getNodeValue();
+        ImageLoader.loadImage(projectileImagePath,projectileHeight,projectileWidth);
         //Load variables that are type dependent
         if (!enemyWeapon) {
             playerImagePath = attributes.getNamedItem("PlayerImage").getNodeValue();
@@ -156,7 +187,7 @@ public class Weapon implements Globals {
             if (singleProjectile != null) { projectiles.remove(singleProjectile); singleProjectile = null;}
         }
         if (type == SINGLEBULLET) {
-            singleProjectile = new SingleProjectile(posVel,projectileImage,this);
+            singleProjectile = new SingleProjectile(posVel,projectileImagePath,this);
             projectiles.add(singleProjectile); 
         }
         key = weaponKey;

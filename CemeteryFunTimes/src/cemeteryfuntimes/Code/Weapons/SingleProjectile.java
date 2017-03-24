@@ -1,12 +1,12 @@
 package cemeteryfuntimes.Code.Weapons;
 
+import cemeteryfuntimes.Code.Shared.ImageLoader;
 import cemeteryfuntimes.Code.Shared.PosVel;
-
-// @author David Kozloff & Tyler Law
-
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
+/**
+* SingleProjectile class contains variables and methods related to single projectiles, i.e. projectiles for Flamethrower, Laser, etc.
+* @author David Kozloff & Tyler Law
+*/
 public class SingleProjectile extends Projectile {
     
     private final PosVel posVel;
@@ -15,26 +15,35 @@ public class SingleProjectile extends Projectile {
     private final int height;
     private final int width;
     private final float offset;
-    private final BufferedImage sourceProjectileImage;
+    private final String projectileImagePath;
     
     private boolean active = false;
     private int currentDirection = -1;
     private float xPadding;
     private float yPadding;
-    
-    public SingleProjectile(PosVel posVel, BufferedImage projectileImage, Weapon weapon) {
+    /**
+    * SingleProjectile class constructor initializes variables related to single projectiles.
+    * 
+    * @param posVel              The posVel firing the projectile
+    * @param projectileImagePath The image path for the projectile image
+    * @param weapon              The posVel's weapon.
+    */
+    public SingleProjectile(PosVel posVel, String projectileImagePath, Weapon weapon) {
+        //TODO Differentiate player and enemy weapon initializations
         super(weapon);
         this.weapon = weapon;
+        this.projectileImagePath = projectileImagePath;
         offset = weapon.ProjectileOffset();
         sourceDamage = weapon.Damage();
         damage = 0; //This projectile has no damage unless active
         this.posVel = posVel;
-        sourceProjectileImage=projectileImage;
-        
+        projectileImage = ImageLoader.getImage(projectileImagePath, rotation);
         height = weapon.ProjectileHeight();
         width = weapon.ProjectileWidth();
     }
-    
+    /**
+    * Updates the projectile.
+    */
     public void update() {
         int direction = weapon.shootDirection();
         if (direction == -1) { active = false; damage = 0; return; }
@@ -53,16 +62,25 @@ public class SingleProjectile extends Projectile {
             yPadding = positive * (vertical * (posVel.rad() + yRad) + horizontal * offset);
             
             //Rotate the projectile image to match the posVel rotation
-            projectileImage = cemeteryfuntimes.Code.Shared.Utilities.rotateImage(sourceProjectileImage,posVel.rotation());
+            double radians = ROTATION[weapon.shootDirection()];
+            if (rotation != radians) {
+                rotation = radians;
+                projectileImage = ImageLoader.getImage(projectileImagePath, rotation);
+            }
             xSide = GAMEBORDER - projectileImage.getWidth()/2;
-            ySide = - projectileImage.getHeight()/2;
+            ySide = -projectileImage.getHeight()/2;
         }
         xPos = xPadding + posVel.xPos();
         yPos = yPadding + posVel.yPos();
     }
     
+    /**
+    * Renders the projectile.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
+    */
     public void draw(Graphics2D g) {
-        if (active) { g.drawImage(projectileImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null); }
+        if (active) { super.draw(g); }
     }
     
 }
