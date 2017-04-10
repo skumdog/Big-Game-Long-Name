@@ -60,6 +60,7 @@ public class Player extends PosVel {
      * @param side The door the player just entered.
      */
     public void changeRoom(int side) {
+        weapon.changeRoom();
         switch(side) {
             case LEFT:
                 xPos = GAMEWIDTH - rad;
