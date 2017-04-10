@@ -57,7 +57,7 @@ public class Game implements Globals {
                 enemie.calcVels();
             });
             //Check for all collisions
-            Collision.checkCollisions(player, enemies,pickups);
+            Collision.checkCollisions(player, enemies,pickups,false);
             Enemy enemy;
             for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
                 enemy = enemyIt.next();
@@ -66,14 +66,7 @@ public class Game implements Globals {
             }
         }
         else {
-            int door = Collision.checkRoomClearCollisions(player);
-<<<<<<< HEAD
-<<<<<<< HEAD
-            Collision.checkPickupCollision(player, pickups);
-=======
->>>>>>> parent of 3b4e279... ladies
-=======
->>>>>>> parent of 3b4e279... ladies
+            int door = Collision.checkCollisions(player, enemies,pickups,true);
             if (door >= 0 && level.changeRoom(door)) {
                 room = level.getCurrentRoom();
                 enemies = room.getEnemies();

@@ -91,6 +91,27 @@ public abstract class PosVel implements Globals {
            else return TOPWALL;
         }
     }
+    /**
+    * Returns true if the PosVel is colliding with a wall.
+    * 
+    * @return  True if the PosVel is colliding with a wall, false otherwise.
+    */
+    public boolean hitWall() {
+        //Returns true if object has collided with a wall
+        if (xPos + xRad > GAMEWIDTH) {
+            return true;
+        }
+        else if (xPos - xRad < 0) {
+            return true;
+        }
+        if (yPos + yRad > GAMEHEIGHT) {
+            return true;
+        }
+        else if (yPos - yRad < 0) {
+            return true;
+        }
+        return false;
+    }
     
     //public abstract void damaged(PosVel posVel, int type);
     

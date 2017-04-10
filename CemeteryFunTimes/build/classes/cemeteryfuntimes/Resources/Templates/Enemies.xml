@@ -55,4 +55,17 @@
         EnemyImage="Enemies/Cultist/cultist.png"
         WeaponKey="21"
     />
+    <Enemy Key="5"
+        Name="SpikeMonster"
+        Type="2"
+        Difficulty="3"
+        MovementType="2"
+        MovementDelay="1000"
+        Health="6"
+        ContactDamage="2"
+        EnemySpeed=".5"
+        EnemySize="60"
+        EnemyImage="Enemies/SpikeMonster/spikemonster.png"
+        WeaponKey="22"
+    />
 </Enemies>

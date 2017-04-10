@@ -116,13 +116,32 @@ public class Enemy extends PosVel {
         if ( now - lastMovement > movementDelay ) {
             lastMovement = now;
             Random random = new Random();
-            xVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
-            yVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
+            do {
+                xVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
+                yVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
+            }
+            while (!validMoveDirection());
             //Adjust to have correct speed
             float totalSpeed = (float) Math.sqrt(xVel*xVel + yVel*yVel);
             xVel = speed * xVel / totalSpeed;
             yVel = speed * yVel / totalSpeed;
+            rotateEnemyImage();
         }
+    }
+    /**
+     * Checks if enemy will collide with wall before changing direction
+     * 
+     * @return false if enemy will collide with wall, true otherwise 
+     */
+    private boolean validMoveDirection() {
+        double steps = movementDelay/TIMERDELAY;
+        boolean valid = true;
+        xPos+=xVel*steps;
+        yPos+=yVel*steps;
+        if (this.hitWall()) {valid=false;}
+        xPos-=xVel*steps;
+        yPos-=yVel*steps;
+        return valid;
     }
     /**
     * Rotates the enemy's image.

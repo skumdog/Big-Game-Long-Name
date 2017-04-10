@@ -19,30 +19,24 @@ public class Collision implements Globals {
     * @param player  The player.
     * @param enemies The array list of enemies.
     * @param pickups The array list of pickups.
+    * @param roomClear True if all enemies are dead
+    * @return door collided with 
     */
-    public static void checkCollisions(Player player, ArrayList<Enemy> enemies, ArrayList<Pickup> pickups) {
+    public static int checkCollisions(Player player, ArrayList<Enemy> enemies, ArrayList<Pickup> pickups, boolean roomClear) {
         //Check for collisions between Player and player projectiles with enemies
         //As well as enemy and enemy projectile collision with player
         //Also collisions with pickups / interactables and walls
         //Update accordingly
         checkBallisticCollisions(player,enemies);
-        checkPlayerWallCollision(player);
-        checkEnemyWallCollisions(enemies);
-        checkBallisticWallCollisions(player,enemies);
-        checkEnemyEnemyCollision(enemies);
-        checkEnemyPlayerCollision(player,enemies);
-        checkPickupCollision(player,pickups);
-    }
-    /**
-     * Handles collisions upon room clear
-     * 
-     * @param player The player.
-     * @return       An int corresponding to the door collided with, or -1 if no door was collided with.
-     */
-    public static int checkRoomClearCollisions(Player player) {
-        ballisticWallCollisionLoop(player.getWeapon().Projectiles());
         boolean[] wall = checkPlayerWallCollision(player);
-        return checkPlayerDoorCollision(player,wall);
+        if (!roomClear) {
+            checkEnemyWallCollisions(enemies);
+            checkEnemyEnemyCollision(enemies);
+            checkEnemyPlayerCollision(player,enemies);
+        }
+        checkBallisticWallCollisions(player,enemies);
+        checkPickupCollision(player,pickups);
+        return checkPlayerDoorCollision(player,wall,roomClear);
     }
     /**
     * Checks for collisions between player projectiles and enemies.
@@ -192,7 +186,8 @@ public class Collision implements Globals {
     * 
     * @param player  The player.
     */
-    private static int checkPlayerDoorCollision(Player player, boolean[] wall) {
+    private static int checkPlayerDoorCollision(Player player, boolean[] wall, boolean roomClear) {
+        if (!roomClear) { return -1; }
         if (wall[RIGHT] && player.yPos <= GAMEHEIGHT/2 + 50 && player.yPos >= GAMEHEIGHT/2 - 50) {
             return RIGHT;
         }
@@ -232,7 +227,7 @@ public class Collision implements Globals {
         Projectile projectile;
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
             projectile =projectileIt.next();
-            if (hitWall(projectile)) {
+            if (projectile.hitWall()) {
                 projectile.collide = true;
             }
         }
@@ -282,28 +277,6 @@ public class Collision implements Globals {
             posVel.yPos = GAMEHEIGHT - posVel.yRad;
         }
         return wall;
-    }
-    /**
-    * Returns true if the PosVel is colliding with a wall.
-    * 
-    * @param posVel The PosVel.
-    * @return       True if the PosVel is colliding with a wall, false otherwise.
-    */
-    private static boolean hitWall(PosVel posVel) {
-        //Returns true if object has collided with a wall
-        if (posVel.xPos + posVel.xRad > GAMEWIDTH) {
-            return true;
-        }
-        else if (posVel.xPos - posVel.xRad < 0) {
-            return true;
-        }
-        if (posVel.yPos + posVel.yRad > GAMEHEIGHT) {
-            return true;
-        }
-        else if (posVel.yPos - posVel.yRad < 0) {
-            return true;
-        }
-        return false;
     }
     /**
     * Returns an array of booleans indicating whether or not this PosVel is colliding with a specific wall.
