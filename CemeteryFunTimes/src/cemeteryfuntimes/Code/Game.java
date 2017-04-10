@@ -67,7 +67,10 @@ public class Game implements Globals {
         }
         else {
             int door = Collision.checkRoomClearCollisions(player);
+<<<<<<< HEAD
             Collision.checkPickupCollision(player, pickups);
+=======
+>>>>>>> parent of 3b4e279... ladies
             if (door >= 0 && level.changeRoom(door)) {
                 room = level.getCurrentRoom();
                 enemies = room.getEnemies();
