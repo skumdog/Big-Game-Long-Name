@@ -136,8 +136,9 @@ public final class Level implements Globals {
      */
     public boolean changeRoom(int side) {
         Room newRoom = currentRoom.GetNeighbor(side);
-        if (newRoom == null) {return false;}
+        if (newRoom == null) { return false; }
         currentRoom = newRoom;
+        currentRoom.visited = true;
         player.changeRoom(side);
         int[] horVert = Utilities.getHorizontalVertical(side);
         xCord = xCord + horVert[HORIZONTAL];

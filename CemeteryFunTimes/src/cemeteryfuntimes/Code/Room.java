@@ -132,7 +132,7 @@ public final class Room implements Globals {
             lastUpdate = now;
             
             Random random = new Random();
-            int type = random.nextInt(4) + 1;
+            int type = random.nextInt(5) + 1;
             // Spawn a new enemy.
             Enemy newEnemy = new Enemy(player,spawnx,spawny,type);
             enemies.add(newEnemy);

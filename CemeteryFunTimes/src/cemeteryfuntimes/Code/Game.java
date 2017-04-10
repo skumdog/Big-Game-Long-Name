@@ -71,10 +71,6 @@ public class Game implements Globals {
                 room = level.getCurrentRoom();
                 enemies = room.getEnemies();
                 pickups = room.getPickups();
-                if (!room.visited) {
-                    room.populateRoom();
-                    room.visited = true;
-                }
             }
         }
     }
