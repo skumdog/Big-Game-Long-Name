@@ -47,7 +47,6 @@ public class Weapon implements Globals {
     public int ProjectileSpread() {
         return projectileSpread;
     }
-    private int numberofProjectiles;
     private int type;
     public int Type() {
         return type;
@@ -102,15 +101,6 @@ public class Weapon implements Globals {
         keyPressed[direction] = false;
     }
     /**
-    * Empties the current projectiles 
-    */
-    public void changeRoom() {
-        projectiles.clear();
-        if (singleProjectile != null) {
-            projectiles.add(singleProjectile);
-        }
-    }
-    /**
     * Updates the weapon.
     */
     public void update() {
@@ -137,19 +127,10 @@ public class Weapon implements Globals {
         lastUpdate = now;
 
         //Create new projectile with correct location relative to posVel
-        if (type == AOEBALLISTIC) {
-            double angle = 2*Math.PI / numberofProjectiles;
-            for (int i=0; i<numberofProjectiles; i++) {
-                Projectile projectile = new StandardProjectile(posVel, -1, i*angle, projectileImagePath, this);
-                projectiles.add(projectile);
-            }
-        }
-        else {
-            int direction = shootDirection();
-            if (direction >= 0) {
-                Projectile projectile = new StandardProjectile(posVel, direction, Double.POSITIVE_INFINITY, projectileImagePath, this);
-                projectiles.add(projectile);
-            }
+        int direction = shootDirection();
+        if (direction >= 0) {
+            Projectile projectile = new StandardProjectile(posVel, direction, projectileImagePath, this);
+            projectiles.add(projectile);
         }
     }
     /**
@@ -208,9 +189,6 @@ public class Weapon implements Globals {
         if (type == SINGLEBULLET) {
             singleProjectile = new SingleProjectile(posVel,projectileImagePath,this);
             projectiles.add(singleProjectile); 
-        }
-        if (type == AOEBALLISTIC) {
-            numberofProjectiles = Integer.parseInt(attributes.getNamedItem("NumberOfProjectiles").getNodeValue());
         }
         key = weaponKey;
     }

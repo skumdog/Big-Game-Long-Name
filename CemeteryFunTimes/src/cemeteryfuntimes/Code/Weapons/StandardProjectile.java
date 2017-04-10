@@ -15,15 +15,14 @@ public class StandardProjectile extends Projectile {
     * 
     * @param posVel              The posVel firing the projectile.
     * @param direction           The direction in which the projectile was fired.
-    * @param angle               The angle in which the projectile fires
     * @param projectileImagePath The file path for the projectile image.
     * @param weapon              The weapon firing the projectile.
     */
-    public StandardProjectile(PosVel posVel, int direction, double angle, String projectileImagePath, Weapon weapon) {
+    public StandardProjectile(PosVel posVel, int direction, String projectileImagePath, Weapon weapon) {
         super(weapon);
         damage = weapon.Damage();
         rotation = posVel.rotation();
-        if (weapon.EnemyWeapon()) {enemyWeaponInit(posVel,weapon,angle);}
+        if (weapon.EnemyWeapon()) {enemyWeaponInit(posVel,weapon);}
         else {playerWeaponInit(posVel,direction,weapon);}
         int height = weapon.ProjectileHeight();
         int width = weapon.ProjectileWidth();
@@ -35,6 +34,7 @@ public class StandardProjectile extends Projectile {
         int yImagePad = projectileImage.getHeight()/2;
         xSide = GAMEBORDER - xImagePad;
         ySide = -yImagePad;
+        
     }
     /**
     * Initializes the projectile if the player is firing it.
@@ -65,34 +65,35 @@ public class StandardProjectile extends Projectile {
      * @param posVel The enemy object.
      * @param weapon The enemy's weapon.
      */
-    private void enemyWeaponInit(PosVel posVel, Weapon weapon, double angle) {
+    private void enemyWeaponInit(PosVel posVel, Weapon weapon) {
         Enemy enemy = (Enemy) posVel;
         float speed = weapon.ProjectileSpeed();
         //TODO use offset: int offset = weapon.ProjectileOffset();
-        float enemyRad = posVel.rad();
+        float playerRad = posVel.rad();
   
         //Create projectile
         //Decide starting position by player position and direction projectile is being fired
         //Decide velocity by adding PROJECTILESPEED with player velocity in that direction 
-        xPos = posVel.xPos();
-        yPos = posVel.yPos();
-        if (angle == Double.POSITIVE_INFINITY) {
-            xVel = PROJECTILEBOOST * posVel.xVel();
-            yVel = PROJECTILEBOOST * posVel.yVel();
+        
+        xVel = PROJECTILEBOOST * posVel.xVel();
+        yVel = PROJECTILEBOOST * posVel.yVel();
+        if ( enemy.MovementType() != STDTOWARDPLAYER) {
             float xDist = enemy.Player().xPos() - posVel.xPos();
             float yDist = enemy.Player().yPos() - posVel.yPos();
             float totDist = (float) Math.sqrt(xDist*xDist + yDist*yDist);
             xVel += speed * xDist / totDist;
             yVel += speed * yDist / totDist;
-            xPos += (float) Math.cos(posVel.rotation()-Math.PI/2) * posVel.rad();
-            yPos += (float) Math.sin(posVel.rotation()-Math.PI/2) * posVel.rad();
         }
         else {
-            xVel = speed * (float) Math.cos(angle);
-            yVel = speed * (float) Math.sin(angle);
+            //Can use enemy xVel and yVel as a vector pointing towards the player
+            float enemySpeed = (float) Math.sqrt(posVel.xVel()*posVel.xVel()+posVel.yVel()*posVel.yVel());
+            xVel += speed * posVel.xVel() / enemySpeed;
+            yVel += speed * posVel.yVel() / enemySpeed;
         }
         handleSpread(weapon);
         //TODO properly set xPos and yPos based on velocity vector
+        xPos = posVel.xPos();
+        yPos = posVel.yPos();
     }
     /**
      * Handles the spread of bullets upon initialization.
@@ -112,6 +113,6 @@ public class StandardProjectile extends Projectile {
             yVel = (float) (xVel * Math.sin(spread) + yVel * Math.cos(spread));
             rotation += spread;
         }
-    }
+     }
     
 }

@@ -33,8 +33,8 @@ public final class Level implements Globals {
     }
     
     //Level creation constants
-    private int numberOfRooms;
     private static final int totalRooms=15;
+    private int numberOfRooms;
     private static final double roomCreationProb=1d/2d;
     private static final double doorCreationProb=1d/3d;
     private static final double noRoomProb=1d/3d;
@@ -59,10 +59,11 @@ public final class Level implements Globals {
     * Initializes the level map.
     */
     private void createMap() {
-        currentRoom = new Room(player); currentRoom.visited=true;
+        currentRoom = new Room(player, 1); 
+        currentRoom.visited=true;
         map = new Object[5][5];
         intMap = new int[5][5];
-        // TODO guarantee number of rooms = totalRooms
+        // TODO Add code to intelligently and randomly generate the map array
         createRooms(currentRoom, 2, 2);
         xCord = 2; yCord = 2;
     }
@@ -82,25 +83,25 @@ public final class Level implements Globals {
         Random random = new Random();
         Room neighbor;
         if (x > 0 && intMap[x-1][y] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new Room(player);
+            neighbor = new Room(player, 1);
             neighbor.SetNeighbor(room,RIGHT);
             room.SetNeighbor(neighbor, LEFT);
             createRooms(neighbor,x-1,y);
         }
         if (x < length && intMap[x+1][y] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new Room(player);
+            neighbor = new Room(player, 1);
             neighbor.SetNeighbor(room,LEFT);
             room.SetNeighbor(neighbor, RIGHT);
             createRooms(neighbor,x+1,y);
         }
         if (y > 0 && intMap[x][y-1] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new Room(player);
+            neighbor = new Room(player, 1);
             neighbor.SetNeighbor(room,DOWN);
             room.SetNeighbor(neighbor, UP);
             createRooms(neighbor,x,y-1);
         }
         if (y < length && intMap[x][y+1] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new Room(player);
+            neighbor = new Room(player, 1);
             neighbor.SetNeighbor(room,UP);
             room.SetNeighbor(neighbor, DOWN);
             createRooms(neighbor,x,y+1);
@@ -137,7 +138,6 @@ public final class Level implements Globals {
         Room newRoom = currentRoom.GetNeighbor(side);
         if (newRoom == null) {return false;}
         currentRoom = newRoom;
-        currentRoom.visited = true;
         player.changeRoom(side);
         int[] horVert = Utilities.getHorizontalVertical(side);
         xCord = xCord + horVert[HORIZONTAL];
@@ -199,4 +199,5 @@ public final class Level implements Globals {
         }
         g.setStroke(oldStroke);
     }
+    
 }

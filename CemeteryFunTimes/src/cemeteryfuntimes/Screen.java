@@ -19,7 +19,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-
 /**
 * Screen class enables rendering, handles keyboard input and
 * sets up the game loop.
@@ -28,11 +27,15 @@ import javax.swing.KeyStroke;
 public class Screen extends JPanel implements Globals {
     
     private final Game game;
+    public Game getGame() {
+        return game;
+    }
     private final java.util.Timer gameUpdater; 
     private boolean gameRunning;
     
     private BufferedImage backgroundImage;
     private BufferedImage gameBackgroundImage;
+    private BufferedImage heartContainer;
     
     //This is used to stop the repeatedly firing pressed events
     private final int[][] keysReleased;
@@ -50,7 +53,7 @@ public class Screen extends JPanel implements Globals {
         SHOOTINGUP(KeyEvent.VK_UP,SHOOT,UP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,DOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,LEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,RIGHT),
         //These are the changing weapon key events
         WEAPONPREV(KeyEvent.VK_Q,CHANGEWEAPON,PREVIOUSWEAPON),WEAPONNEXT(KeyEvent.VK_E,CHANGEWEAPON,NEXTWEAPON),
-        WEAPONONE(KeyEvent.VK_1,CHANGEWEAPON,PISTOL),WEAPONTWO(KeyEvent.VK_2,CHANGEWEAPON,MACHINEGUN),WEAPONFIVE(KeyEvent.VK_5,CHANGEWEAPON,FLAMETHROWER);
+        WEAPONTWO(KeyEvent.VK_2,CHANGEWEAPON,MACHINEGUN),WEAPONFIVE(KeyEvent.VK_5,CHANGEWEAPON,FLAMETHROWER);
         private final int keyCode;
         private final int actionType;
         private final int gameCode;
@@ -98,14 +101,17 @@ public class Screen extends JPanel implements Globals {
     
     /**GameUpdater class forms the game loop, updating and rendering the game at a fixed rate.
     TIMERDELAY dictates the update rate.*/
-    private class GameUpdater extends java.util.TimerTask {
+    private class GameUpdater extends java.util.TimerTask
+    {
         //Updates and renders the game in the game loop.
         //The game loop stops if gameRunning is set to false.
-        public void run() {     
+        public void run() 
+        {     
             game.update();
             repaint();
-            
-            if (!gameRunning) {
+
+            if (!gameRunning)
+            {
                 gameUpdater.cancel();
             }
         }

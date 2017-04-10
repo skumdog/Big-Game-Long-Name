@@ -23,7 +23,14 @@ public class Player extends PosVel {
     private BufferedImage playerImage;
     private BufferedImage sourcePlayerImage;
     private double currentRotation; //Current player orientation in radians
-    public int health;
+    private int health;
+    public int getHealth() {
+        return health;
+    }
+    private int coins;
+    public int getCoins() {
+        return coins;
+    }
     public long invincTimer = 0;
     private final Weapon weapon;
     private final ArrayList<Integer> weaponKeys;
@@ -41,6 +48,7 @@ public class Player extends PosVel {
     public Player(int xPos, int yPos, int weaponKey) {
         moveKeysPressed = new boolean [4];
         health = 6;
+        coins = 3;
         this.xPos = xPos;
         this.yPos = yPos;
         rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
@@ -60,7 +68,6 @@ public class Player extends PosVel {
      * @param side The door the player just entered.
      */
     public void changeRoom(int side) {
-        weapon.changeRoom();
         switch(side) {
             case LEFT:
                 xPos = GAMEWIDTH - rad;
@@ -146,7 +153,7 @@ public class Player extends PosVel {
             // Load the new weapon provided from the above logic,
             // as long as the new weapon is a different weapon.
             if (newWeaponKey != currentWeaponKey) {
-                this.weapon.loadWeapon(newWeaponKey);
+                this.weapon.loadWeapon(currentWeaponKey);
                 currentWeaponKey = newWeaponKey;
             }
             // Start shooting the new weapon.
@@ -238,8 +245,25 @@ public class Player extends PosVel {
     * @param damage 
     */
     @Override
-    public void damaged(float damage) {
+    public void damaged (float damage) {
         health -= damage;
+        if (health < 0) {
+            health = 0;
+        }
+    }
+    /** Updates player's health upon receiving a health pickup.
+    * 
+    * @param hp The amount of healing done.
+    */
+    public void healed (float hp) {
+        this.health += hp;
+    }
+    /** Updates player's coin count upon receiving a coin pickup.
+    * 
+    * @param coins The amount of coins received.
+    */
+    public void addMoney (float coins) {
+        this.coins += coins;
     }
     /**
     * Renders the player.

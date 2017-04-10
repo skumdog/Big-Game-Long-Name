@@ -9,8 +9,11 @@ import java.awt.image.BufferedImage;
 public class Pickup extends PosVel {
     private final Player player;
     // Make this global?
-    private BufferedImage heartContainer = null;
     private final static int HEARTSIZE = 40;
+    private final int type;
+    public int getType() {
+        return type;
+    }
     /**
     * Pickup class constructor initializes variables related to pickups.
     * 
@@ -21,12 +24,12 @@ public class Pickup extends PosVel {
     */
     public Pickup (Player player, float x, float y, int type) {
         this.player = player;
+        this.type = type;
         xPos = x;
         yPos = y;
         rad = HEARTSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER - rad;
         ySide = - rad;
-        setupImages();
     }
     /**
     * Renders the pickup.
@@ -34,13 +37,14 @@ public class Pickup extends PosVel {
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw (Graphics g) {
-        g.drawImage(heartContainer,(int)(xSide + xPos),(int)(ySide + yPos),null);
-    }
-    /**
-    * Initializes BufferedImage objects, which are used to render images.
-    */
-    private void setupImages() {
-       // Make this a shared method?
-       heartContainer = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE);
+        // Draw a heart.
+        if (this.type == 0) {
+            BufferedImage heart = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/heart.png",0);
+            g.drawImage(heart,(int)(xSide + xPos),(int)(ySide + yPos),null);
+        // Draw a coin.
+        } else if (this.type == 1) {
+            BufferedImage coin = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/coin.png",0);
+            g.drawImage(coin,(int)(xSide + xPos),(int)(ySide + yPos),null);
+        }
     }
 }

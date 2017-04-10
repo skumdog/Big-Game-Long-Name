@@ -16,6 +16,7 @@ public class Game implements Globals {
     private final Level level;
     private Room room;
     private BufferedImage heartContainer;
+    private BufferedImage coin;
     //private BufferedImage halfHeartContainer=null;
     
     //Constants
@@ -34,8 +35,12 @@ public class Game implements Globals {
         enemies = room.getEnemies();
         pickups = room.getPickups();
         
-        // Image setup.
+        // Call roomEntered when the game begins to spawn initial enemies.
         
+        room.populateRoom();
+        
+        // Image setup.
+
         setupImages();
         
         // TODO: Logic for loading new room/level as the player progresses.
@@ -45,13 +50,14 @@ public class Game implements Globals {
     */
     public void update() {
         player.update();
+        room.update();
         if (!room.RoomClear()) {
             //Calculate new velocities for all enemies
             enemies.stream().forEach((enemie) -> {
                 enemie.calcVels();
             });
             //Check for all collisions
-            Collision.checkCollisions(player,enemies,pickups,false);
+            Collision.checkCollisions(player, enemies,pickups);
             Enemy enemy;
             for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
                 enemy = enemyIt.next();
@@ -60,11 +66,16 @@ public class Game implements Globals {
             }
         }
         else {
-            int door = Collision.checkCollisions(player,enemies,pickups,true);
+            int door = Collision.checkRoomClearCollisions(player);
+            Collision.checkPickupCollision(player, pickups);
             if (door >= 0 && level.changeRoom(door)) {
                 room = level.getCurrentRoom();
                 enemies = room.getEnemies();
                 pickups = room.getPickups();
+                if (!room.visited) {
+                    room.populateRoom();
+                    room.visited = true;
+                }
             }
         }
     }
@@ -76,13 +87,13 @@ public class Game implements Globals {
     public void draw(Graphics2D g) {
         drawHUD(g);
         if (!room.RoomClear()) {
-            enemies.stream().forEach((enemy) -> {
-                enemy.draw(g);
-            });
-            pickups.stream().forEach((pickup) -> {
-                pickup.draw(g);
-            });
+            for (int i=0; i < enemies.size(); i++) {
+                enemies.get(i).draw(g);
+            }
         }
+        pickups.stream().forEach((pickup) -> {
+            pickup.draw(g);
+        });
         player.draw(g);
         room.draw(g);
         level.draw(g);
@@ -94,9 +105,13 @@ public class Game implements Globals {
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void drawHUD(Graphics2D g) {
-        //Draw players heart containers
-        for (int i=0; i<player.health; i=i+2) {
-            g.drawImage(heartContainer,(i/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
+        //Draw player's heart containers
+        for (int i=0; i<player.getHealth(); i=i+2) {
+            g.drawImage(this.heartContainer,(i/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
+        }
+        //Draw player's coins.
+        for (int i=0; i<player.getCoins(); i=i+1) {
+           g.drawImage(this.coin,10*i+10,70,null);
         }
         //Check if player has half a heart
         /*if (player.health % 2 != 0) {
@@ -141,8 +156,10 @@ public class Game implements Globals {
     */
     private void setupImages() {
        //Initialize always relevent images images
-       heartContainer = Utilities.getScaledInstance(IMAGEPATH+"General/heart.png",HEARTSIZE,HEARTSIZE);
+       cemeteryfuntimes.Code.Shared.ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
+       cemeteryfuntimes.Code.Shared.ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
+       this.heartContainer = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/heart.png",0);
+       this.coin = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/coin.png",0);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
-    
 }

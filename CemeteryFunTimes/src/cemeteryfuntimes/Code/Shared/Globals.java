@@ -60,7 +60,7 @@ public interface Globals {
     //Weapon Types
     public final static int REGULARBALLISTIC=1; //Simple firearms: pistol, machinegun, etc.
     public final static int SINGLEBULLET=2; //Firearms that only have one projectile: flamethrower, single solid laser
-    public final static int AOEBALLISTIC=3; //Radiating projectiles
+    
     //Action Types
     //These represent the various actions that a user can do in the game
     public final static int MOVEMENT=0;
@@ -81,10 +81,8 @@ public interface Globals {
     public final static int BAT=2;
     public final static int BLOATER=3;
     public final static int CULTIST=4;
-    public final static int SPIKEMONSTER=5;
     //Enemy Weapons 
     public final static int BLOATERBALL=20;
     public final static int FIREBALL=21;
-    public final static int SPIKEBALL=22;
     
 }

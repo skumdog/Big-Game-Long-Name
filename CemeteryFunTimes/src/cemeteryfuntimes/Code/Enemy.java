@@ -35,6 +35,10 @@ public class Enemy extends PosVel {
     public int Type() {
         return type;
     }
+    private int difficulty;
+    public int Difficulty() {
+        return difficulty;
+    }
     private int movementType;
     public int MovementType() {
         return movementType;
@@ -112,32 +116,13 @@ public class Enemy extends PosVel {
         if ( now - lastMovement > movementDelay ) {
             lastMovement = now;
             Random random = new Random();
-            do {
-                xVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
-                yVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
-            }
-            while (!validMoveDirection());
+            xVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
+            yVel = (random.nextFloat() < 0.5 ? -1 : 1) * random.nextFloat();
             //Adjust to have correct speed
             float totalSpeed = (float) Math.sqrt(xVel*xVel + yVel*yVel);
             xVel = speed * xVel / totalSpeed;
             yVel = speed * yVel / totalSpeed;
-            rotateEnemyImage();
         }
-    }
-    /**
-     * Checks if enemy will collide with wall before changing direction
-     * 
-     * @return false if enemy will collide with wall, true otherwise 
-     */
-    private boolean validMoveDirection() {
-        double steps = movementDelay/TIMERDELAY;
-        boolean valid = true;
-        xPos+=xVel*steps;
-        yPos+=yVel*steps;
-        if (this.hitWall()) {valid=false;}
-        xPos-=xVel*steps;
-        yPos-=yVel*steps;
-        return valid;
     }
     /**
     * Rotates the enemy's image.
@@ -159,6 +144,7 @@ public class Enemy extends PosVel {
         contactDamage = Integer.parseInt(attributes.getNamedItem("ContactDamage").getNodeValue());
         health = Integer.parseInt(attributes.getNamedItem("Health").getNodeValue());
         name = attributes.getNamedItem("Name").getNodeValue();
+        difficulty = Integer.parseInt(attributes.getNamedItem("Difficulty").getNodeValue());
         speed = Float.parseFloat(attributes.getNamedItem("EnemySpeed").getNodeValue());
         rad = Integer.parseInt(attributes.getNamedItem("EnemySize").getNodeValue());
         type = Integer.parseInt(attributes.getNamedItem("Type").getNodeValue());

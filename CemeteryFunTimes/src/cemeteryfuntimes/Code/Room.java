@@ -3,12 +3,38 @@ import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import org.w3c.dom.NamedNodeMap;
+import java.util.Random;
 /**
 * Room class contains variables and methods related to rooms.
 * @author David Kozloff & Tyler Law
 */
 public final class Room implements Globals {
-    
+    private int maxDifficulty;
+    public int MaxDifficulty() {
+        return maxDifficulty;
+    }
+    private int currentDifficulty;
+    public int CurrentDifficulty() {
+        return currentDifficulty;
+    }
+    private int spawnx;
+    public int Spawnx() {
+        return spawnx;
+    }
+    private int spawny;
+    public int Spawny() {
+        return spawny;
+    }
+    private int delay;
+    public int Delay() {
+        return delay;
+    }
+    private final int key;
+    public final int Key() {
+        return key;
+    }
+    private long lastUpdate;
     private final Player player;
     private final ArrayList<Enemy> enemies;
     public ArrayList<Enemy> getEnemies() {
@@ -33,32 +59,38 @@ public final class Room implements Globals {
     /**
     * Room class constructor initializes variables related to rooms.
     * 
-    * @param player The player.
+    * @param player  The player.
+    * @param roomKey The key corresponding to a specific room type.
     */
-    public Room (Player player) {
+    public Room (Player player, int roomKey) {
         this.player = player;
+        key = roomKey;
         enemies = new ArrayList();
         pickups = new ArrayList();
         neighbors = new Object[4];
-        
+        currentDifficulty = 0;
+        loadRoom(roomKey);
         setupImages();
         
         // Test objects in the room.
-        
-        exampleRoom();
-        
+                
         // TODO: Logic for retrieving specific room data from parser.
     }
-    
-    public void exampleRoom() {
-        //pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 0));
-        //pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
-        //pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,ZOMBIE));
-        //enemies.add(new MeleeEnemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,BAT));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,BLOATER));
-        //enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,CULTIST));
-        enemies.add(new Enemy(player,GAMEWIDTH/2,GAMEHEIGHT/2,SPIKEMONSTER));
+    /**
+    * Populates the room with initial enemies. Enemies and pickups are only 
+    * generated if the player has not visited this room before.
+    */
+    public void populateRoom() {
+        pickups.add(new Pickup(player, 10*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 10*HEARTPADDING, 1));
+//        pickups.add(new Pickup(player, 15*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 15*HEARTPADDING, 0));
+//        pickups.add(new Pickup(player, 12*(HEARTSIZE+HEARTPADDING)+HEARTPADDING, 18*HEARTPADDING, 0));
+        enemies.add(new Enemy(player,spawnx,spawny,ZOMBIE));
+        enemies.add(new Enemy(player,spawnx,spawny,BAT));
+//        enemies.add(new Enemy(player,spawn1x,spawn1y,BLOATER));
+//        enemies.add(new Enemy(player,spawn1x,spawn1y,CULTIST));
+        enemies.stream().forEach((enemy) -> {
+            currentDifficulty += enemy.Difficulty();
+        });
     }
     /**
     * Renders the doors in the room.
@@ -86,13 +118,30 @@ public final class Room implements Globals {
             g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, GAMEHEIGHT - door.getHeight()/2 , null);
         }
     }
-    
+    /**
+    * Updates the room, spawning new enemies if necessary.
+    */
     public void update() {
-        
+        // Check to see if more enemies should be spawned.
+        if (currentDifficulty < maxDifficulty) {
+            // Make sure enough time has passed to spawn a new enemy.
+            long now = System.currentTimeMillis();
+            if (now - lastUpdate < delay) {
+                return;
+            }
+            lastUpdate = now;
+            
+            Random random = new Random();
+            int type = random.nextInt(4) + 1;
+            // Spawn a new enemy.
+            Enemy newEnemy = new Enemy(player,spawnx,spawny,type);
+            enemies.add(newEnemy);
+            currentDifficulty += newEnemy.Difficulty();
+        }
     }
     
     public boolean RoomClear() {
-        return enemies.isEmpty();
+        return (enemies.isEmpty() && (currentDifficulty >= maxDifficulty));
     }
     
     public Room GetNeighbor(int side) {
@@ -111,5 +160,16 @@ public final class Room implements Globals {
        doorOpen = Utilities.getScaledInstance(IMAGEPATH+"General/doorOpen.png",doorHeight,doorWidth);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
-    
+    /**
+    * Loads the room data for a specified room variant from an xml file.
+    * 
+    * @param roomKey The key corresponding to a specific room type.
+    */
+    public void loadRoom(int roomKey) {
+        NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Rooms.xml","Room",roomKey);
+        maxDifficulty = Integer.parseInt(attributes.getNamedItem("Difficulty").getNodeValue());
+        spawnx = Integer.parseInt(attributes.getNamedItem("Spawnx").getNodeValue());
+        spawny = Integer.parseInt(attributes.getNamedItem("Spawny").getNodeValue());
+        delay = Integer.parseInt(attributes.getNamedItem("Delay").getNodeValue());
+    }
 }
