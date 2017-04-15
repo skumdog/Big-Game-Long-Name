@@ -5,16 +5,25 @@
 -->
 
 <Rooms>
-    <Room Key="1" 
-        Difficulty="9"
-        Spawnx="500"
-        Spawny="500"
-        Delay="2000"
+    <Room Key="1"
+        NumSpawns="1"
+        Difficulty1="9"
+        Spawn1x="500"
+        Spawn1y="500"
+        Spawn1Enemies="1,2"
+        Delay1="2000"
     />
-    <Room Key="2" 
-        Difficulty="11"
-        Spawnx="600"
-        Spawny="600"
-        Delay="1500"
+    <Room Key="2"
+        NumSpawns="2"
+        Difficulty1="11"
+        Difficulty2="17"
+        Spawn1x="400"
+        Spawn1y="400"
+        Spawn2x="700"
+        Spawn2y="700"
+        Spawn1Enemies="1"
+        Spawn2Enemies=""
+        Delay1="1500"
+        Delay2="2500"
     />
 </Rooms>

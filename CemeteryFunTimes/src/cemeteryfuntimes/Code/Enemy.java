@@ -197,5 +197,4 @@ public class Enemy extends PosVel {
         if(health>0) {g.drawImage(enemyImage, Math.round(xSide+xPos-xImagePad), Math.round(ySide+yPos-yImagePad), null);}
         if( weapon!=null ) { weapon.draw(g); }
     }
-    
 }

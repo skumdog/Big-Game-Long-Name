@@ -14,7 +14,7 @@ public class Game implements Globals {
     private ArrayList<Enemy> enemies;
     private ArrayList<Pickup> pickups;
     private final Level level;
-    private Room room;
+    private NormalRoom room;
     private BufferedImage heartContainer;
     private BufferedImage coin;
     //private BufferedImage halfHeartContainer=null;
@@ -34,11 +34,7 @@ public class Game implements Globals {
         
         enemies = room.getEnemies();
         pickups = room.getPickups();
-        
-        // Call roomEntered when the game begins to spawn initial enemies.
-        
-        room.populateRoom();
-        
+                        
         // Image setup.
 
         setupImages();

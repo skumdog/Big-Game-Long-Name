@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- XML enemy template
     This template contains the base properties of enemies
-
-
+    
 -->
 <Enemies>
     <Enemy Key="1" 

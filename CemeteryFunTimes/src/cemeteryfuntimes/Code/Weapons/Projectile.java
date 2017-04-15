@@ -1,13 +1,11 @@
 package cemeteryfuntimes.Code.Weapons;
+import cemeteryfuntimes.Code.Shared.PosVel;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 /**
 * Projectile abstract class contains variables and methods related to projectiles.
 * @author David Kozloff & Tyler Law
 */
-import cemeteryfuntimes.Code.Shared.PosVel;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-
 public abstract class Projectile extends PosVel {
     
     protected BufferedImage projectileImage;
