@@ -21,22 +21,20 @@ public abstract class Room implements Globals {
     /**
     * Updates the room.  Overridden by a specific room implementation.
     */
-    public void update() {}
+    public abstract void update();
     /**
     * Renders room objects.  Overridden by a specific room implementation.
     * 
     * @param g The Graphics object used by Java to render everything in the game.
     */
-    public void draw(Graphics2D g) {}
+    public abstract void draw(Graphics2D g);
     /**
     * Determines if a room has been cleared, which is overridden by the
     * specific room type.
     * 
     * @return A boolean indicating if the room has been cleared.
     */
-    public boolean RoomClear() {
-        return true;
-    }
+    public abstract boolean RoomClear();
     /**
     * Gets the neighboring room according to the given side.
     * 

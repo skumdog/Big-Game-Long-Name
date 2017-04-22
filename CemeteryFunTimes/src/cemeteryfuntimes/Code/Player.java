@@ -115,6 +115,7 @@ public class Player extends PosVel {
     * 
     * @param gameCode    The change weapon key currently being pressed.
     * @param keyIsPressed Returns true if the key is currently being pressed.
+    * @param specificWeapon
     */
     public void changeWeaponKeyChanged(int gameCode, boolean keyIsPressed, boolean specificWeapon) {
         if (!keyIsPressed) { return; }
@@ -153,7 +154,7 @@ public class Player extends PosVel {
             weapon.keyPressed(lastShotDirection);
         }
         changePlayerImage();
-}
+    }
     /**
     * Updates player image on weapon change.
     */

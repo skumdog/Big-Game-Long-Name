@@ -44,6 +44,7 @@ public class SingleProjectile extends Projectile {
     /**
     * Updates the projectile.
     */
+    @Override
     public void update() {
         int direction = weapon.shootDirection();
         if (direction == -1) { active = false; damage = 0; return; }
@@ -79,6 +80,7 @@ public class SingleProjectile extends Projectile {
     * 
     * @param g The Graphics object used by Java to render everything in the game.
     */
+    @Override
     public void draw(Graphics2D g) {
         if (active) { super.draw(g); }
     }

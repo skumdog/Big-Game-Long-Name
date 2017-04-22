@@ -71,6 +71,9 @@ public final class NormalRoom extends Room implements Globals {
     @Override
     public void draw(Graphics2D g) {
         //Draw pickups and enemies
+        for (int i=0; i<spawns.size(); i++) {
+            spawns.get(i).draw(g);
+        }
         for (int i=0; i < enemies.size(); i++) {
             enemies.get(i).draw(g);
         }
@@ -80,11 +83,7 @@ public final class NormalRoom extends Room implements Globals {
         for (int i=0; i < deadEnemyProjectiles.size(); i++) {
             deadEnemyProjectiles.get(i).draw(g);
         }
-        for (int i=0; i<spawns.size(); i++) {
-            spawns.get(i).draw(g);
-        }
         //Draw the doors of the room
-        boolean doorsOpen = RoomClear();
         BufferedImage sourceDoor = RoomClear() ? ImageLoader.getImage("General/doorOpen.png",0) : ImageLoader.getImage("General/doorClosed.png",0);
         BufferedImage door;
         if (GetNeighbor(LEFT) != null) {
@@ -119,10 +118,7 @@ public final class NormalRoom extends Room implements Globals {
                 count++;
             }
         }
-        if (count == spawns.size()) {
-            doneSpawning = true;
-        }
-        return (enemies.isEmpty() && doneSpawning);
+        return (enemies.isEmpty() && count==spawns.size());
     }
     /**
     * Removes dead enemy frome the enemies array
@@ -164,7 +160,7 @@ public final class NormalRoom extends Room implements Globals {
     * 
     * @param roomKey The key corresponding to a specific room variant.
     */
-    public void loadRoom(int roomKey) {
+    private void loadRoom(int roomKey) {
         NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Rooms.xml","Room",roomKey);
         numSpawns = Integer.parseInt(attributes.getNamedItem("NumSpawns").getNodeValue());
         int maxDifficulty = Integer.parseInt(attributes.getNamedItem("Difficulty1").getNodeValue());

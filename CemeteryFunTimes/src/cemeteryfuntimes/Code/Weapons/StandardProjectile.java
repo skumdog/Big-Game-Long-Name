@@ -70,7 +70,6 @@ public class StandardProjectile extends Projectile {
         Enemy enemy = (Enemy) posVel;
         float speed = weapon.ProjectileSpeed();
         //TODO use offset: int offset = weapon.ProjectileOffset();
-        float playerRad = posVel.rad();
   
         //Create projectile
         //Decide starting position by player position and direction projectile is being fired

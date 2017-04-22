@@ -171,8 +171,8 @@ public class Weapon implements Globals {
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
-        for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
-            projectileIt.next().draw(g);
+        for (int i=0; i<projectiles.size(); i++) {
+            projectiles.get(i).draw(g);
         }
     }
     /**

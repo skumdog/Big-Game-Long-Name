@@ -1,5 +1,6 @@
 package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Shared.Globals;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 /**
 * BossRoom class contains variables and methods related to boss rooms.
@@ -41,5 +42,10 @@ public final class BossRoom extends Room implements Globals {
     @Override
     public boolean RoomClear() {
         return boss.isDead();
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+        boss.draw(g); 
     }
 }
