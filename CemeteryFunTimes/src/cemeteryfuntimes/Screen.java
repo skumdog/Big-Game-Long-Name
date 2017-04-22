@@ -53,7 +53,7 @@ public class Screen extends JPanel implements Globals {
         SHOOTINGUP(KeyEvent.VK_UP,SHOOT,UP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,DOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,LEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,RIGHT),
         //These are the changing weapon key events
         WEAPONPREV(KeyEvent.VK_Q,CHANGEWEAPON,PREVIOUSWEAPON),WEAPONNEXT(KeyEvent.VK_E,CHANGEWEAPON,NEXTWEAPON),
-        WEAPONTWO(KeyEvent.VK_2,CHANGEWEAPON,MACHINEGUN),WEAPONFIVE(KeyEvent.VK_5,CHANGEWEAPON,FLAMETHROWER);
+        WEAPONONE(KeyEvent.VK_1,CHANGESPECIFICWEAPON,PISTOL) ,WEAPONTWO(KeyEvent.VK_2,CHANGESPECIFICWEAPON,MACHINEGUN),WEAPONFIVE(KeyEvent.VK_5,CHANGESPECIFICWEAPON,FLAMETHROWER);
         private final int keyCode;
         private final int actionType;
         private final int gameCode;
@@ -85,7 +85,7 @@ public class Screen extends JPanel implements Globals {
     
     /*** Screen class constructor sets up key bindings, creates the Game object, and begins the game loop.*/
     public Screen() {
-        keysReleased = new int[3][4];
+        keysReleased = new int[4][5];
         for (int i = 0; i < keysReleased.length; i++)
             for (int j = 0; j < keysReleased[0].length; j++)
                 keysReleased[i][j] = 1;
@@ -198,6 +198,9 @@ public class Screen extends JPanel implements Globals {
                 case CHANGEWEAPON:
                     methodName = "changeWeaponAction";
                     break;
+                case CHANGESPECIFICWEAPON:
+                    methodName = "changeSpecificWeaponAction";
+                    break;
             }
             try {
                 action = Game.class.getMethod(methodName,Integer.TYPE,Boolean.TYPE);
@@ -214,9 +217,9 @@ public class Screen extends JPanel implements Globals {
         */
         @Override
         public void actionPerformed(ActionEvent e) {
-            //if (!isPressed) { keysReleased[actionType][gameCode] = 1; }
-            //else if (isPressed && keysReleased[actionType][gameCode]==0) { return; }
-            //else { keysReleased[actionType][gameCode] = 0; }
+            if (!isPressed) { keysReleased[actionType][gameCode] = 1; }
+            else if (isPressed && keysReleased[actionType][gameCode]==0) { return; }
+            else { keysReleased[actionType][gameCode] = 0; }
             try {
                 action.invoke(game,gameCode,isPressed);
             }

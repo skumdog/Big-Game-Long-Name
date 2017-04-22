@@ -28,7 +28,7 @@ public class Game implements Globals {
     public Game() {
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
         level = new Level(player);
-        room = level.getCurrentRoom();
+        room = (NormalRoom) level.getCurrentRoom();
         
         // Enemies and pickups in the current room (Remove final keyword later).
         
@@ -43,31 +43,30 @@ public class Game implements Globals {
     }
     /**
     * Updates the game.
-    */
+    */    
     public void update() {
         player.update();
         room.update();
-        if (!room.RoomClear()) {
-            //Calculate new velocities for all enemies
-            enemies.stream().forEach((enemie) -> {
-                enemie.calcVels();
-            });
-            //Check for all collisions
-            Collision.checkCollisions(player, enemies,pickups,false);
-            Enemy enemy;
-            for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-                enemy = enemyIt.next();
-                if (enemy.health <= 0) { enemyIt.remove(); break;}
-                enemy.update();
-            }
+        //Calculate new velocities for all enemies
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).calcVels();
         }
-        else {
-            int door = Collision.checkCollisions(player, enemies,pickups,true);
-            if (door >= 0 && level.changeRoom(door)) {
-                room = level.getCurrentRoom();
-                enemies = room.getEnemies();
-                pickups = room.getPickups();
+        //Check for all collisions
+        int door = Collision.checkCollisions(player,room);
+        Enemy enemy;
+        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
+            enemy = enemyIt.next();
+            if (enemy.health <= 0) { 
+                room.EnemyDead(enemy);
+                enemyIt.remove(); 
+                break;
             }
+            enemy.update();
+        }
+        if (door >= 0 && level.changeRoom(door)) {
+            room = (NormalRoom) level.getCurrentRoom();
+            enemies = room.getEnemies();
+            pickups = room.getPickups();
         }
     }
     /**
@@ -140,7 +139,18 @@ public class Game implements Globals {
     */
     public void changeWeaponAction(int gameCode, boolean isPressed) {
         //Game code is the relevant global in the "Player Commands" section of globals
-        player.changeWeaponKeyChanged(gameCode,isPressed);
+        player.changeWeaponKeyChanged(gameCode,isPressed,false);
+    }
+    /**
+    * Calls the callback method triggered by a set of related key events.
+    * Changing weapons keys.
+    * 
+    * @param gameCode  The change weapon key currently being pressed.
+    * @param isPressed Returns true if the key is currently being pressed.
+    */
+    public void changeSpecificWeaponAction(int gameCode, boolean isPressed) {
+        //Game code is the relevant global in the "Player Commands" section of globals
+        player.changeWeaponKeyChanged(gameCode,isPressed,true);
     }
     /**
     * Initializes BufferedImage objects, which are used to render images.

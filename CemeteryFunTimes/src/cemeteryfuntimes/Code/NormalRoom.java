@@ -1,5 +1,8 @@
 package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Shared.*;
+import cemeteryfuntimes.Code.Weapons.Projectile;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import org.w3c.dom.NamedNodeMap;
 /**
@@ -14,6 +17,10 @@ public final class NormalRoom extends Room implements Globals {
     private final ArrayList<Enemy> enemies;
     public ArrayList<Enemy> getEnemies() {
         return enemies;
+    }
+    private final ArrayList<Projectile> deadEnemyProjectiles;
+    public ArrayList<Projectile> deadEnemyProjectiles() {
+        return deadEnemyProjectiles;
     }
     private final ArrayList<Pickup> pickups;
     public ArrayList<Pickup> getPickups() {
@@ -39,6 +46,7 @@ public final class NormalRoom extends Room implements Globals {
         enemies = new ArrayList();
         pickups = new ArrayList();
         spawns = new ArrayList();
+        deadEnemyProjectiles = new ArrayList();
         loadRoom(roomKey);
     }
     /**
@@ -48,6 +56,39 @@ public final class NormalRoom extends Room implements Globals {
     public void update() {
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
+        }
+    }
+    @Override
+    public void draw(Graphics2D g) {
+        //Draw pickups and enemies
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
+        }
+        for (int i=0; i < pickups.size(); i++) {
+            pickups.get(i).draw(g);
+        }
+        for (int i=0; i < deadEnemyProjectiles.size(); i++) {
+            deadEnemyProjectiles.get(i).draw(g);
+        }
+        //Draw the doors of the room
+        boolean doorsOpen = RoomClear();
+        BufferedImage sourceDoor = RoomClear() ? ImageLoader.getImage("General/doorOpen.png",0) : ImageLoader.getImage("General/doorClosed.png",0);
+        BufferedImage door;
+        if (GetNeighbor(LEFT) != null) {
+            door = sourceDoor;
+            g.drawImage(door, GAMEBORDER - door.getWidth()/2, GAMEHEIGHT/2 - door.getHeight()/2 , null);
+        }
+        if (GetNeighbor(RIGHT) != null) {
+            door = Utilities.rotateImage(sourceDoor, ROTATION[RIGHT]);
+            g.drawImage(door, SCREENWIDTH - GAMEBORDER - door.getWidth()/2, GAMEHEIGHT/2 - door.getHeight()/2 , null);
+        }
+        if (GetNeighbor(UP) != null) {
+            door = Utilities.rotateImage(sourceDoor, ROTATION[UP]);
+            g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, - door.getHeight()/2 , null);
+        }
+        if (GetNeighbor(DOWN) != null) {
+            door = Utilities.rotateImage(sourceDoor, ROTATION[DOWN]);
+            g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, GAMEHEIGHT - door.getHeight()/2 , null);
         }
     }
     /**
@@ -69,6 +110,16 @@ public final class NormalRoom extends Room implements Globals {
             doneSpawning = true;
         }
         return (enemies.isEmpty() && doneSpawning);
+    }
+    /**
+    * Removes dead enemy frome the enemies array
+    * Adds any remaining projectiles to deadEnemyProjectiles
+    * 
+    * @param enemy The dead enemy
+    */
+    public void EnemyDead(Enemy enemy) {
+        if (enemy.getWeapon() == null) { return; }
+        deadEnemyProjectiles.addAll(enemy.getWeapon().Projectiles());
     }
     /**
     * Helper method for loadRoom.  Generates an integer array of enemy keys
