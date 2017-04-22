@@ -10,9 +10,7 @@ import java.util.Random;
 * Levels are represented as two-dimensional arrays of rooms.
 * @author David Kozloff & Tyler Law
 */
-
 public final class Level implements Globals {
-    
     private final Player player;
     private Room currentRoom;
     public Room getCurrentRoom() {
@@ -31,6 +29,7 @@ public final class Level implements Globals {
     public int yCord() {
         return yCord;
     }
+    private Random random;
     
     //Level creation constants
     private static final int totalRooms=15;
@@ -72,7 +71,9 @@ public final class Level implements Globals {
     * Initializes the level map.
     */
     private void createMap() {
-        currentRoom = new NormalRoom(player, 1); 
+        this.random = new Random();
+        int rand = random.nextInt(2) + 1;
+        currentRoom = new NormalRoom(player, rand); 
         currentRoom.visited=true;
         map = new Object[mapSize][mapSize];
         intMap = new int[mapSize][mapSize];
