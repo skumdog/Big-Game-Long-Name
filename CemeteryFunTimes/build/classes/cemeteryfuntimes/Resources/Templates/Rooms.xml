@@ -6,10 +6,10 @@
 
 <Rooms>
     <Room Key="1" 
-        Difficulty="4"
+        Difficulty="9"
         Spawnx="500"
         Spawny="500"
-        Delay="0"
+        Delay="2000"
     />
     <Room Key="2" 
         Difficulty="11"

@@ -51,26 +51,27 @@ public class Game implements Globals {
     public void update() {
         player.update();
         room.update();
-        //Calculate new velocities for all enemies
-        for (int i=0; i < enemies.size(); i++) {
-            enemies.get(i).calcVels();
-        }
-        //Check for all collisions
-        int door = Collision.checkCollisions(player,room);
-        Enemy enemy;
-        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-            enemy = enemyIt.next();
-            if (enemy.health <= 0) { 
-                room.EnemyDead(enemy);
-                enemyIt.remove(); 
-                break;
+        if (!room.RoomClear()) {
+            //Calculate new velocities for all enemies
+            enemies.stream().forEach((enemie) -> {
+                enemie.calcVels();
+            });
+            //Check for all collisions
+            Collision.checkCollisions(player, enemies,pickups,false);
+            Enemy enemy;
+            for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
+                enemy = enemyIt.next();
+                if (enemy.health <= 0) { enemyIt.remove(); break;}
+                enemy.update();
             }
-            enemy.update();
         }
-        if (door >= 0 && level.changeRoom(door)) {
-            room = level.getCurrentRoom();
-            enemies = room.getEnemies();
-            pickups = room.getPickups();
+        else {
+            int door = Collision.checkCollisions(player, enemies,pickups,true);
+            if (door >= 0 && level.changeRoom(door)) {
+                room = level.getCurrentRoom();
+                enemies = room.getEnemies();
+                pickups = room.getPickups();
+            }
         }
     }
     /**
@@ -80,6 +81,14 @@ public class Game implements Globals {
     */
     public void draw(Graphics2D g) {
         drawHUD(g);
+        if (!room.RoomClear()) {
+            for (int i=0; i < enemies.size(); i++) {
+                enemies.get(i).draw(g);
+            }
+        }
+        pickups.stream().forEach((pickup) -> {
+            pickup.draw(g);
+        });
         player.draw(g);
         room.draw(g);
         level.draw(g);
@@ -135,28 +144,17 @@ public class Game implements Globals {
     */
     public void changeWeaponAction(int gameCode, boolean isPressed) {
         //Game code is the relevant global in the "Player Commands" section of globals
-        player.changeWeaponKeyChanged(gameCode,isPressed,false);
-    }
-    /**
-    * Calls the callback method triggered by a set of related key events.
-    * Changing weapons keys.
-    * 
-    * @param gameCode  The change weapon key currently being pressed.
-    * @param isPressed Returns true if the key is currently being pressed.
-    */
-    public void changeSpecificWeaponAction(int gameCode, boolean isPressed) {
-        //Game code is the relevant global in the "Player Commands" section of globals
-        player.changeWeaponKeyChanged(gameCode,isPressed,true);
+        player.changeWeaponKeyChanged(gameCode,isPressed);
     }
     /**
     * Initializes BufferedImage objects, which are used to render images.
     */
     private void setupImages() {
        //Initialize always relevent images images
-       ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
-       ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
-       this.heartContainer = ImageLoader.getImage("General/heart.png",0);
-       this.coin = ImageLoader.getImage("General/coin.png",0);
+       cemeteryfuntimes.Code.Shared.ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
+       cemeteryfuntimes.Code.Shared.ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
+       this.heartContainer = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/heart.png",0);
+       this.coin = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/coin.png",0);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
 }

@@ -17,26 +17,24 @@ public class Collision implements Globals {
     * Collision class constructor calls all collision methods.
     * 
     * @param player  The player.
-    * @param room    The current room
-    * @return        -1 if room is not clear or no door collided, else side of door collision
+    * @param enemies The array list of enemies.
+    * @param pickups The array list of pickups.
+    * @param roomClear True if all enemies are dead
+    * @return door collided with 
     */
-    public static int checkCollisions(Player player, Room room) {
+    public static int checkCollisions(Player player, ArrayList<Enemy> enemies, ArrayList<Pickup> pickups, boolean roomClear) {
         //Check for collisions between Player and player projectiles with enemies
         //As well as enemy and enemy projectile collision with player
         //Also collisions with pickups / interactables and walls
         //Update accordingly
-        boolean roomClear = room.RoomClear();
-        ArrayList<Enemy> enemies = room.getEnemies();
-        ArrayList<Pickup> pickups = room.getPickups();
-        ArrayList<Projectile> deadEnemyProjectiles = room.deadEnemyProjectiles();
-        checkBallisticCollisions(player,enemies,deadEnemyProjectiles);
+        checkBallisticCollisions(player,enemies);
         boolean[] wall = checkPlayerWallCollision(player);
         if (!roomClear) {
             checkEnemyWallCollisions(enemies);
             checkEnemyEnemyCollision(enemies);
             checkEnemyPlayerCollision(player,enemies);
         }
-        checkBallisticWallCollisions(player,enemies,deadEnemyProjectiles);
+        checkBallisticWallCollisions(player,enemies);
         checkPickupCollision(player,pickups);
         return checkPlayerDoorCollision(player,wall,roomClear);
     }
@@ -46,13 +44,13 @@ public class Collision implements Globals {
     * @param player  The player.
     * @param enemies The array list of enemies.
     */
-    private static void checkBallisticCollisions(Player player, ArrayList<Enemy> enemies, ArrayList<Projectile> deadEnemyProjectiles) {
+    private static void checkBallisticCollisions(Player player, ArrayList<Enemy> enemies) {
         Enemy enemy;
         Projectile projectile;
         Weapon playerWeapon = player.getWeapon();
         ArrayList<Projectile> projectiles = playerWeapon.Projectiles();
         float damage = playerWeapon.Damage();
-        handleBallisticCollisions(deadEnemyProjectiles,player);
+        
         //Check player projectiles collision with enemies
         for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
             enemy = enemyIt.next();
@@ -210,9 +208,8 @@ public class Collision implements Globals {
     * @param player  The player.
     * @param enemies The array list of enemies.
     */
-    private static void checkBallisticWallCollisions(Player player, ArrayList<Enemy> enemies, ArrayList<Projectile> deadEnemyProjectiles) {
+    private static void checkBallisticWallCollisions(Player player, ArrayList<Enemy> enemies) {
         ballisticWallCollisionLoop(player.getWeapon().Projectiles());
-        ballisticWallCollisionLoop(deadEnemyProjectiles);
         Weapon enemyWeapon;
         enemies.stream().forEach((Enemy enemy) -> {
             if (enemy.getWeapon() != null) {

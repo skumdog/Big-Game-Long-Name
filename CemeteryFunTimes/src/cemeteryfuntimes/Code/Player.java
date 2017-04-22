@@ -116,44 +116,56 @@ public class Player extends PosVel {
     * @param gameCode    The change weapon key currently being pressed.
     * @param keyIsPressed Returns true if the key is currently being pressed.
     */
-    public void changeWeaponKeyChanged(int gameCode, boolean keyIsPressed, boolean specificWeapon) {
-        if (!keyIsPressed) { return; }
-        int newWeaponKey;
-        int lastShotDirection = weapon.shootDirection();
-        boolean shooting = lastShotDirection != -1;
-        // Stop shooting the old weapon.
-        // This allows the player to automatically begin firing the new gun 
-        // if a change weapon key is pressed while the fire key is being held down.
-        if (shooting) {
-            weapon.keyReleased(lastShotDirection);
+    public void changeWeaponKeyChanged(int gameCode, boolean keyIsPressed) {
+        // Check if any shoot keys are currently pressed.
+        
+        // Load appropriate weapon based on gameCode.
+        // Note: We must check to see if two or more change weapon keys are
+        // being pressed in order to prevent a bug that can occur
+        // where multiple weapons fire at once if the player
+        // presses multiple change weapon keys at once.
+        if (keyIsPressed) {
+            int newWeaponKey;
+            int lastShotDirection = weapon.shootDirection();
+            boolean shooting = false;
+            if (lastShotDirection != -1) { shooting = true; }
+            // Stop shooting the old weapon.
+            // This allows the player to automatically begin firing the new gun 
+            // if a change weapon key is pressed while the fire key is being held down.
+            if (shooting) {
+                weapon.keyReleased(lastShotDirection);
+            }
+            // If gameCode is a number key, just switch to that weapon.
+            if ((gameCode != NEXTWEAPON) && (gameCode != PREVIOUSWEAPON)) {
+                int index = weaponKeys.indexOf(gameCode);
+                newWeaponKey = weaponKeys.get(index);
+            // Otherwise, scroll to the next/previous weapon.
+            } else {
+                int currentIndex = weaponKeys.indexOf(currentWeaponKey);
+                if ((currentIndex == weaponKeys.size() - 1) && (gameCode == NEXTWEAPON)) {
+                    newWeaponKey = weaponKeys.get(0);
+                } else if ((currentIndex == 0) && (gameCode == PREVIOUSWEAPON)) {
+                    newWeaponKey = weaponKeys.get(weaponKeys.size() - 1);
+                } else {
+                    // I had to set NEXTWEAPON = -1 and PREVIOUSWEAPON = -3
+                    newWeaponKey = weaponKeys.get(currentIndex + gameCode + 2);
+                }
+            }
+            // Load the new weapon provided from the above logic,
+            // as long as the new weapon is a different weapon.
+            if (newWeaponKey != currentWeaponKey) {
+                this.weapon.loadWeapon(currentWeaponKey);
+                currentWeaponKey = newWeaponKey;
+            }
+            // Start shooting the new weapon.
+            // This allows the player to automatically begin firing the new gun 
+            // if a change weapon key is pressed while the fire key is being held down.
+            if (shooting) {
+                weapon.keyPressed(lastShotDirection);
+            }
+            changePlayerImage();
         }
-        // If gameCode is a number key, just switch to that weapon.
-        if (specificWeapon) {
-            int index = weaponKeys.indexOf(gameCode);
-            newWeaponKey = weaponKeys.get(index);
-        // Otherwise, scroll to the next/previous weapon.
-        } else {
-            int nextIndex = weaponKeys.indexOf(currentWeaponKey);
-            nextIndex += (gameCode==NEXTWEAPON ? 1 : -1);
-            int mod = weaponKeys.size();
-            //Get next index using modulus arithmetic
-            nextIndex = ((nextIndex % mod) + mod) % mod;
-            newWeaponKey = weaponKeys.get(nextIndex);
-        }
-        // Load the new weapon provided from the above logic,
-        // as long as the new weapon is a different weapon.
-        if (newWeaponKey != currentWeaponKey) {
-            this.weapon.loadWeapon(newWeaponKey);
-            currentWeaponKey = newWeaponKey;
-        }
-        // Start shooting the new weapon.
-        // This allows the player to automatically begin firing the new gun 
-        // if a change weapon key is pressed while the fire key is being held down.
-        if (shooting) {
-            weapon.keyPressed(lastShotDirection);
-        }
-        changePlayerImage();
-}
+    }
     /**
     * Updates player image on weapon change.
     */
