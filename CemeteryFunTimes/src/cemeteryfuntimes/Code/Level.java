@@ -63,6 +63,7 @@ public final class Level implements Globals {
         //Load level images
         ImageLoader.loadImage("General/doorClosed.png",doorHeight,doorWidth);
         ImageLoader.loadImage("General/doorOpen.png",doorHeight,doorWidth);
+        ImageLoader.loadImage("General/cave.png",doorHeight,doorWidth);
         //Initialze map
         this.player = player;
         createMap();
@@ -143,7 +144,9 @@ public final class Level implements Globals {
      * @param side 
      */
     private void createRoom(Room neighbor, int x, int y, int side) {
-        Room newRoom = new NormalRoom(player, 1);
+        Random random = new Random();
+        int rand = this.random.nextInt(2) + 1;
+        Room newRoom = new NormalRoom(player, rand);
         neighbor.SetNeighbor(newRoom,side);
         newRoom.SetNeighbor(neighbor,Utilities.otherSide(side));
         numberOfRooms++;

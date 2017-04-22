@@ -34,12 +34,6 @@ public final class NormalRoom extends Room implements Globals {
     public int getNumSpawns() {
         return numSpawns;
     }
-    //Static variables
-    private final int doorHeight=100;
-    private final int doorWidth=50;
-    private BufferedImage doorClosed;
-    private BufferedImage doorOpen;
-    private BufferedImage spawnImage;
     /**
     * NormalRoom class constructor initializes variables related to normal rooms.
     * 
@@ -54,7 +48,6 @@ public final class NormalRoom extends Room implements Globals {
         spawns = new ArrayList();
         deadEnemyProjectiles = new ArrayList();
         loadRoom(roomKey);
-        setupImages();
     }
     /**
     * Updates the room.
@@ -64,7 +57,17 @@ public final class NormalRoom extends Room implements Globals {
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
         }
+        Projectile projectile;
+        for (int i=0; i<deadEnemyProjectiles.size(); i++) {
+            projectile = deadEnemyProjectiles.get(i);
+            if (projectile.collide) { deadEnemyProjectiles.remove(i); }
+            else { projectile.update(); }
+        }
     }
+    /**
+    *  
+    * @param g 
+    */
     @Override
     public void draw(Graphics2D g) {
         //Draw pickups and enemies
@@ -76,6 +79,9 @@ public final class NormalRoom extends Room implements Globals {
         }
         for (int i=0; i < deadEnemyProjectiles.size(); i++) {
             deadEnemyProjectiles.get(i).draw(g);
+        }
+        for (int i=0; i<spawns.size(); i++) {
+            spawns.get(i).draw(g);
         }
         //Draw the doors of the room
         boolean doorsOpen = RoomClear();
@@ -186,15 +192,5 @@ public final class NormalRoom extends Room implements Globals {
             enemyIntArray = getSpawnEnemies(enemyString);
             spawns.add(new Spawn(this.player, this, spawnx, spawny, delay, maxDifficulty, enemyIntArray));
         }
-    }
-    /**
-    * Initializes BufferedImage objects, which are used to render images.
-    */
-    private void setupImages() {
-       //Initialize always relevent images images
-       doorClosed = Utilities.getScaledInstance(IMAGEPATH+"General/doorClosed.png",doorHeight,doorWidth);
-       doorOpen = Utilities.getScaledInstance(IMAGEPATH+"General/doorOpen.png",doorHeight,doorWidth);
-       spawnImage = Utilities.getScaledInstance(IMAGEPATH+"General/cave.png",doorHeight,doorWidth);
-       //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
 }

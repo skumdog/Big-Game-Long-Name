@@ -58,14 +58,14 @@ public class Game implements Globals {
         for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
             enemy = enemyIt.next();
             Random random = new Random();
-            int rand = random.nextInt(10);
-            if (rand == 3) {
-                float x = enemy.xPos();
-                float y = enemy.yPos();
-                rand = random.nextInt(2);
-                room.getPickups().add(new Pickup(player, x, y, rand));
-            }
+            int rand = random.nextInt(4);
             if (enemy.health <= 0) { 
+                if (rand == 3) {
+                    float x = enemy.xPos();
+                    float y = enemy.yPos();
+                    rand = random.nextInt(2);
+                    room.getPickups().add(new Pickup(player, x, y, rand));
+                }
                 room.EnemyDead(enemy);
                 enemyIt.remove(); 
                 break;
