@@ -1,5 +1,7 @@
 package cemeteryfuntimes.Code;
-import cemeteryfuntimes.Code.Shared.*;
+import cemeteryfuntimes.Code.Shared.*;;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import org.w3c.dom.NamedNodeMap;
 /**
@@ -27,6 +29,12 @@ public final class NormalRoom extends Room implements Globals {
     public int getNumSpawns() {
         return numSpawns;
     }
+    //Static variables
+    private final int doorHeight=100;
+    private final int doorWidth=50;
+    private BufferedImage doorClosed;
+    private BufferedImage doorOpen;
+    private BufferedImage spawnImage;
     /**
     * NormalRoom class constructor initializes variables related to normal rooms.
     * 
@@ -40,6 +48,7 @@ public final class NormalRoom extends Room implements Globals {
         pickups = new ArrayList();
         spawns = new ArrayList();
         loadRoom(roomKey);
+        setupImages();
     }
     /**
     * Updates the room.
@@ -48,6 +57,35 @@ public final class NormalRoom extends Room implements Globals {
     public void update() {
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
+        }
+    }
+    /**
+    * Renders the doors in the room.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
+    */
+    @Override
+    public void draw(Graphics2D g) {
+        for (int i=0; i<spawns.size(); i++) {
+            spawns.get(i).draw(g);
+        }
+        BufferedImage sourceDoor = RoomClear() ? doorOpen : doorClosed;
+        BufferedImage door;
+        if (GetNeighbor(LEFT) != null) {
+            door = sourceDoor;
+            g.drawImage(door, GAMEBORDER - door.getWidth()/2, GAMEHEIGHT/2 - door.getHeight()/2 , null);
+        }
+        if (GetNeighbor(RIGHT) != null) {
+            door = Utilities.rotateImage(sourceDoor, ROTATION[RIGHT]);
+            g.drawImage(door, SCREENWIDTH - GAMEBORDER - door.getWidth()/2, GAMEHEIGHT/2 - door.getHeight()/2 , null);
+        }
+        if (GetNeighbor(UP) != null) {
+            door = Utilities.rotateImage(sourceDoor, ROTATION[UP]);
+            g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, - door.getHeight()/2 , null);
+        }
+        if (GetNeighbor(DOWN) != null) {
+            door = Utilities.rotateImage(sourceDoor, ROTATION[DOWN]);
+            g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, GAMEHEIGHT - door.getHeight()/2 , null);
         }
     }
     /**
@@ -128,5 +166,15 @@ public final class NormalRoom extends Room implements Globals {
             enemyIntArray = getSpawnEnemies(enemyString);
             spawns.add(new Spawn(this.player, this, spawnx, spawny, delay, maxDifficulty, enemyIntArray));
         }
+    }
+    /**
+    * Initializes BufferedImage objects, which are used to render images.
+    */
+    private void setupImages() {
+       //Initialize always relevent images images
+       doorClosed = Utilities.getScaledInstance(IMAGEPATH+"General/doorClosed.png",doorHeight,doorWidth);
+       doorOpen = Utilities.getScaledInstance(IMAGEPATH+"General/doorOpen.png",doorHeight,doorWidth);
+       spawnImage = Utilities.getScaledInstance(IMAGEPATH+"General/cave.png",doorHeight,doorWidth);
+       //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
 }

@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 /**
 * Game class contains variables and methods related to game state.
 * @author David Kozloff & Tyler Law
@@ -57,7 +58,18 @@ public class Game implements Globals {
             Enemy enemy;
             for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
                 enemy = enemyIt.next();
-                if (enemy.health <= 0) { enemyIt.remove(); break;}
+                if (enemy.health <= 0) {
+                    Random random = new Random();
+                    int rand = random.nextInt(10);
+                    if (rand == 3) {
+                        float x = enemy.xPos();
+                        float y = enemy.yPos();
+                        rand = random.nextInt(2);
+                        room.getPickups().add(new Pickup(player, x, y, rand));
+                    }
+                    enemyIt.remove();
+                    break;
+                }
                 enemy.update();
             }
         }
@@ -76,19 +88,16 @@ public class Game implements Globals {
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
-        drawHUD(g);
-        if (!room.RoomClear()) {
-            for (int i=0; i < enemies.size(); i++) {
-                enemies.get(i).draw(g);
-            }
-        }
-        pickups.stream().forEach((pickup) -> {
-            pickup.draw(g);
-        });
-        player.draw(g);
         room.draw(g);
+        for (int i=0; i < pickups.size(); i++) {
+            pickups.get(i).draw(g);
+        }
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
+        }
+        player.draw(g);
+        drawHUD(g);
         level.draw(g);
-        //testOne.draw(g2d);
     }
     /**
     * Renders the player's heads up display.
@@ -147,10 +156,11 @@ public class Game implements Globals {
     */
     private void setupImages() {
        //Initialize always relevent images images
-       cemeteryfuntimes.Code.Shared.ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
-       cemeteryfuntimes.Code.Shared.ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
-       this.heartContainer = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/heart.png",0);
-       this.coin = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/coin.png",0);
+       ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
+       ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
+       this.heartContainer = ImageLoader.getImage("General/heart.png",0);
+       this.coin = ImageLoader.getImage("General/coin.png",0);
+       ImageLoader.loadImage("General/cave.png", 100, 150);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
 }

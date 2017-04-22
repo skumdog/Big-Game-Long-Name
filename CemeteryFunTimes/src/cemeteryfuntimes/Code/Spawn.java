@@ -1,11 +1,13 @@
 package cemeteryfuntimes.Code;
+import cemeteryfuntimes.Code.Shared.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 /**
 * Spawn class contains variables and methods related to enemy spawns.
 * @author David Kozloff & Tyler Law
 */
-public class Spawn {
+public final class Spawn implements Globals {
     private final int xPos;
     private final int yPos;
     private final int delay;
@@ -21,7 +23,6 @@ public class Spawn {
     private long lastUpdate;
     private final Player player;
     private final NormalRoom room;
-    private BufferedImage spawnImage;
     /**
     * Spawn class constructor initializes variables related to spawns.
     * 
@@ -65,5 +66,14 @@ public class Spawn {
             this.room.getEnemies().add(newEnemy);
             this.currentDifficulty += newEnemy.Difficulty();
         }
+    }
+    /**
+    * Renders the enemy.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
+    */
+    public void draw(Graphics2D g) {
+        BufferedImage spawnImage = ImageLoader.getImage("General/cave.png", 0);
+        g.drawImage(spawnImage, this.xPos+150, this.yPos-80, null);
     }
 }

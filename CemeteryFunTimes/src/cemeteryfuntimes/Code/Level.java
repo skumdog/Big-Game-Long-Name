@@ -10,9 +10,7 @@ import java.util.Random;
 * Levels are represented as two-dimensional arrays of rooms.
 * @author David Kozloff & Tyler Law
 */
-
 public final class Level implements Globals {
-    
     private final Player player;
     private NormalRoom currentRoom;
     public NormalRoom getCurrentRoom() {
@@ -31,6 +29,7 @@ public final class Level implements Globals {
     public int yCord() {
         return yCord;
     }
+    private Random random;
     
     //Level creation constants
     private static final int totalRooms=15;
@@ -59,7 +58,9 @@ public final class Level implements Globals {
     * Initializes the level map.
     */
     private void createMap() {
-        currentRoom = new NormalRoom(player, 2); 
+        this.random = new Random();
+        int rand = random.nextInt(2) + 1;
+        currentRoom = new NormalRoom(player, rand); 
         currentRoom.visited=true;
         map = new Object[5][5];
         intMap = new int[5][5];
@@ -80,28 +81,28 @@ public final class Level implements Globals {
         map[x][y] = room;
         intMap[x][y] = 1;
         if (numberOfRooms >= totalRooms) {return;}
-        Random random = new Random();
+        int rand = this.random.nextInt(2) + 1;
         NormalRoom neighbor;
         if (x > 0 && intMap[x-1][y] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new NormalRoom(player, 1);
+            neighbor = new NormalRoom(player, rand);
             neighbor.SetNeighbor(room,RIGHT);
             room.SetNeighbor(neighbor, LEFT);
             createRooms(neighbor,x-1,y);
         }
         if (x < length && intMap[x+1][y] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new NormalRoom(player, 1);
+            neighbor = new NormalRoom(player, rand);
             neighbor.SetNeighbor(room,LEFT);
             room.SetNeighbor(neighbor, RIGHT);
             createRooms(neighbor,x+1,y);
         }
         if (y > 0 && intMap[x][y-1] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new NormalRoom(player, 1);
+            neighbor = new NormalRoom(player, rand);
             neighbor.SetNeighbor(room,DOWN);
             room.SetNeighbor(neighbor, UP);
             createRooms(neighbor,x,y-1);
         }
         if (y < length && intMap[x][y+1] != 1 && random.nextFloat() <= roomCreationProb ) {
-            neighbor = new NormalRoom(player, 1);
+            neighbor = new NormalRoom(player, rand);
             neighbor.SetNeighbor(room,UP);
             room.SetNeighbor(neighbor, DOWN);
             createRooms(neighbor,x,y+1);
