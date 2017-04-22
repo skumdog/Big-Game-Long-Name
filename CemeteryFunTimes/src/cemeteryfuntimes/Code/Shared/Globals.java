@@ -35,8 +35,8 @@ public interface Globals {
     public final static double[] ROTATION = {
         0,Math.PI,Math.PI/2,3*Math.PI/2
     };  
-    public final static int NEXTWEAPON=-1;
-    public final static int PREVIOUSWEAPON=-3;
+    public final static int NEXTWEAPON=0;
+    public final static int PREVIOUSWEAPON=1;
     
     //Other
     public final static int TIMERDELAY=10;
@@ -62,12 +62,18 @@ public interface Globals {
     public final static int SINGLEBULLET=2; //Firearms that only have one projectile: flamethrower, single solid laser
     public final static int AOEBALLISTIC=3; //Radiating projectiles
     
+    //Room Types
+    public final static int NORMALROOM=0;
+    public final static int BOSSROOM=1;
+    public final static int STOREROOM=2;
+    
     //Action Types
     //These represent the various actions that a user can do in the game
     public final static int MOVEMENT=0;
     public final static int SHOOT=1;
     public final static int CHANGEWEAPON=2;
-    public final static int GAME=3; //Place holder, things like pausing? 
+    public final static int CHANGESPECIFICWEAPON=3;
+    public final static int GAME=4; //Place holder, things like pausing? 
     
     //Enemy Globals:
     //Enemy Types

@@ -3,26 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Game.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/Collision.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Enemy.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Templates/Rooms.xml</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Templates/Enemies.xml</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Screen.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Player.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Pickup.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/Globals.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/ImageLoader.java</file>
-            <file>file:/C:/Users/Master%20Shake/Desktop/Game%20V7/Big-Game-Long-Name-master/CemeteryFunTimes/src/cemeteryfuntimes/Code/Room.java</file>
-=======
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Weapons/StandardProjectile.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Weapons/SingleProjectile.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Player.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Screen.java</file>
-            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Weapons/Projectile.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/PosVel.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Level.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/Collision.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Resources/Templates/Rooms.xml</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Enemy.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Shared/Globals.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Room.java</file>
+            <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Game.java</file>
             <file>file:/Users/dkozloff11/Documents/Big-Game-Long-Name/CemeteryFunTimes/src/cemeteryfuntimes/Code/Weapons/Weapon.java</file>
->>>>>>> parent of 3b4e279... ladies
         </group>
     </open-files>
 </project-private>

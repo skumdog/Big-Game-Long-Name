@@ -1,8 +1,10 @@
 package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Shared.*;
+import cemeteryfuntimes.Code.Weapons.Projectile;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.w3c.dom.NamedNodeMap;
 import java.util.Random;
 /**
@@ -34,6 +36,10 @@ public final class Room implements Globals {
     public final int Key() {
         return key;
     }
+    private final int type;
+    public final int Type() {
+        return type;
+    }
     private long lastUpdate;
     private final Player player;
     private final ArrayList<Enemy> enemies;
@@ -44,14 +50,13 @@ public final class Room implements Globals {
     public ArrayList<Pickup> getPickups() {
         return pickups;
     }
+    private final ArrayList<Projectile> deadEnemyProjectiles;
+    public ArrayList<Projectile> deadEnemyProjectiles() {
+        return deadEnemyProjectiles;
+    }
+    
     private final Object[] neighbors;
     public boolean visited;
-    
-    //Static variables
-    private BufferedImage doorClosed;
-    private BufferedImage doorOpen;
-    private final int doorHeight=100;
-    private final int doorWidth=50;
     
     //Constants
     private final static int HEARTSIZE=40;
@@ -67,13 +72,11 @@ public final class Room implements Globals {
         key = roomKey;
         enemies = new ArrayList();
         pickups = new ArrayList();
+        deadEnemyProjectiles = new ArrayList();
         neighbors = new Object[4];
         currentDifficulty = 0;
         loadRoom(roomKey);
-        setupImages();
-        
-        // Test objects in the room.
-                
+        type = NORMALROOM;
         // TODO: Logic for retrieving specific room data from parser.
     }
     /**
@@ -93,13 +96,25 @@ public final class Room implements Globals {
         });
     }
     /**
-    * Renders the doors in the room.
+    * Renders everything contained in the room
     * 
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
+        //Draw pickups and enemies
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
+        }
+        for (int i=0; i < pickups.size(); i++) {
+            pickups.get(i).draw(g);
+        }
+        for (int i=0; i < deadEnemyProjectiles.size(); i++) {
+            deadEnemyProjectiles.get(i).draw(g);
+        }
+        //Draw the doors of the room
         boolean doorsOpen = RoomClear();
-        BufferedImage sourceDoor = RoomClear() ? doorOpen : doorClosed;
+        
+        BufferedImage sourceDoor = RoomClear() ? ImageLoader.getImage("General/doorOpen.png",0) : ImageLoader.getImage("General/doorClosed.png",0);
         BufferedImage door;
         if (GetNeighbor(LEFT) != null) {
             door = sourceDoor;
@@ -122,6 +137,13 @@ public final class Room implements Globals {
     * Updates the room, spawning new enemies if necessary.
     */
     public void update() {
+        // Update dead enemy projectiles
+        Projectile projectile;
+        for (Iterator<Projectile> projectileIt = deadEnemyProjectiles.iterator(); projectileIt.hasNext();) {
+            projectile = projectileIt.next();
+            if (projectile.collide) { projectileIt.remove(); break; }
+            projectile.update();
+        }
         // Check to see if more enemies should be spawned.
         if (currentDifficulty < maxDifficulty) {
             // Make sure enough time has passed to spawn a new enemy.
@@ -140,6 +162,11 @@ public final class Room implements Globals {
         }
     }
     
+    public void EnemyDead(Enemy enemy) {
+        if (enemy.getWeapon() == null) { return; }
+        deadEnemyProjectiles.addAll(enemy.getWeapon().Projectiles());
+    }
+    
     public boolean RoomClear() {
         return (enemies.isEmpty() && (currentDifficulty >= maxDifficulty));
     }
@@ -150,15 +177,6 @@ public final class Room implements Globals {
     
     public void SetNeighbor(Room neighbor, int side) {
         neighbors[side] = neighbor;
-    }
-    /**
-    * Initializes BufferedImage objects, which are used to render images.
-    */
-    private void setupImages() {
-       //Initialize always relevent images images
-       doorClosed = Utilities.getScaledInstance(IMAGEPATH+"General/doorClosed.png",doorHeight,doorWidth);
-       doorOpen = Utilities.getScaledInstance(IMAGEPATH+"General/doorOpen.png",doorHeight,doorWidth);
-       //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
     /**
     * Loads the room data for a specified room variant from an xml file.
