@@ -43,6 +43,7 @@ public class Enemy extends PosVel {
     public int MovementType() {
         return movementType;
     }
+    private long invincTimer;
     private int movementDelay;
     private long lastMovement;
     private String name;
@@ -60,14 +61,14 @@ public class Enemy extends PosVel {
     * @param key    The key corresponding to a specific enemy type.
     */
     public Enemy(Player player, int xPos, int yPos, int key) {
-        this.xPos = xPos;
-        this.yPos = yPos;
+        super (xPos,yPos);
         this.player = player;
         loadEnemy(key);
         xRad = rad; yRad = rad;
         xSide = GAMEBORDER;
         ySide = 0;
         if (weaponKey != 0) { weapon = new Weapon(this,weaponKey); }
+        invincTimer = System.currentTimeMillis();
     }
     /**
     * Updates the enemy.
@@ -76,6 +77,7 @@ public class Enemy extends PosVel {
         xPos += xVel;
         yPos += yVel;
         if (weapon != null) { weapon.update(); }
+        if (invincTimer != 0 && System.currentTimeMillis() - invincTimer > INVINCFRAMES) {invincTimer = 0;}
     }
     /**
     * Calculates the direction the enemy should be moving in.
@@ -183,7 +185,9 @@ public class Enemy extends PosVel {
      */
     @Override
     public void damaged(float damage) {
-        health -= damage;
+        if (invincTimer == 0) {
+            health -= damage;
+        }
     }
     /**
     * Renders the enemy.

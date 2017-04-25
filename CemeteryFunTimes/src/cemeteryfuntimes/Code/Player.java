@@ -43,24 +43,23 @@ public class Player extends PosVel {
     * 
     * @param xPos      The x-coordinate of the player.
     * @param yPos      The y-coordinate of the player.
-    * @param weaponKey The player's currently equipped weapon.
     */
-    public Player(int xPos, int yPos, int weaponKey) {
+    public Player(int xPos, int yPos) {
+        super (xPos,yPos);
         moveKeysPressed = new boolean [4];
         health = 6;
         coins = 3;
-        this.xPos = xPos;
-        this.yPos = yPos;
         rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
-        this.weaponKeys = new ArrayList();
-        this.weapon = new Weapon(this, weaponKey);
-        this.currentWeaponKey = weaponKey;
-        this.weaponKeys.add(weaponKey);
-        this.weaponKeys.add(MACHINEGUN);
-        this.weaponKeys.add(FLAMETHROWER);
+        weaponKeys = new ArrayList();
+        weapon = new Weapon(this, PISTOL);
+        currentWeaponKey = PISTOL;
+        weaponKeys.add(PISTOL);
         changePlayerImage();
+        //TODO dynamically add weapon keys with a method
+        weaponKeys.add(MACHINEGUN);
+        weaponKeys.add(FLAMETHROWER);
     }
     /**
      * Updates player position on room change.
@@ -184,7 +183,7 @@ public class Player extends PosVel {
         xPos += xVel;
         yPos += yVel;
         //Stop invincibility frames after a certain amount of time
-        if (System.currentTimeMillis() - invincTimer > INVINCFRAMES) {invincTimer = 0;}
+        if (invincTimer != 0 && System.currentTimeMillis() - invincTimer > INVINCFRAMES) {invincTimer = 0;}
     }
     /**
     * Calculates the player's acceleration.
@@ -222,8 +221,7 @@ public class Player extends PosVel {
     */
     public void enemyCollide(Enemy enemy, int[] horVert) {
         if (invincTimer == 0) {
-            invincTimer = System.currentTimeMillis();
-            health -= enemy.ContactDamage();
+            damaged(enemy.ContactDamage());
             xVel = - PLAYERCOLLISIONVEL * horVert[HORIZONTAL];
             yVel = - PLAYERCOLLISIONVEL * horVert[VERTICAL];
             //Maybe add in some sort of knockback on collision?
@@ -236,9 +234,9 @@ public class Player extends PosVel {
     */
     @Override
     public void damaged (float damage) {
-        health -= damage;
-        if (health < 0) {
-            health = 0;
+        if (invincTimer == 0) {
+            invincTimer = System.currentTimeMillis();
+            health -= damage;
         }
     }
     /** Updates player's health upon receiving a health pickup.

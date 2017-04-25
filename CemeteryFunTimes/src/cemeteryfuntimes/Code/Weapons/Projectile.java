@@ -24,6 +24,7 @@ public abstract class Projectile extends PosVel {
      * @param weapon The weapon firing the projectile
      */
     public Projectile(Weapon weapon) {
+        super(0,0);
         type = weapon.Type();
         xSide = GAMEBORDER;
         ySide = 0;

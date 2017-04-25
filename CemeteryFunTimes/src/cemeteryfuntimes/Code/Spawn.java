@@ -1,4 +1,5 @@
 package cemeteryfuntimes.Code;
+import cemeteryfuntimes.Code.Rooms.NormalRoom;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

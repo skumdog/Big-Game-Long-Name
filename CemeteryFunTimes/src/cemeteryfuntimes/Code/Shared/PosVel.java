@@ -45,7 +45,16 @@ public abstract class PosVel implements Globals {
     public double rotation() {
         return rotation;
     }
-    
+    /**
+    * Constructor for PosVel, initiates position
+    * 
+    * @param xPos x Position
+    * @param yPos y Position
+    */
+    public PosVel(float xPos, float yPos) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+    }
     /**
     * Returns true if this PosVel is overlapping with another PosVel.
     * 

@@ -40,7 +40,7 @@ public interface Globals {
     
     //Other
     public final static int TIMERDELAY=10;
-    public final static long INVINCFRAMES=1000;
+    public final static long INVINCFRAMES=500;
     public final static int LEFTWALL=0;
     public final static int RIGHTWALL=1;
     public final static int TOPWALL=2;
@@ -66,6 +66,10 @@ public interface Globals {
     public final static int NORMALROOM=0;
     public final static int BOSSROOM=1;
     public final static int STOREROOM=2;
+    
+    //Number of keys
+    public final static int ROOMKEYS=2; //Number of entries in Rooms.xml
+    public final static int PICKUPTYPES=2; //Number of types of pickups
     
     //Action Types
     //These represent the various actions that a user can do in the game

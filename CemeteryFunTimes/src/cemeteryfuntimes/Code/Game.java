@@ -1,10 +1,8 @@
 package cemeteryfuntimes.Code;
+import cemeteryfuntimes.Code.Rooms.Room;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
 /**
 * Game class contains variables and methods related to game state.
 * @author David Kozloff & Tyler Law
@@ -12,10 +10,8 @@ import java.util.Random;
 public class Game implements Globals {
     
     private final Player player;
-    private ArrayList<Enemy> enemies;
-    private ArrayList<Pickup> pickups;
     private final Level level;
-    private NormalRoom room;
+    private Room room;
     private BufferedImage heartContainer;
     private BufferedImage coin;
     //private BufferedImage halfHeartContainer=null;
@@ -27,56 +23,23 @@ public class Game implements Globals {
     * Game class constructor initializes variables related to game state.
     */
     public Game() {
-        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2,PISTOL);
+        player = new Player(PLAYERSIZE/2,PLAYERSIZE/2);
         level = new Level(player);
-        room = (NormalRoom) level.getCurrentRoom();
-        
-        // Enemies and pickups in the current room (Remove final keyword later).
-        
-        enemies = room.getEnemies();
-        pickups = room.getPickups();
-                        
+        room = level.getCurrentRoom();
         // Image setup.
-
         setupImages();
-        
         // TODO: Logic for loading new room/level as the player progresses.
     }
     /**
     * Updates the game.
     */    
     public void update() {
+        if (level.changeRoom(Collision.checkCollisions(player,room))) {
+            room = level.getCurrentRoom();
+        }
         player.update();
         room.update();
-        //Calculate new velocities for all enemies
-        for (int i=0; i < enemies.size(); i++) {
-            enemies.get(i).calcVels();
-        }
         //Check for all collisions
-        int door = Collision.checkCollisions(player,room);
-        Enemy enemy;
-        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-            enemy = enemyIt.next();
-            Random random = new Random();
-            int rand = random.nextInt(4);
-            if (enemy.health <= 0) { 
-                if (rand == 3) {
-                    float x = enemy.xPos();
-                    float y = enemy.yPos();
-                    rand = random.nextInt(2);
-                    room.getPickups().add(new Pickup(player, x, y, rand));
-                }
-                room.EnemyDead(enemy);
-                enemyIt.remove(); 
-                break;
-            }
-            enemy.update();
-        }
-        if (door >= 0 && level.changeRoom(door)) {
-            room = (NormalRoom) level.getCurrentRoom();
-            enemies = room.getEnemies();
-            pickups = room.getPickups();
-        }
     }
     /**
     * Renders the game.

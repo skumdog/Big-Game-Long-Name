@@ -4,6 +4,7 @@ package cemeteryfuntimes.Code.Shared;
 * @author David Kozloff & Tyler Law
 */
 
+import cemeteryfuntimes.Code.Rooms.Room;
 import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Weapons.Projectile;
 import cemeteryfuntimes.Code.Weapons.Weapon;
@@ -20,13 +21,16 @@ public class Collision implements Globals {
     * @param room    The current room
     * @return        -1 if room is not clear or no door collided, else side of door collision
     */
-    public static int checkCollisions(Player player, NormalRoom room) {
+    public static int checkCollisions(Player player, Room room) {
        //Check for collisions between Player and player projectiles with enemies
         //As well as enemy and enemy projectile collision with player
         //Also collisions with pickups / interactables and walls
         //Update accordingly
         boolean roomClear = room.RoomClear();
         ArrayList<Enemy> enemies = room.getEnemies();
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).calcVels();
+        }
         ArrayList<Pickup> pickups = room.getPickups();
         ArrayList<Projectile> deadEnemyProjectiles = room.deadEnemyProjectiles();
         checkBallisticCollisions(player,enemies,deadEnemyProjectiles);

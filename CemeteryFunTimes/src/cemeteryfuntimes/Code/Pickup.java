@@ -1,5 +1,5 @@
 package cemeteryfuntimes.Code;
-import cemeteryfuntimes.Code.Shared.PosVel;
+import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 /**
@@ -7,26 +7,25 @@ import java.awt.image.BufferedImage;
 * @author David Kozloff & Tyler Law
 */
 public class Pickup extends PosVel {
-    private final Player player;
     // Make this global?
     private final static int HEARTSIZE = 40;
     private final int type;
     public int getType() {
         return type;
     }
+    private final static String[] imagePaths = {
+        "General/heart.png","General/coin.png"
+    };
     /**
     * Pickup class constructor initializes variables related to pickups.
     * 
-    * @param player The player.
     * @param x      The x-coordinate of the pickup.
     * @param y      The y-coordinate of the pickup.
     * @param type   The type of the pickup object, i.e. health, ammo, etc.
     */
-    public Pickup (Player player, float x, float y, int type) {
-        this.player = player;
+    public Pickup (float x, float y, int type) {
+        super(x,y);
         this.type = type;
-        xPos = x;
-        yPos = y;
         rad = HEARTSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER - rad;
         ySide = - rad;
@@ -38,13 +37,7 @@ public class Pickup extends PosVel {
     */
     public void draw (Graphics g) {
         // Draw a heart.
-        if (this.type == 0) {
-            BufferedImage heart = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/heart.png",0);
-            g.drawImage(heart,(int)(xSide + xPos),(int)(ySide + yPos),null);
-        // Draw a coin.
-        } else if (this.type == 1) {
-            BufferedImage coin = cemeteryfuntimes.Code.Shared.ImageLoader.getImage("General/coin.png",0);
-            g.drawImage(coin,(int)(xSide + xPos),(int)(ySide + yPos),null);
-        }
+        BufferedImage image = ImageLoader.getImage(imagePaths[type],0);
+        g.drawImage(image,(int)(xSide + xPos),(int)(ySide + yPos),null);
     }
 }

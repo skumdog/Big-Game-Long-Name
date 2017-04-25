@@ -1,4 +1,5 @@
 package cemeteryfuntimes.Code;
+import cemeteryfuntimes.Code.Rooms.*;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -34,25 +35,22 @@ public final class Level implements Globals {
     //Level creation constants
     private static final int totalRooms=15;
     private int numberOfRooms;
-    private static final double roomCreationProb=1d/3d;
-    private static final double noRoomProb=1d/3d;
+    private static final double roomCreationProb=1d/8d;
+    private static final double noRoomProb=1d/4d;
     private static final int mapSize = 11;
     
     //Map drawing constants
     private final static int MAPPADDING=7;
     private final static int MAPBORDER=GAMEBORDER+GAMEWIDTH+MAPPADDING;
     private final static float MAPLENGTH=SCREENWIDTH-MAPBORDER-2*MAPPADDING;
-    private final static int MAPELEMENTS=5;
+    private final static int MAPELEMENTS=11;
     private final static int MAPELEMENT=(int)((MAPLENGTH-(MAPELEMENTS+1)*MAPPADDING)/MAPELEMENTS);
     private final static int MAPDOORWIDTH=5;
     private final static int MAPDOORPADDING=(int)(MAPELEMENT/2d-MAPDOORWIDTH/2d);
     private final static int doorHeight=100;
     private final static int doorWidth=50;
-    private final static int[][] doorPadding={
-        {-MAPPADDING,MAPDOORPADDING},
-        {MAPELEMENT,MAPDOORPADDING},
-        {MAPDOORPADDING,-MAPPADDING},
-        {MAPDOORPADDING,-MAPPADDING}
+    private final static Color[] roomColors = {
+        Color.BLACK,Color.RED,Color.BLUE
     };
     /**
     * Level constructor initializes variables related to levels.
@@ -72,9 +70,7 @@ public final class Level implements Globals {
     * Initializes the level map.
     */
     private void createMap() {
-        this.random = new Random();
-        int rand = random.nextInt(2) + 1;
-        currentRoom = new NormalRoom(player, rand); 
+        currentRoom = new NormalRoom(player); 
         currentRoom.visited=true;
         map = new Object[mapSize][mapSize];
         intMap = new int[mapSize][mapSize];
@@ -101,7 +97,7 @@ public final class Level implements Globals {
         }
         while (numberOfRooms < totalRooms);
         createSpecialRoom(BOSSROOM);
-        createSpecialRoom(STOREROOM);
+        //createSpecialRoom(STOREROOM);
     }
     /**
     * Create a room and assign it to a coordinate on the level map.
@@ -112,10 +108,10 @@ public final class Level implements Globals {
     */
     private void createRooms(Room room, int x, int y) {
         int length = map.length-1;
-        if (x > 0 ) { checkAndCreateRoom(room,x,y,LEFT); }
-        if (x < length ) { checkAndCreateRoom(room,x,y,RIGHT); }
-        if (y > 0 ) { checkAndCreateRoom(room,x,y,UP); }
-        if (y < length ) { checkAndCreateRoom(room,x,y,DOWN); }
+        if (x > 0 ) { checkAndCreateRoom(room,x,y,LEFT,NORMALROOM); }
+        if (x < length ) { checkAndCreateRoom(room,x,y,RIGHT,NORMALROOM); }
+        if (y > 0 ) { checkAndCreateRoom(room,x,y,UP,NORMALROOM); }
+        if (y < length ) { checkAndCreateRoom(room,x,y,DOWN,NORMALROOM); }
     }
     /**
      * Helper routine for create room
@@ -124,17 +120,19 @@ public final class Level implements Globals {
      * @param y
      * @param side 
      */
-    private void checkAndCreateRoom(Room room,int x, int y, int side) {
+    private boolean checkAndCreateRoom(Room room,int x, int y, int side, int type) {
         Random random = new Random();
         int[] horVert = Utilities.getHorizontalVertical(side);
         if (intMap[x+horVert[HORIZONTAL]][y+horVert[VERTICAL]] == 0) {
             if (random.nextFloat() <= roomCreationProb) {
-                createRoom(room,x+horVert[HORIZONTAL],y+horVert[VERTICAL],side);
+                createRoom(room,x+horVert[HORIZONTAL],y+horVert[VERTICAL],side,type);
+                return true;
             }
             else if (random.nextFloat() <= noRoomProb) {
                 intMap[x+horVert[HORIZONTAL]][y+horVert[VERTICAL]] = -1;
             }
         }
+        return false;
     }
     /**
      * Helping routine for Create Rooms, which generates the new room
@@ -143,18 +141,65 @@ public final class Level implements Globals {
      * @param y
      * @param side 
      */
-    private void createRoom(Room neighbor, int x, int y, int side) {
-        Random random = new Random();
-        int rand = this.random.nextInt(2) + 1;
-        Room newRoom = new NormalRoom(player, rand);
+    private void createRoom(Room neighbor, int x, int y, int side, int type) {
+        Room newRoom;
+        switch(type) {
+            case BOSSROOM:
+                newRoom = new BossRoom(player,0);
+                break;
+            default:
+                newRoom = new NormalRoom(player);
+        }
         neighbor.SetNeighbor(newRoom,side);
         newRoom.SetNeighbor(neighbor,Utilities.otherSide(side));
         numberOfRooms++;
         intMap[x][y]=1;
         map[x][y]=newRoom;
     }
+    /**
+     * Attempt to create a special room
+     * 
+     * @param room Room to check neighboring spots on
+     * @param x    xCord of the room
+     * @param y    yCord of the room
+     * @return     True if room was created else false
+     */
+    private boolean createSpecialRoom(Room room, int x, int y, int type) {
+        int length = map.length-1;
+        if (x > 0 ) { if (checkAndCreateRoom(room,x,y,LEFT,type)) { return true; } }
+        if (x < length ) { if (checkAndCreateRoom(room,x,y,RIGHT,type)) { return true; } }
+        if (y > 0 ) { if (checkAndCreateRoom(room,x,y,UP,type)) { return true; } }
+        if (y < length ) { if (checkAndCreateRoom(room,x,y,DOWN,type)) { return true; } }
+        return false;
+    }
+    /**
+     * Create a single room of a special type
+     * 
+     * @param type Type of room to create
+     */
     private void createSpecialRoom(int type) {
-        
+        boolean created = false;
+        int attempts = 0;
+        do {
+            for (int x=0; x<intMap.length; x++) {
+               if (created) { break; }
+                for (int y=0; y<intMap[0].length; y++)  {
+                    if (created) { break; }
+                    if (intMap[x][y] == 1) {
+                        created = createSpecialRoom((Room)map[x][y],x,y,type);
+                    }
+                }
+            }
+            attempts++;
+            if (attempts >= 20) {
+                int q=6;
+                for (int x=0; x<intMap.length; x++) 
+                    for (int y=0; y<intMap[0].length; y++)
+                            if (intMap[x][y] == -1) { intMap[x][y] = 0; }
+                attempts=0;
+            }
+        }
+        while (!created);
     }
     /**
      * Changes the current room and updates the new room to be visited.
@@ -191,18 +236,20 @@ public final class Level implements Globals {
         Color currentRoomBackground = new Color(255,255,0,127); //50% transparent yellow
         g.setColor(mapBackground);
         g.fillRect(MAPBORDER, MAPPADDING, (int) MAPLENGTH , (int) MAPLENGTH); 
-        g.setColor(Color.BLACK);
         for (int x=-mapAdjust;x<=mapAdjust;x++) {
             //Loop through all rooms centered around current room
             if (xCord + x >= 0 && xCord + x < map.length) {
                 for (int y=-mapAdjust;y<=mapAdjust;y++) {
                     if (yCord + y >= 0 && yCord + y < map.length) {
                         mapRoom = (Room) map[xCord+x][yCord+y];
-                        if (mapRoom != null && mapRoom.visited) {
+                        if (mapRoom != null) {
+                            if (mapRoom == currentRoom) { g.setColor(currentRoomBackground); }
+                            else { g.setColor(roomColors[mapRoom.type]);  }
                             //Draw room
                             roomX = MAPBORDER+(int)((x+mapAdjust)*(MAPELEMENT+MAPPADDING))+MAPPADDING;
                             roomY = (int)((y+mapAdjust)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING);
                             g.drawRect(roomX,roomY,MAPELEMENT,MAPELEMENT);
+                            g.setColor(Color.BLACK);
                             //Draw doors of the current room
                             if (mapRoom.GetNeighbor(LEFT) != null) {
                                 doorX = roomX - MAPPADDING;
@@ -229,11 +276,6 @@ public final class Level implements Globals {
                 }
             }
         }
-        g.setColor(currentRoomBackground);
-        roomX = MAPBORDER+(int)((mapAdjust)*(MAPELEMENT+MAPPADDING))+MAPPADDING;
-        roomY = (int)((mapAdjust)*(MAPPADDING+MAPELEMENT)+2*MAPPADDING);
-        g.fillRect(roomX,roomY,MAPELEMENT,MAPELEMENT);
-        g.setStroke(oldStroke);
     }
     
 }
