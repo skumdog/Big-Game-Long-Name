@@ -46,8 +46,10 @@ public abstract class Boss extends PosVel implements Globals {
     * Updates the boss.  Overridden by a specific boss implementation.
     */
     public void update() {
-        for (int i=0; i<weapons.size(); i++) {
-            weapons.get(i).update();
+        if (!isDead()) {
+            for (int i=0; i<weapons.size(); i++) {
+                weapons.get(i).update();
+            }
         }
     }
     /**
