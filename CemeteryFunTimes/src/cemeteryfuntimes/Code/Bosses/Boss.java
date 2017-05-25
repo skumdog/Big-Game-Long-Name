@@ -2,7 +2,7 @@ package cemeteryfuntimes.Code.Bosses;
 import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.*;
 import cemeteryfuntimes.Code.Weapons.Weapon;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 /**
@@ -12,7 +12,14 @@ import java.util.ArrayList;
 public abstract class Boss extends PosVel implements Globals {
     protected float health;
     protected final Player player;
-    private final ArrayList<Weapon> weapons;
+    public Player Player() {
+        return player;
+    }
+    protected int contactDamage;
+    public int ContactDamage() {
+        return contactDamage;
+    }
+    protected final ArrayList<Weapon> weapons;
     public ArrayList<Weapon> weapons() {
         return weapons;
     }
@@ -24,11 +31,11 @@ public abstract class Boss extends PosVel implements Globals {
     * @param imagePath Image path for the boss.
     * @param height    Image height
     * @param width     Image width
-    * @param radius    Boss radius
     */
-    public Boss(Player player, String imagePath, int height, int width) {
-        super (100,100);
+    public Boss(Player player, String imagePath, int height, int width, int health, int contactDamage) {
+        super (GAMEWIDTH/2,GAMEHEIGHT/2);
         this.player = player;
+        this.health = health;
         weapons = new ArrayList();
         sourceBossImage = Utilities.getScaledInstance(IMAGEPATH+imagePath, width, height);
         xSide = GAMEBORDER;
@@ -38,13 +45,20 @@ public abstract class Boss extends PosVel implements Globals {
     /**
     * Updates the boss.  Overridden by a specific boss implementation.
     */
-    public abstract void update();
+    public void update() {
+        for (int i=0; i<weapons.size(); i++) {
+            weapons.get(i).update();
+        }
+    }
     /**
     * Renders the boss.
     * 
     * @param g The Graphics object used by Java to render everything in the game.
     */
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
+         for (int i=0; i<weapons.size(); i++) {
+            weapons.get(i).draw(g);
+        }
         BufferedImage bossImage = Utilities.rotateImage(sourceBossImage, rotation);
         float xImagePad = bossImage.getWidth()/2;
         float yImagePad = bossImage.getHeight()/2;
@@ -57,5 +71,15 @@ public abstract class Boss extends PosVel implements Globals {
     */
     public boolean isDead() {
         return this.health <= 0;
+    }
+     /**
+     * Updates the health of the enemy upon taking damage.
+     * TODO hurt animation/invincibility frames?
+     * 
+     * @param damage The damage being done to the enemy.
+     */
+    @Override
+    public void damaged(float damage) {
+       health -= damage;
     }
 }

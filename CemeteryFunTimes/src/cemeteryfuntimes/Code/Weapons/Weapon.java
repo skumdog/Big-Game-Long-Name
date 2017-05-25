@@ -67,6 +67,7 @@ public class Weapon implements Globals {
         return playerImagePath;
     }
     private SingleProjectile singleProjectile;
+    public boolean inactive=false;
     
     /**
     * Weapon class constructor initializes variables related to weapons.
@@ -129,6 +130,7 @@ public class Weapon implements Globals {
     * Spawns a new projectile.
     */
     public void createProjectile() {
+        if (inactive) { return; }
         //Check if enough time has passed for more projectiles to spawn
         long now = System.currentTimeMillis();
         if (now - lastUpdate < projectileDelay) {

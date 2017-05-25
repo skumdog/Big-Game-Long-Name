@@ -121,6 +121,50 @@ public abstract class PosVel implements Globals {
         }
         return false;
     }
+    /**
+    * Returns an array of booleans indicating whether or not this PosVel is colliding with a specific wall.
+    * 
+    * @return       An array of booleans indicating whether or not this PosVel is colliding with a specific wall.
+    */
+    public boolean[] checkWallCollision() {
+        //Returns an array of booleans indicating whether or not this object
+        //has collided with that wall
+        boolean[] wallsHit = new boolean[4];
+        if (xPos + xRad > GAMEWIDTH) {
+            wallsHit[RIGHTWALL]=true;
+        }
+        else if (xPos - xRad < 0) {
+            wallsHit[LEFTWALL]=true;
+        }
+        if (yPos + yRad > GAMEHEIGHT) {
+            wallsHit[BOTTOMWALL]=true;
+        }
+        else if (yPos - yRad < 0) {
+            wallsHit[TOPWALL]=true;
+        }
+        return wallsHit;
+    }
+    /**
+     * Used to find which wall an object has collided with
+     * 
+     * @return The wall collided with else 
+     */
+    public int hitSpecificWall() {
+        //Returns which wall the object hit
+        if (xPos + xRad > GAMEWIDTH) {
+            return RIGHT;
+        }
+        else if (xPos - xRad < 0) {
+            return LEFT;
+        }
+        if (yPos + yRad > GAMEHEIGHT) {
+            return DOWN;
+        }
+        else if (yPos - yRad < 0) {
+            return UP;
+        }
+        return -1;
+    }
     
     //public abstract void damaged(PosVel posVel, int type);
     

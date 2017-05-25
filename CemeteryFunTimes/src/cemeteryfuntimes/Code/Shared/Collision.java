@@ -9,6 +9,8 @@ import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Weapons.Projectile;
 import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.*;
+import cemeteryfuntimes.Code.Bosses.Boss;
+import cemeteryfuntimes.Code.Rooms.BossRoom;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -34,15 +36,40 @@ public class Collision implements Globals {
         ArrayList<Pickup> pickups = room.getPickups();
         ArrayList<Projectile> deadEnemyProjectiles = room.deadEnemyProjectiles();
         checkBallisticCollisions(player,enemies,deadEnemyProjectiles);
-        boolean[] wall = checkPlayerWallCollision(player);
         if (!roomClear) {
+            if (room.type == BOSSROOM) {
+                BossRoom bossRoom = (BossRoom) room;
+                handleBossCollisions(bossRoom.getBoss(),player);
+            }
             checkEnemyWallCollisions(enemies);
             checkEnemyEnemyCollision(enemies);
             checkEnemyPlayerCollision(player,enemies);
         }
         checkBallisticWallCollisions(player,enemies,deadEnemyProjectiles);
+        boolean[] wall = checkPlayerWallCollision(player);
         checkPickupCollision(player,pickups);
         return checkPlayerDoorCollision(player,wall,roomClear);
+    }
+    /**
+     * Handles all collisions for boss
+     * 
+     * @param boss   The boss of this level.
+     * @param player The player.
+     */
+    private static void handleBossCollisions(Boss boss, Player player) {
+        //Handle wall collisions
+        handleWallCollision(boss,boss.checkWallCollision()); 
+        //Handle ballistic collisions
+        handleBallisticCollisions(player.getWeapon().Projectiles(),boss); 
+        ArrayList<Weapon> weapons = boss.weapons();
+        for (int i=0; i <weapons.size(); i++) {
+            handleBallisticCollisions(weapons.get(i).Projectiles(),player);
+            ballisticWallCollisionLoop(weapons.get(i).Projectiles());
+        }
+        //Handle physical collisions
+        if (boss.collide(player)) {
+            handleBossPlayerCollision(player,boss);
+        }
     }
     /**
     * Checks for collisions between player projectiles and enemies.
@@ -105,7 +132,7 @@ public class Collision implements Globals {
     private static void handleEnemyPlayerCollision(Player player, Enemy enemy) {
         int side = player.sideCollided(enemy);
         // Positive is equal to 1 if player has the greater x or y coordinate on the side of the collision else -1
-        int[] horVert = cemeteryfuntimes.Code.Shared.Utilities.getHorizontalVertical(side);
+        int[] horVert = Utilities.getHorizontalVertical(side);
         
         player.enemyCollide(enemy, horVert);
         
@@ -120,6 +147,18 @@ public class Collision implements Globals {
         }
         enemy.xVel=0; 
         enemy.yVel=0; 
+    }
+    /**
+     * Handles collisions between the boss and player
+     * 
+     * @param player The player.
+     * @param boss   The boss.
+     */
+    private static void handleBossPlayerCollision(Player player, Boss boss) {
+        float xDist = boss.xPos - player.xPos;
+        float yDist = boss.yPos - player.yPos;
+        float totDist = (float) Math.sqrt(xDist*xDist + yDist*yDist);
+        player.bossCollide(boss,xDist/totDist,yDist/totDist);
     }
     /**
     * Checks for collisions between an enemy and other enemies.
@@ -246,7 +285,7 @@ public class Collision implements Globals {
     */
     private static void checkEnemyWallCollisions(ArrayList<Enemy> enemies) {
         for (Enemy enemy : enemies) {
-            handleWallCollision(enemy,checkWallCollision(enemy));
+            handleWallCollision(enemy,enemy.checkWallCollision());
         }
     }
     /**
@@ -256,7 +295,7 @@ public class Collision implements Globals {
     * @return        Boolean[] telling which walls were collided with.
     */
     private static boolean[] checkPlayerWallCollision(Player player) {
-        boolean[] wall=checkWallCollision(player);
+        boolean[] wall=player.checkWallCollision();
         return handleWallCollision(player,wall);
     }
     /**
@@ -285,29 +324,4 @@ public class Collision implements Globals {
         }
         return wall;
     }
-    /**
-    * Returns an array of booleans indicating whether or not this PosVel is colliding with a specific wall.
-    * 
-    * @param posVel The PosVel.
-    * @return       An array of booleans indicating whether or not this PosVel is colliding with a specific wall.
-    */
-    private static boolean[] checkWallCollision(PosVel posVel) {
-        //Returns an array of booleans indicating whether or not this object
-        //has collided with that wall
-        boolean[] wallsHit = new boolean[4];
-        if (posVel.xPos + posVel.xRad > GAMEWIDTH) {
-            wallsHit[RIGHTWALL]=true;
-        }
-        else if (posVel.xPos - posVel.xRad < 0) {
-            wallsHit[LEFTWALL]=true;
-        }
-        if (posVel.yPos + posVel.yRad > GAMEHEIGHT) {
-            wallsHit[BOTTOMWALL]=true;
-        }
-        else if (posVel.yPos - posVel.yRad < 0) {
-            wallsHit[TOPWALL]=true;
-        }
-        return wallsHit;
-    }
-    
 }

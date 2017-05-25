@@ -30,9 +30,6 @@ public final class NormalRoom extends Room implements Globals {
         return numSpawns;
     }
     
-    //Constants
-    private final static float pickupSpawnProb = 1/3;
-    
     /**
     * NormalRoom class constructor initializes variables related to normal rooms.
     * 
@@ -53,26 +50,7 @@ public final class NormalRoom extends Room implements Globals {
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
         }
-        Projectile projectile;
-        for (int i=0; i<deadEnemyProjectiles.size(); i++) {
-            projectile = deadEnemyProjectiles.get(i);
-            if (projectile.collide) { deadEnemyProjectiles.remove(i); }
-            else { projectile.update(); }
-        }
-        Enemy enemy;
-        Random random = new Random();
-        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-            enemy = enemyIt.next();
-            if (enemy.health <= 0) { 
-                if (random.nextFloat() <= pickupSpawnProb) {
-                    pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), random.nextInt(PICKUPTYPES)));
-                }
-                EnemyDead(enemy);
-                enemyIt.remove(); 
-                break;
-            }
-            enemy.update();
-        }
+        super.update();
     }
     /**
     *  
@@ -84,15 +62,7 @@ public final class NormalRoom extends Room implements Globals {
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).draw(g);
         }
-        for (int i=0; i < enemies.size(); i++) {
-            enemies.get(i).draw(g);
-        }
-        for (int i=0; i < pickups.size(); i++) {
-            pickups.get(i).draw(g);
-        }
-        for (int i=0; i < deadEnemyProjectiles.size(); i++) {
-            deadEnemyProjectiles.get(i).draw(g);
-        }
+        super.draw(g);
         //Draw the doors of the room
         BufferedImage sourceDoor = RoomClear() ? ImageLoader.getImage("General/doorOpen.png",0) : ImageLoader.getImage("General/doorClosed.png",0);
         BufferedImage door;

@@ -1,5 +1,6 @@
 package cemeteryfuntimes.Code;
 
+import cemeteryfuntimes.Code.Bosses.Boss;
 import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
@@ -209,8 +210,8 @@ public class Player extends PosVel {
             yAccel /= 1.41421356237;
         }
         //Combine both player accel and friction deaccel
-        xAccel += -PLAYERDAMP * xVel;
-        yAccel += -PLAYERDAMP *  yVel;
+        xAccel += -FRICTION * xVel;
+        yAccel += -FRICTION *  yVel;
     }
 
     /**
@@ -224,6 +225,21 @@ public class Player extends PosVel {
             damaged(enemy.ContactDamage());
             xVel = - PLAYERCOLLISIONVEL * horVert[HORIZONTAL];
             yVel = - PLAYERCOLLISIONVEL * horVert[VERTICAL];
+            //Maybe add in some sort of knockback on collision?
+        }
+    }
+    /**
+    * Handles collision if the player is not currently in invincibility frames.
+    * 
+    * @param boss    The boss the player collided with.
+    * @param xDist   The proportion of collision in xDirection
+    * @param yDist   The proportion of collision in yDirection
+    */
+    public void bossCollide(Boss boss, float xDist, float yDist) {
+        if (invincTimer == 0) {
+            damaged(boss.ContactDamage());
+            xVel = - BOSSCOLLISIONVEL * xDist;
+            yVel = - BOSSCOLLISIONVEL * yDist;
             //Maybe add in some sort of knockback on collision?
         }
     }

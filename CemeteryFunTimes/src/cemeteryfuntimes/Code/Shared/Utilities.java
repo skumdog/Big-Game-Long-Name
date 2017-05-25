@@ -1,5 +1,6 @@
 package cemeteryfuntimes.Code.Shared;
 
+import cemeteryfuntimes.Code.Player;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;

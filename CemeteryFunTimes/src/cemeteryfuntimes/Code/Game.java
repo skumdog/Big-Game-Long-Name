@@ -34,11 +34,11 @@ public class Game implements Globals {
     * Updates the game.
     */    
     public void update() {
+        player.update();
+        room.update();
         if (level.changeRoom(Collision.checkCollisions(player,room))) {
             room = level.getCurrentRoom();
         }
-        player.update();
-        room.update();
         //Check for all collisions
     }
     /**
