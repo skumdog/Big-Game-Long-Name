@@ -38,12 +38,13 @@ public abstract class Room implements Globals {
     private final Random randPickup;
     
      //Constants
-    private final static float pickupSpawnProb = 1/3;
+    private final static float pickupSpawnProb = 1f/3f;
     
     /**
     * Room class constructor initializes variables related to rooms.
     * 
     * @param player  The player.
+    * @param type
     */
     public Room (Player player, int type) {
         this.player = player;

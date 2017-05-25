@@ -32,7 +32,6 @@ public class BatLord extends Boss implements Globals {
     private int movementType=0; //The style of movement batlord is currently using
                                 // 0 - Rest, duration = 2000
                                 // 1 - Charge, duration = 5000
-                                // 2 - Spiral
     private long movementDuration=2000;
     private long movementTimer=System.currentTimeMillis();
     private int attackType=0; //The weapon batlord is currently using

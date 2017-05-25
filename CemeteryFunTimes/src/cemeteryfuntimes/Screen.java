@@ -118,9 +118,9 @@ public class Screen extends JPanel implements Globals {
             lastUpdate = now;
             game.update();
             repaint();
-            //if (!gameRunning) {
-            //    gameUpdater.cancel();
-            //}
+            if (!gameRunning) {
+                gameUpdater.cancel();
+            }
         }
     }
     

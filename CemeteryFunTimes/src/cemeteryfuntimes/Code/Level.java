@@ -61,7 +61,7 @@ public final class Level implements Globals {
         //Load level images
         ImageLoader.loadImage("General/doorClosed.png",doorHeight,doorWidth);
         ImageLoader.loadImage("General/doorOpen.png",doorHeight,doorWidth);
-        ImageLoader.loadImage("General/cave.png",doorHeight,doorWidth);
+        ImageLoader.loadImage("General/cave.png",100,150);
         //Initialze map
         this.player = player;
         createMap();
@@ -98,6 +98,7 @@ public final class Level implements Globals {
         }
         while (numberOfRooms < totalRooms);
         createSpecialRoom(BOSSROOM);
+        createSpecialRoom(STOREROOM);
         //createSpecialRoom(STOREROOM);
     }
     /**
@@ -147,6 +148,9 @@ public final class Level implements Globals {
         switch(type) {
             case BOSSROOM:
                 newRoom = new BossRoom(player);
+                break;
+            case STOREROOM:
+                newRoom = new StoreRoom(player);
                 break;
             default:
                 newRoom = new NormalRoom(player);

@@ -56,7 +56,7 @@ public abstract class Boss extends PosVel implements Globals {
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
-         for (int i=0; i<weapons.size(); i++) {
+        for (int i=0; i<weapons.size(); i++) {
             weapons.get(i).draw(g);
         }
         BufferedImage bossImage = Utilities.rotateImage(sourceBossImage, rotation);
