@@ -26,12 +26,9 @@ public final class Ghoulie extends Boss implements Globals {
     * Ghoulie class constructor initializes variables related to the Ghoulie boss.
     * 
     * @param player     The player.
-    * @param imagePath  The path to the boss image.
-    * @param height     The height of the boss.
-    * @param width      The width of the boss.
     */
-    public Ghoulie(Player player, String imagePath, int height, int width) {
-        super(player, imagePath, height, width);
+    public Ghoulie(Player player) {
+        super(player, "General/GHOUL.png", 300, 300,50,1);
         this.health = 70;
         this.rad = 150;
         this.xRad = this.rad;
@@ -49,6 +46,7 @@ public final class Ghoulie extends Boss implements Globals {
     */
     @Override
     public void update() {
+        calcVels();
         xPos += xVel;
         yPos += yVel;
     }

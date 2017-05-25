@@ -30,9 +30,10 @@ public final class Level implements Globals {
     public int yCord() {
         return yCord;
     }
+    private Random random;
     
     //Level creation constants
-    private static final int totalRooms=15;
+    private static final int totalRooms=2;
     private int numberOfRooms;
     private static final double roomCreationProb=1d/8d;
     private static final double noRoomProb=1d/4d;
@@ -60,7 +61,7 @@ public final class Level implements Globals {
         //Load level images
         ImageLoader.loadImage("General/doorClosed.png",doorHeight,doorWidth);
         ImageLoader.loadImage("General/doorOpen.png",doorHeight,doorWidth);
-        ImageLoader.loadImage("General/cave.png",100,150);
+        ImageLoader.loadImage("General/cave.png",doorHeight,doorWidth);
         //Initialze map
         this.player = player;
         createMap();
@@ -69,7 +70,7 @@ public final class Level implements Globals {
     * Initializes the level map.
     */
     private void createMap() {
-        currentRoom = new BossRoom(player, 1); 
+        currentRoom = new NormalRoom(player); 
         currentRoom.visited=true;
         map = new Object[mapSize][mapSize];
         intMap = new int[mapSize][mapSize];
@@ -82,7 +83,8 @@ public final class Level implements Globals {
         do {
             for (int x=0; x<intMap.length; x++) 
                 for (int y=0; y<intMap[0].length; y++) 
-                    if (intMap[x][y] == 1) {
+                    if (numberOfRooms >= totalRooms) { break; }
+                    else if (intMap[x][y] == 1) {
                         createRooms((Room)map[x][y],x,y);
                     }
             attempts++;
@@ -144,7 +146,7 @@ public final class Level implements Globals {
         Room newRoom;
         switch(type) {
             case BOSSROOM:
-                newRoom = new BossRoom(player,0);
+                newRoom = new BossRoom(player);
                 break;
             default:
                 newRoom = new NormalRoom(player);

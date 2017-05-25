@@ -212,8 +212,8 @@ public class Player extends PosVel {
             yAccel /= 1.41421356237;
         }
         //Combine both player accel and friction deaccel
-        xAccel += -PLAYERDAMP * xVel;
-        yAccel += -PLAYERDAMP *  yVel;
+        xAccel += -FRICTION * xVel;
+        yAccel += -FRICTION *  yVel;
     }
 
     /**

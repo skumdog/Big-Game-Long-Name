@@ -124,4 +124,19 @@
         NumberOfProjectiles="8"
         ProjectileImage="Weapons/SpikeBall/spikeball.png"
     />
+    <Weapon Key="23"
+        Name="Fire Bat"
+        Type="3"
+        Damage="1"
+        EnemyWeapon="True"
+        WeaponLength="0"
+        ProjectileSpeed="1"
+        ProjectileDelay="1500"
+        ProjectileOffset="0"
+        ProjectileHeight="40"
+        ProjectileWidth="40"
+        ProjectileSpread="0"
+        NumberOfProjectiles="6"
+        ProjectileImage="Weapons/FireBat/firebat.png"
+    />
 </Weapons>

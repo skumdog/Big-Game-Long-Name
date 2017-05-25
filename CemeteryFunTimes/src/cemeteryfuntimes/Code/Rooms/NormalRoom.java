@@ -1,13 +1,8 @@
 package cemeteryfuntimes.Code.Rooms;
-import cemeteryfuntimes.Code.Enemy;
-import cemeteryfuntimes.Code.Pickup;
 import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.*;
 import cemeteryfuntimes.Code.Spawn;
-import cemeteryfuntimes.Code.Weapons.Projectile;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import org.w3c.dom.NamedNodeMap;
 /**
@@ -19,17 +14,10 @@ public final class NormalRoom extends Room implements Globals {
     public final int Key() {
         return key;
     }
-    private final ArrayList<Spawn> spawns;
-    public ArrayList<Spawn> getSpawns() {
-        return spawns;
-    }
     private int numSpawns;
     public int getNumSpawns() {
         return numSpawns;
     }
-    private final Random random;
-    //Constants
-    private final static double pickupSpawnProb = 0.2;
     
     /**
     * NormalRoom class constructor initializes variables related to normal rooms.
@@ -40,8 +28,6 @@ public final class NormalRoom extends Room implements Globals {
         super(player,NORMALROOM);
         int roomKey = new Random().nextInt(ROOMKEYS) + 1;
         this.key = roomKey;
-        spawns = new ArrayList();
-        this.random = new Random();
         loadRoom(roomKey);
     }
     /**
@@ -49,63 +35,22 @@ public final class NormalRoom extends Room implements Globals {
     */
     @Override
     public void update() {
-        Collision.checkPickupCollision(player,pickups);
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
         }
-        Projectile projectile;
-        for (int i=0; i<deadEnemyProjectiles.size(); i++) {
-            projectile = deadEnemyProjectiles.get(i);
-            if (projectile.collide) { deadEnemyProjectiles.remove(i); }
-            else { projectile.update(); }
-        }
-        Enemy enemy;
-        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
-            enemy = enemyIt.next();
-            if (enemy.health <= 0) { 
-                if (this.random.nextFloat() <= pickupSpawnProb) {
-                    Boolean collide = false;
-                    float y = 0;
-                    for (int i = 0; i < this.spawns.size(); i++) {
-                        if (this.spawns.get(i).collide(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)))) {
-                            collide = true;
-                            y = spawns.get(i).yPos();
-                        }
-                    }
-                    if (collide) {
-                        this.pickups.add(new Pickup(enemy.xPos(), y-100, this.random.nextInt(PICKUPTYPES)));
-                    } else {
-                        this.pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)));
-                    }
-                }
-                EnemyDead(enemy);
-                enemyIt.remove();
-                break;
-            }
-            enemy.update();
-        }
+        super.update();
     }
     /**
-    * Renders room objects.  Overridden by a specific room implementation.
-    * 
-    * @param g The Graphics object used by Java to render everything in the game.
+    *  
+    * @param g 
     */
     @Override
     public void draw(Graphics2D g) {
-        super.draw(g);
         //Draw pickups and enemies
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).draw(g);
         }
-        for (int i=0; i < enemies.size(); i++) {
-            enemies.get(i).draw(g);
-        }
-        for (int i=0; i < pickups.size(); i++) {
-            pickups.get(i).draw(g);
-        }
-        for (int i=0; i < deadEnemyProjectiles.size(); i++) {
-            deadEnemyProjectiles.get(i).draw(g);
-        }
+        super.draw(g);
     }
     /**
     * Determines if a room has been cleared, which is determined by the
@@ -115,6 +60,7 @@ public final class NormalRoom extends Room implements Globals {
     */
     @Override
     public boolean RoomClear() {
+        Boolean doneSpawning = false;
         int count = 0;
         for (int i=0; i<spawns.size(); i++) {
             if (spawns.get(i).getCurrentDifficulty() >= spawns.get(i).getMaxDifficulty()) {
@@ -148,8 +94,7 @@ public final class NormalRoom extends Room implements Globals {
         }
         return enemyIntArray;
     }
-    /**
-    * Loads the room data for a specified room variant from an xml file.
+    /* Loads the room data for a specified room variant from an xml file.
     * 
     * @param roomKey The key corresponding to a specific room variant.
     */

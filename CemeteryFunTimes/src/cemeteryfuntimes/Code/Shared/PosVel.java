@@ -156,4 +156,26 @@ public abstract class PosVel implements Globals {
         }
         return wallsHit;
     }
+    
+    /**
+     * Used to find which wall an object has collided with
+     * 
+     * @return The wall collided with else 
+     */
+    public int hitSpecificWall() {
+        //Returns which wall the object hit
+        if (xPos + xRad > GAMEWIDTH) {
+            return RIGHT;
+        }
+        else if (xPos - xRad < 0) {
+            return LEFT;
+        }
+        if (yPos + yRad > GAMEHEIGHT) {
+            return DOWN;
+        }
+        else if (yPos - yRad < 0) {
+            return UP;
+        }
+        return -1;
+    }
 }

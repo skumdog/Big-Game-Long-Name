@@ -16,9 +16,9 @@ public interface Globals {
     //Movement constants
     public final static float PLAYERACCEL=.2f;
     public final static float PLAYERMAXSPEED=1;
-    public final static float PLAYERDAMP=.05f; //Friction coeffecient
+    public final static float FRICTION=.05f; //Friction coeffecient
     public final static float PLAYERCOLLISIONVEL=3f; //Player accel upon enemy collision
-    public final static float BOSSCOLLISIONVEL=3f;
+    public final static float BOSSCOLLISIONVEL=7f; //Player accel upon boss collision
     
     //Ballistic constants
     public final static float PROJECTILEBOOST=.25f;  //This constant represents the fraction of the players velocity that is added to the projectile speed
@@ -95,9 +95,15 @@ public interface Globals {
     public final static int CULTIST=4;
     public final static int SPIKEMONSTER=5;
     
+    //Boss Keys
+    public final static int BOSSES=2; //Number of bosses
+    public final static int BATLORD=0;
+    public final static int GHOULIE=1;
+    
     //Enemy Weapons 
     public final static int BLOATERBALL=20;
     public final static int FIREBALL=21;
     public final static int SPIKEBALL=22;
+    public final static int FIREBAT=23;
     
 }

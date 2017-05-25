@@ -41,7 +41,6 @@ public class Collision implements Globals {
         if (!roomClear) {
             if (room instanceof BossRoom) {
                 BossRoom bossRoom = (BossRoom) room;
-                bossRoom.getBoss().calcVels();
                 handleBossCollisions(bossRoom.getBoss(),player);
             }
             checkEnemyWallCollisions(enemies);

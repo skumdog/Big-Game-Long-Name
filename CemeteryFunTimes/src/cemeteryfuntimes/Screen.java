@@ -109,18 +109,18 @@ public class Screen extends JPanel implements Globals {
         @Override
         public void run() {
             long now = System.currentTimeMillis();
-            if (game.getPlayer().getHealth() <= 0) {
+            /*if (game.getPlayer().getHealth() <= 0) {
                 if (now - lastUpdate < 3000) {
                     return;
                 }
                 game = new Game();
-            }
+            }*/
             lastUpdate = now;
             game.update();
             repaint();
-            if (!gameRunning) {
-                gameUpdater.cancel();
-            }
+            //if (!gameRunning) {
+            //    gameUpdater.cancel();
+            //}
         }
     }
     

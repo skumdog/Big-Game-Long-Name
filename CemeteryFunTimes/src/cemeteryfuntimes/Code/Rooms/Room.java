@@ -3,11 +3,13 @@ import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Pickup;
 import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.*;
-import static cemeteryfuntimes.Code.Shared.Globals.*;
+import cemeteryfuntimes.Code.Spawn;
 import cemeteryfuntimes.Code.Weapons.Projectile;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 /**
 * Room abstract class contains variables and methods related to rooms.
 * @author David Kozloff & Tyler Law
@@ -19,6 +21,10 @@ public abstract class Room implements Globals {
     public ArrayList<Enemy> getEnemies() {
         return enemies;
     }
+    protected final ArrayList<Spawn> spawns;
+    public ArrayList<Spawn> getSpawns() {
+        return spawns;
+    }
     protected final ArrayList<Projectile> deadEnemyProjectiles;
     public ArrayList<Projectile> deadEnemyProjectiles() {
         return deadEnemyProjectiles;
@@ -29,6 +35,11 @@ public abstract class Room implements Globals {
     }
     public boolean visited;
     public final int type;
+    private final Random randPickup;
+    
+     //Constants
+    private final static float pickupSpawnProb = 1/3;
+    
     /**
     * Room class constructor initializes variables related to rooms.
     * 
@@ -40,19 +51,46 @@ public abstract class Room implements Globals {
         this.type = type;
         enemies = new ArrayList();
         pickups = new ArrayList();
+        spawns = new ArrayList();
         deadEnemyProjectiles = new ArrayList();
+        randPickup = new Random();
     }
     /**
     * Updates the room.  Overridden by a specific room implementation.
     */
-    public abstract void update();
+    public void update() {
+        Projectile projectile;
+        for (int i=0; i<deadEnemyProjectiles.size(); i++) {
+            projectile = deadEnemyProjectiles.get(i);
+            if (projectile.collide) { deadEnemyProjectiles.remove(i); }
+            else { projectile.update(); }
+        }
+        Enemy enemy;
+        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
+            enemy = enemyIt.next();
+            if (enemy.health <= 0) { 
+                EnemyDead(enemy);
+                enemyIt.remove(); 
+                break;
+            }
+            enemy.update();
+        }
+    }
     /**
     * Renders room objects.  Overridden by a specific room implementation.
     * 
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
-        //Draw the doors of the room
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
+        }
+        for (int i=0; i < pickups.size(); i++) {
+            pickups.get(i).draw(g);
+        }
+        for (int i=0; i < deadEnemyProjectiles.size(); i++) {
+            deadEnemyProjectiles.get(i).draw(g);
+        }
         BufferedImage sourceDoor = RoomClear() ? ImageLoader.getImage("General/doorOpen.png",0) : ImageLoader.getImage("General/doorClosed.png",0);
         BufferedImage door;
         if (GetNeighbor(LEFT) != null) {
@@ -82,12 +120,28 @@ public abstract class Room implements Globals {
     /**
     * Removes dead enemy frome the enemies array
     * Adds any remaining projectiles to deadEnemyProjectiles
+    * Generates pickup if necessary
     * 
     * @param enemy The dead enemy
     */
     public void EnemyDead(Enemy enemy) {
         if (enemy.getWeapon() == null) { return; }
         deadEnemyProjectiles.addAll(enemy.getWeapon().Projectiles());
+        boolean collide = false;
+        float y=0;
+        if (randPickup.nextFloat() <= pickupSpawnProb) {
+            for (int i = 0; i < this.spawns.size(); i++) {
+                if (this.spawns.get(i).collide(new Pickup(enemy.xPos(), enemy.yPos(), this.randPickup.nextInt(PICKUPTYPES)))) {
+                    collide = true;
+                    y = spawns.get(i).yPos();
+                }
+            }
+            if (collide) {
+                this.pickups.add(new Pickup(enemy.xPos(), y-100, this.randPickup.nextInt(PICKUPTYPES)));
+            } else {
+                this.pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), this.randPickup.nextInt(PICKUPTYPES)));
+            }
+        }
     }
     /**
     * Gets the neighboring room according to the given side.
