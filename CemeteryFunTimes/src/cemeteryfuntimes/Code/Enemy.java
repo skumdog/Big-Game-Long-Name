@@ -60,7 +60,7 @@ public class Enemy extends PosVel {
     * @param yPos   The y-coordinate of the enemy.
     * @param key    The key corresponding to a specific enemy type.
     */
-    public Enemy(Player player, float xPos, float yPos, int key) {
+    public Enemy(Player player, int xPos, int yPos, int key) {
         super (xPos,yPos);
         this.player = player;
         loadEnemy(key);

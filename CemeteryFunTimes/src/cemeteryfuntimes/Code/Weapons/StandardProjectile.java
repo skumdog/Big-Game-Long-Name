@@ -1,8 +1,6 @@
 package cemeteryfuntimes.Code.Weapons;
 
-import cemeteryfuntimes.Code.Bosses.Boss;
 import cemeteryfuntimes.Code.Enemy;
-import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.ImageLoader;
 import cemeteryfuntimes.Code.Shared.PosVel;
 import java.util.Random;
@@ -69,15 +67,7 @@ public class StandardProjectile extends Projectile {
      * @param weapon The enemy's weapon.
      */
     private void enemyWeaponInit(PosVel posVel, Weapon weapon, double angle) {
-        Player player;
-        if (posVel instanceof Enemy) {
-            Enemy enemy = (Enemy) posVel;
-            player = enemy.Player();
-        }
-        else {
-            Boss boss = (Boss) posVel;
-            player = boss.Player();
-        }
+        Enemy enemy = (Enemy) posVel;
         float speed = weapon.ProjectileSpeed();
         //TODO use offset: int offset = weapon.ProjectileOffset();
   
@@ -90,8 +80,8 @@ public class StandardProjectile extends Projectile {
         if (angle == Double.POSITIVE_INFINITY) {
             xVel = PROJECTILEBOOST * posVel.xVel();
             yVel = PROJECTILEBOOST * posVel.yVel();
-            float xDist = player.xPos() - posVel.xPos();
-            float yDist = player.yPos() - posVel.yPos();
+            float xDist = enemy.Player().xPos() - posVel.xPos();
+            float yDist = enemy.Player().yPos() - posVel.yPos();
             float totDist = (float) Math.sqrt(xDist*xDist + yDist*yDist);
             xVel += speed * xDist / totDist;
             yVel += speed * yDist / totDist;

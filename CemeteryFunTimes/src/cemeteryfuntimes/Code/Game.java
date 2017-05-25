@@ -1,6 +1,8 @@
 package cemeteryfuntimes.Code;
 import cemeteryfuntimes.Code.Rooms.Room;
 import cemeteryfuntimes.Code.Shared.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 /**
@@ -8,8 +10,10 @@ import java.awt.image.BufferedImage;
 * @author David Kozloff & Tyler Law
 */
 public class Game implements Globals {
-    
     private final Player player;
+    public Player getPlayer() {
+        return player;
+    }
     private final Level level;
     private Room room;
     private BufferedImage heartContainer;
@@ -34,11 +38,11 @@ public class Game implements Globals {
     * Updates the game.
     */    
     public void update() {
-        player.update();
-        room.update();
         if (level.changeRoom(Collision.checkCollisions(player,room))) {
             room = level.getCurrentRoom();
         }
+        player.update();
+        room.update();
         //Check for all collisions
     }
     /**
@@ -51,6 +55,11 @@ public class Game implements Globals {
         player.draw(g);
         drawHUD(g);
         level.draw(g);
+        if (this.player.getHealth() <= 0) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Courier", 1, 100));
+            g.drawString("GAME OVER", 300, 375);
+        }
     }
     /**
     * Renders the player's heads up display.
@@ -122,9 +131,10 @@ public class Game implements Globals {
        //Initialize always relevent images images
        ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
        ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
+       ImageLoader.loadImage("General/machinegun.png",HEARTSIZE*2,HEARTSIZE*2);
+       ImageLoader.loadImage("General/flamethrower.png",HEARTSIZE*2,HEARTSIZE*2);
        this.heartContainer = ImageLoader.getImage("General/heart.png",0);
        this.coin = ImageLoader.getImage("General/coin.png",0);
-       ImageLoader.loadImage("General/cave.png", 100, 150);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }
 }

@@ -26,7 +26,7 @@ import javax.swing.KeyStroke;
 */
 public class Screen extends JPanel implements Globals {
     
-    private final Game game;
+    private Game game;
     public Game getGame() {
         return game;
     }
@@ -36,7 +36,7 @@ public class Screen extends JPanel implements Globals {
     private BufferedImage backgroundImage;
     private BufferedImage gameBackgroundImage;
     private BufferedImage heartContainer;
-    
+    private long lastUpdate;
     //This is used to stop the repeatedly firing pressed events
     private final int[][] keysReleased;
     
@@ -83,9 +83,9 @@ public class Screen extends JPanel implements Globals {
         }
     }
     
-    /*** Screen class constructor sets up key bindings, creates the Game object, and begins the game loop.*/
+    /** Screen class constructor sets up key bindings, creates the Game object, and begins the game loop.*/
     public Screen() {
-        keysReleased = new int[4][5];
+        keysReleased = new int[4][6];
         for (int i = 0; i < keysReleased.length; i++)
             for (int j = 0; j < keysReleased[0].length; j++)
                 keysReleased[i][j] = 1;
@@ -99,19 +99,26 @@ public class Screen extends JPanel implements Globals {
         gameUpdater.schedule(new GameUpdater(), 0, TIMERDELAY);
     }
     
-    /**GameUpdater class forms the game loop, updating and rendering the game at a fixed rate.
-    TIMERDELAY dictates the update rate.*/
-    private class GameUpdater extends java.util.TimerTask
-    {
-        //Updates and renders the game in the game loop.
-        //The game loop stops if gameRunning is set to false.
-        public void run() 
-        {     
+    /** 
+    * GameUpdater class forms the game loop, updating and rendering the game at a fixed rate.
+    * TIMERDELAY dictates the update rate.
+    */
+    private class GameUpdater extends java.util.TimerTask {
+        // Updates and renders the game in the game loop.
+        // The game loop stops if gameRunning is set to false.
+        @Override
+        public void run() {
+            long now = System.currentTimeMillis();
+            if (game.getPlayer().getHealth() <= 0) {
+                if (now - lastUpdate < 3000) {
+                    return;
+                }
+                game = new Game();
+            }
+            lastUpdate = now;
             game.update();
             repaint();
-
-            if (!gameRunning)
-            {
+            if (!gameRunning) {
                 gameUpdater.cancel();
             }
         }

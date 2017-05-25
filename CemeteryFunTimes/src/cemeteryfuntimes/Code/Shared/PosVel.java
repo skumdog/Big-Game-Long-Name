@@ -1,4 +1,6 @@
 package cemeteryfuntimes.Code.Shared;
+import cemeteryfuntimes.Code.Bosses.Ghoulie;
+import cemeteryfuntimes.Code.Player;
 /**
 * PosVel abstract class contains variables and methods related to
 * object positions, velocities, collisions between two PosVels, and
@@ -63,14 +65,24 @@ public abstract class PosVel implements Globals {
     */
     public boolean collide(PosVel other) {
         //Return true if the two PosVels are overlapping
-        if (Math.abs(other.xPos+other.xVel - (xPos+xVel)) < other.xRad + xRad) {
-            if (Math.abs(other.yPos+other.yVel - (yPos+yVel)) < other.yRad + yRad) {
-                return true;
+        if ((this instanceof Ghoulie) && (other instanceof Player)) {
+            // Fake radii used when Player collides with Ghoulie in order to
+            // create a nicer looking collision in this particular case.
+            Ghoulie ghoulie = (Ghoulie) this;
+            if (Math.abs(other.xPos+other.xVel - (xPos+xVel)) < other.xRad + ghoulie.getFauxXRad()) {
+                if (Math.abs(other.yPos+other.yVel - (yPos+yVel)) < other.yRad + ghoulie.getFauxYRad()) {
+                    return true;
+                }
+            }
+        } else {
+            if (Math.abs(other.xPos+other.xVel - (xPos+xVel)) < other.xRad + xRad) {
+                if (Math.abs(other.yPos+other.yVel - (yPos+yVel)) < other.yRad + yRad) {
+                    return true;
+                }
             }
         }
         return false;
     }
-    
     /**
     * Abstract method implememnted by PosVels that need custom code to handle getting damaged.
     * 
@@ -124,7 +136,7 @@ public abstract class PosVel implements Globals {
     /**
     * Returns an array of booleans indicating whether or not this PosVel is colliding with a specific wall.
     * 
-    * @return       An array of booleans indicating whether or not this PosVel is colliding with a specific wall.
+    * @return  An array of booleans indicating whether or not this PosVel is colliding with a specific wall.
     */
     public boolean[] checkWallCollision() {
         //Returns an array of booleans indicating whether or not this object
@@ -144,28 +156,4 @@ public abstract class PosVel implements Globals {
         }
         return wallsHit;
     }
-    /**
-     * Used to find which wall an object has collided with
-     * 
-     * @return The wall collided with else 
-     */
-    public int hitSpecificWall() {
-        //Returns which wall the object hit
-        if (xPos + xRad > GAMEWIDTH) {
-            return RIGHT;
-        }
-        else if (xPos - xRad < 0) {
-            return LEFT;
-        }
-        if (yPos + yRad > GAMEHEIGHT) {
-            return DOWN;
-        }
-        else if (yPos - yRad < 0) {
-            return UP;
-        }
-        return -1;
-    }
-    
-    //public abstract void damaged(PosVel posVel, int type);
-    
 }

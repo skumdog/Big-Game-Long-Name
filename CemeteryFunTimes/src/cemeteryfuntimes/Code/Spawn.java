@@ -8,9 +8,7 @@ import java.util.Random;
 * Spawn class contains variables and methods related to enemy spawns.
 * @author David Kozloff & Tyler Law
 */
-public final class Spawn implements Globals {
-    private final int xPos;
-    private final int yPos;
+public final class Spawn extends PosVel implements Globals {
     private final int delay;
     private int currentDifficulty;
     public int getCurrentDifficulty() {
@@ -24,6 +22,8 @@ public final class Spawn implements Globals {
     private long lastUpdate;
     private final Player player;
     private final NormalRoom room;
+    private float xImagePad;
+    private float yImagePad;
     /**
     * Spawn class constructor initializes variables related to spawns.
     * 
@@ -37,8 +37,11 @@ public final class Spawn implements Globals {
     *                    be spawned at this spawn point.
     */
     public Spawn(Player player, NormalRoom room, int x, int y, int delay, int max, int[] enemyArray) {
-        this.xPos = x;
-        this.yPos = y;
+        super(x, y);
+        xRad = 40;
+        yRad = 45;
+        xSide = GAMEBORDER;
+        ySide = 0;
         this.delay = delay;
         this.maxDifficulty = max;
         this.currentDifficulty = 0;
@@ -63,7 +66,7 @@ public final class Spawn implements Globals {
             int index = random.nextInt(this.enemyArray.length);
             int type = this.enemyArray[index];
             // Spawn a new enemy.
-            Enemy newEnemy = new Enemy(this.player, this.xPos, this.yPos, type);
+            Enemy newEnemy = new Enemy(this.player, (int) xPos(), (int) yPos(), type);
             this.room.getEnemies().add(newEnemy);
             this.currentDifficulty += newEnemy.Difficulty();
         }
@@ -75,6 +78,8 @@ public final class Spawn implements Globals {
     */
     public void draw(Graphics2D g) {
         BufferedImage spawnImage = ImageLoader.getImage("General/cave.png", 0);
-        g.drawImage(spawnImage, this.xPos+150, this.yPos-80, null);
+        xImagePad = spawnImage.getWidth()/2;
+        yImagePad = spawnImage.getHeight()/2;
+        g.drawImage(spawnImage, Math.round(xSide+xPos-xImagePad), Math.round(ySide+yPos-yImagePad+15), null);
     }
 }

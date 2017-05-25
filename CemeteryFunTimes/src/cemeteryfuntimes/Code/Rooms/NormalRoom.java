@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Rooms;
-import cemeteryfuntimes.Code.Rooms.Room;
 import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Pickup;
 import cemeteryfuntimes.Code.Player;
@@ -7,7 +6,6 @@ import cemeteryfuntimes.Code.Shared.*;
 import cemeteryfuntimes.Code.Spawn;
 import cemeteryfuntimes.Code.Weapons.Projectile;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
@@ -29,6 +27,9 @@ public final class NormalRoom extends Room implements Globals {
     public int getNumSpawns() {
         return numSpawns;
     }
+    private final Random random;
+    //Constants
+    private final static double pickupSpawnProb = 0.2;
     
     /**
     * NormalRoom class constructor initializes variables related to normal rooms.
@@ -40,6 +41,7 @@ public final class NormalRoom extends Room implements Globals {
         int roomKey = new Random().nextInt(ROOMKEYS) + 1;
         this.key = roomKey;
         spawns = new ArrayList();
+        this.random = new Random();
         loadRoom(roomKey);
     }
     /**
@@ -47,40 +49,62 @@ public final class NormalRoom extends Room implements Globals {
     */
     @Override
     public void update() {
+        Collision.checkPickupCollision(player,pickups);
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
         }
-        super.update();
+        Projectile projectile;
+        for (int i=0; i<deadEnemyProjectiles.size(); i++) {
+            projectile = deadEnemyProjectiles.get(i);
+            if (projectile.collide) { deadEnemyProjectiles.remove(i); }
+            else { projectile.update(); }
+        }
+        Enemy enemy;
+        for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
+            enemy = enemyIt.next();
+            if (enemy.health <= 0) { 
+                if (this.random.nextFloat() <= pickupSpawnProb) {
+                    Boolean collide = false;
+                    float y = 0;
+                    for (int i = 0; i < this.spawns.size(); i++) {
+                        if (this.spawns.get(i).collide(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)))) {
+                            collide = true;
+                            y = spawns.get(i).yPos();
+                        }
+                    }
+                    if (collide) {
+                        this.pickups.add(new Pickup(enemy.xPos(), y-100, this.random.nextInt(PICKUPTYPES)));
+                    } else {
+                        this.pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)));
+                    }
+                }
+                EnemyDead(enemy);
+                enemyIt.remove();
+                break;
+            }
+            enemy.update();
+        }
     }
     /**
-    *  
-    * @param g 
+    * Renders room objects.  Overridden by a specific room implementation.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
     */
     @Override
     public void draw(Graphics2D g) {
+        super.draw(g);
         //Draw pickups and enemies
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).draw(g);
         }
-        super.draw(g);
-        //Draw the doors of the room
-        BufferedImage sourceDoor = RoomClear() ? ImageLoader.getImage("General/doorOpen.png",0) : ImageLoader.getImage("General/doorClosed.png",0);
-        BufferedImage door;
-        if (GetNeighbor(LEFT) != null) {
-            door = sourceDoor;
-            g.drawImage(door, GAMEBORDER - door.getWidth()/2, GAMEHEIGHT/2 - door.getHeight()/2 , null);
+        for (int i=0; i < enemies.size(); i++) {
+            enemies.get(i).draw(g);
         }
-        if (GetNeighbor(RIGHT) != null) {
-            door = Utilities.rotateImage(sourceDoor, ROTATION[RIGHT]);
-            g.drawImage(door, SCREENWIDTH - GAMEBORDER - door.getWidth()/2, GAMEHEIGHT/2 - door.getHeight()/2 , null);
+        for (int i=0; i < pickups.size(); i++) {
+            pickups.get(i).draw(g);
         }
-        if (GetNeighbor(UP) != null) {
-            door = Utilities.rotateImage(sourceDoor, ROTATION[UP]);
-            g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, - door.getHeight()/2 , null);
-        }
-        if (GetNeighbor(DOWN) != null) {
-            door = Utilities.rotateImage(sourceDoor, ROTATION[DOWN]);
-            g.drawImage(door, GAMEBORDER + GAMEWIDTH/2 - door.getWidth()/2, GAMEHEIGHT - door.getHeight()/2 , null);
+        for (int i=0; i < deadEnemyProjectiles.size(); i++) {
+            deadEnemyProjectiles.get(i).draw(g);
         }
     }
     /**
@@ -91,7 +115,6 @@ public final class NormalRoom extends Room implements Globals {
     */
     @Override
     public boolean RoomClear() {
-        Boolean doneSpawning = false;
         int count = 0;
         for (int i=0; i<spawns.size(); i++) {
             if (spawns.get(i).getCurrentDifficulty() >= spawns.get(i).getMaxDifficulty()) {
@@ -133,29 +156,13 @@ public final class NormalRoom extends Room implements Globals {
     private void loadRoom(int roomKey) {
         NamedNodeMap attributes = cemeteryfuntimes.Code.Shared.Utilities.loadTemplate("Rooms.xml","Room",roomKey);
         numSpawns = Integer.parseInt(attributes.getNamedItem("NumSpawns").getNodeValue());
-        int maxDifficulty = Integer.parseInt(attributes.getNamedItem("Difficulty1").getNodeValue());
-        int spawnx = Integer.parseInt(attributes.getNamedItem("Spawn1x").getNodeValue());
-        int spawny = Integer.parseInt(attributes.getNamedItem("Spawn1y").getNodeValue());
-        int delay = Integer.parseInt(attributes.getNamedItem("Delay1").getNodeValue());
-        String enemyString = attributes.getNamedItem("Spawn1Enemies").getNodeValue();
-        int[] enemyIntArray = getSpawnEnemies(enemyString);
-        spawns.add(new Spawn(this.player, this, spawnx, spawny, delay, maxDifficulty, enemyIntArray));
-        if (numSpawns > 1) {
-            maxDifficulty = Integer.parseInt(attributes.getNamedItem("Difficulty2").getNodeValue());
-            spawnx = Integer.parseInt(attributes.getNamedItem("Spawn2x").getNodeValue());
-            spawny = Integer.parseInt(attributes.getNamedItem("Spawn2y").getNodeValue());
-            delay = Integer.parseInt(attributes.getNamedItem("Delay2").getNodeValue());
-            enemyString = attributes.getNamedItem("Spawn2Enemies").getNodeValue();
-            enemyIntArray = getSpawnEnemies(enemyString);
-            spawns.add(new Spawn(this.player, this, spawnx, spawny, delay, maxDifficulty, enemyIntArray));
-        }
-        if (numSpawns > 2) {
-            maxDifficulty = Integer.parseInt(attributes.getNamedItem("Difficulty3").getNodeValue());
-            spawnx = Integer.parseInt(attributes.getNamedItem("Spawn3x").getNodeValue());
-            spawny = Integer.parseInt(attributes.getNamedItem("Spawn3y").getNodeValue());
-            delay = Integer.parseInt(attributes.getNamedItem("Delay3").getNodeValue());
-            enemyString = attributes.getNamedItem("Spawn3Enemies").getNodeValue();
-            enemyIntArray = getSpawnEnemies(enemyString);
+        for (int i=0; i<numSpawns; i++) {
+            int maxDifficulty = Integer.parseInt(attributes.getNamedItem("Difficulty" + Integer.toString(i+1)).getNodeValue());
+            int spawnx = Integer.parseInt(attributes.getNamedItem("Spawn" + Integer.toString(i+1) + "x").getNodeValue());
+            int spawny = Integer.parseInt(attributes.getNamedItem("Spawn" + Integer.toString(i+1) + "y").getNodeValue());
+            int delay = Integer.parseInt(attributes.getNamedItem("Delay" + Integer.toString(i+1)).getNodeValue());
+            String enemyString = attributes.getNamedItem("Spawn" + Integer.toString(i+1) + "Enemies").getNodeValue();
+            int[] enemyIntArray = getSpawnEnemies(enemyString);
             spawns.add(new Spawn(this.player, this, spawnx, spawny, delay, maxDifficulty, enemyIntArray));
         }
     }

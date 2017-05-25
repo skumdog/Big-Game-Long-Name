@@ -1,35 +1,26 @@
 package cemeteryfuntimes.Code.Rooms;
-import cemeteryfuntimes.Code.Bosses.*;
+import cemeteryfuntimes.Code.Bosses.Ghoulie;
 import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics2D;
-import java.util.Random;
 /**
 * BossRoom class contains variables and methods related to boss rooms.
 * @author David Kozloff & Tyler Law
 */
 public final class BossRoom extends Room implements Globals {
-    private final Boss boss;
-    public Boss getBoss() {
+    private final Ghoulie boss;
+    public Ghoulie getBoss() {
         return boss;
     }
     /**
     * BossRoom class constructor initializes variables related to boss rooms.
     * 
     * @param player  The player.
+    * @param bossKey The key for the boss.
     */
-    public BossRoom(Player player) {
+    public BossRoom(Player player, int bossKey) {
         super(player,BOSSROOM);
-        Random random = new Random();
-        int bossKey = random.nextInt(BOSSES);
-        switch(bossKey) {
-            case BATLORD: 
-                boss = new BatLord(player,this);
-                break;
-            default:
-                boss = null;
-                break;
-        }
+        this.boss = new Ghoulie(player, "General/GHOUL.png", 300, 300);
     }
     /**
     * Updates the room.
@@ -37,7 +28,6 @@ public final class BossRoom extends Room implements Globals {
     @Override
     public void update() {
         boss.update();
-        super.update();
     }
     /**
     * Determines if a room has been cleared, which is determined by the
@@ -49,10 +39,10 @@ public final class BossRoom extends Room implements Globals {
     public boolean RoomClear() {
         return boss.isDead();
     }
-
+    
     @Override
     public void draw(Graphics2D g) {
-        boss.draw(g); 
         super.draw(g);
+        boss.draw(g); 
     }
 }

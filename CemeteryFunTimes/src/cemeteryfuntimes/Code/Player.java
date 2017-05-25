@@ -35,6 +35,9 @@ public class Player extends PosVel {
     public long invincTimer = 0;
     private final Weapon weapon;
     private final ArrayList<Integer> weaponKeys;
+    public ArrayList<Integer> getWeaponKeys() {
+        return weaponKeys;
+    }
     private int currentWeaponKey;
     public Weapon getWeapon() {
         return weapon;
@@ -48,8 +51,8 @@ public class Player extends PosVel {
     public Player(int xPos, int yPos) {
         super (xPos,yPos);
         moveKeysPressed = new boolean [4];
-        health = 6;
-        coins = 3;
+        health = 4;
+        coins = 8;
         rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
@@ -58,7 +61,6 @@ public class Player extends PosVel {
         currentWeaponKey = PISTOL;
         weaponKeys.add(PISTOL);
         changePlayerImage();
-        //TODO dynamically add weapon keys with a method
         weaponKeys.add(MACHINEGUN);
         weaponKeys.add(FLAMETHROWER);
     }
@@ -210,8 +212,8 @@ public class Player extends PosVel {
             yAccel /= 1.41421356237;
         }
         //Combine both player accel and friction deaccel
-        xAccel += -FRICTION * xVel;
-        yAccel += -FRICTION *  yVel;
+        xAccel += -PLAYERDAMP * xVel;
+        yAccel += -PLAYERDAMP *  yVel;
     }
 
     /**
@@ -243,6 +245,14 @@ public class Player extends PosVel {
             //Maybe add in some sort of knockback on collision?
         }
     }
+    public void spawnCollide (Spawn spawn, int[] horVert) {
+        if (horVert[0] != 0) {
+            xPos = spawn.xPos() - 90*horVert[0];
+        } 
+        if (horVert[1] != 0) {
+            yPos = spawn.yPos() - 95*horVert[1];
+        }
+    }
     /**
     * Updates player's health upon taking damage.
     * 
@@ -268,6 +278,13 @@ public class Player extends PosVel {
     */
     public void addMoney (float coins) {
         this.coins += coins;
+    }
+    /** Updates player's coin count upon buying an item.
+    * 
+    * @param coins The amount of coins spent.
+    */
+    public void removeMoney (float coins) {
+        this.coins -= coins;
     }
     /**
     * Renders the player.

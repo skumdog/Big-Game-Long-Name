@@ -7,7 +7,7 @@
 <Rooms>
     <Room Key="1"
         NumSpawns="1"
-        Difficulty1="0"
+        Difficulty1="9"
         Spawn1x="500"
         Spawn1y="500"
         Spawn1Enemies="1,2"
@@ -15,8 +15,8 @@
     />
     <Room Key="2"
         NumSpawns="2"
-        Difficulty1="0"
-        Difficulty2="0"
+        Difficulty1="11"
+        Difficulty2="17"
         Spawn1x="400"
         Spawn1y="400"
         Spawn2x="700"

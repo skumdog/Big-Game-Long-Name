@@ -1,9 +1,4 @@
 package cemeteryfuntimes.Code.Shared;
-/**
-* Collision class contains methods related to object collisions.
-* @author David Kozloff & Tyler Law
-*/
-
 import cemeteryfuntimes.Code.Rooms.Room;
 import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Weapons.Projectile;
@@ -11,11 +6,14 @@ import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.*;
 import cemeteryfuntimes.Code.Bosses.Boss;
 import cemeteryfuntimes.Code.Rooms.BossRoom;
+import cemeteryfuntimes.Code.Rooms.NormalRoom;
 import java.util.ArrayList;
 import java.util.Iterator;
-
+/**
+* Collision class contains methods related to object collisions.
+* @author David Kozloff & Tyler Law
+*/
 public class Collision implements Globals {
-    
     /**
     * Collision class constructor calls all collision methods.
     * 
@@ -33,12 +31,17 @@ public class Collision implements Globals {
         for (int i=0; i < enemies.size(); i++) {
             enemies.get(i).calcVels();
         }
-        ArrayList<Pickup> pickups = room.getPickups();
         ArrayList<Projectile> deadEnemyProjectiles = room.deadEnemyProjectiles();
         checkBallisticCollisions(player,enemies,deadEnemyProjectiles);
+        ArrayList<Spawn> spawns;
+        if (room instanceof NormalRoom) {
+            spawns = ((NormalRoom) room).getSpawns();
+            checkPlayerSpawnCollision(player,spawns);
+        }
         if (!roomClear) {
-            if (room.type == BOSSROOM) {
+            if (room instanceof BossRoom) {
                 BossRoom bossRoom = (BossRoom) room;
+                bossRoom.getBoss().calcVels();
                 handleBossCollisions(bossRoom.getBoss(),player);
             }
             checkEnemyWallCollisions(enemies);
@@ -47,7 +50,6 @@ public class Collision implements Globals {
         }
         checkBallisticWallCollisions(player,enemies,deadEnemyProjectiles);
         boolean[] wall = checkPlayerWallCollision(player);
-        checkPickupCollision(player,pickups);
         return checkPlayerDoorCollision(player,wall,roomClear);
     }
     /**
@@ -132,7 +134,7 @@ public class Collision implements Globals {
     private static void handleEnemyPlayerCollision(Player player, Enemy enemy) {
         int side = player.sideCollided(enemy);
         // Positive is equal to 1 if player has the greater x or y coordinate on the side of the collision else -1
-        int[] horVert = Utilities.getHorizontalVertical(side);
+        int[] horVert = cemeteryfuntimes.Code.Shared.Utilities.getHorizontalVertical(side);
         
         player.enemyCollide(enemy, horVert);
         
@@ -204,22 +206,35 @@ public class Collision implements Globals {
     /**
     * Checks for collisions between the player and pickups.
     * 
-    * @param player  The player.
-    * @param pickups The array list of pickups.
+    * @param player     The player.
+    * @param pickups    The array list of pickups.
     */
     public static void checkPickupCollision(Player player, ArrayList<Pickup> pickups) {
         for (int i = 0; i < pickups.size(); i++) {
             if (player.collide(pickups.get(i))) {
-                // Add health if health pickup.
-                if (pickups.get(i).getType() == 0) {
-                    if (player.getHealth() == 5) {
-                        player.healed(1);
-                    } else if (player.getHealth() < 5) {
-                        player.healed(2);
-                    }
-                // Add money if coin pickup.
-                } else if (pickups.get(i).getType() == 1) {
-                    player.addMoney(1);
+                switch (pickups.get(i).getType()) {
+                    case 0:
+                        // Add health if health pickup.
+                        if (player.getHealth() == 5) {
+                            player.healed(1);
+                        } else if (player.getHealth() < 5) {
+                            player.healed(2);
+                        }
+                        break;
+                    case 1:
+                        // Add money if coin pickup.
+                        player.addMoney(1);
+                        break;
+                    case 2:
+                        // Add machine gun if machine gun pickup.
+                        player.getWeaponKeys().add(MACHINEGUN);
+                        break;
+                    case 3:
+                        // Add flamethrower if flamethrower pickup.
+                        player.getWeaponKeys().add(FLAMETHROWER);
+                        break;
+                    default:
+                        break;
                 }
                 pickups.remove(i); 
                 i--;
@@ -323,5 +338,20 @@ public class Collision implements Globals {
             posVel.yPos = GAMEHEIGHT - posVel.yRad;
         }
         return wall;
+    }
+    /**
+    * Checks for collisions between the player and spawns.
+    * 
+    * @param player  The player.
+    * @param spawns  The array list of spawns.
+    */
+    private static void checkPlayerSpawnCollision (Player player, ArrayList<Spawn> spawns) {
+        for (Spawn spawn : spawns) {
+            if (player.collide(spawn)) {
+                int side = player.sideCollided(spawn);
+                int[] horVert = cemeteryfuntimes.Code.Shared.Utilities.getHorizontalVertical(side);
+                player.spawnCollide(spawn, horVert);
+            }
+        }
     }
 }

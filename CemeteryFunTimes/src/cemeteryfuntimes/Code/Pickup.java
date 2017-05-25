@@ -14,14 +14,15 @@ public class Pickup extends PosVel {
         return type;
     }
     private final static String[] imagePaths = {
-        "General/heart.png","General/coin.png"
+        "General/heart.png","General/coin.png",
+        "General/machinegun.png","General/flamethrower.png"
     };
     /**
     * Pickup class constructor initializes variables related to pickups.
     * 
-    * @param x      The x-coordinate of the pickup.
-    * @param y      The y-coordinate of the pickup.
-    * @param type   The type of the pickup object, i.e. health, ammo, etc.
+    * @param x          The x-coordinate of the pickup.
+    * @param y          The y-coordinate of the pickup.
+    * @param type       The type of the pickup object, i.e. health, ammo, etc.
     */
     public Pickup (float x, float y, int type) {
         super(x,y);
