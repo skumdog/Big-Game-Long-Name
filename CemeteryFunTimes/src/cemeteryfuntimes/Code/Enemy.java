@@ -10,7 +10,7 @@ import org.w3c.dom.NamedNodeMap;
 * @author David Kozloff & Tyler Law.
 */
 public class Enemy extends PosVel {
-    
+
     //Member variables
     public float health;
     private final Player player;
@@ -19,7 +19,7 @@ public class Enemy extends PosVel {
     }
     private float xImagePad;
     private float yImagePad;
-    
+
     //Enemy definition
     private int contactDamage;
     public int ContactDamage() {
@@ -53,7 +53,7 @@ public class Enemy extends PosVel {
     }
     /**
     * Enemy class constructor initializes variables related to enemies.
-    * 
+    *
     * @param player The player.
     * @param xPos   The x-coordinate of the enemy.
     * @param yPos   The y-coordinate of the enemy.
@@ -92,7 +92,7 @@ public class Enemy extends PosVel {
         }
     }
     /**
-    * Updates the velocity of the enemy to be moving directly toward the player. 
+    * Updates the velocity of the enemy to be moving directly toward the player.
     */
     private void moveTowardPlayer() {
         //Calculates what the current velocity of the enemy should be
@@ -103,14 +103,14 @@ public class Enemy extends PosVel {
         float xDist = player.xPos() - xPos;
         float yDist = player.yPos() - yPos;
         float totDist = (float) Math.sqrt(xDist*xDist + yDist*yDist);
-        
+
         //Scale the vector to be the length of enemy speed to get speed
         xVel = speed * (xDist / totDist);
         yVel = speed * (yDist / totDist);
         rotateEnemyImage();
     }
     /**
-    * Updates the velocity of the enemy to move randomly. 
+    * Updates the velocity of the enemy to move randomly.
     */
     private void moveRandomly() {
         long now = System.currentTimeMillis();
@@ -131,8 +131,8 @@ public class Enemy extends PosVel {
     }
     /**
      * Checks if enemy will collide with wall before changing direction
-     * 
-     * @return false if enemy will collide with wall, true otherwise 
+     *
+     * @return false if enemy will collide with wall, true otherwise
      */
     private boolean validMoveDirection() {
         double steps = movementDelay/TIMERDELAY;
@@ -156,7 +156,7 @@ public class Enemy extends PosVel {
     }
     /**
     * Loads the enemy data for a specified enemy variant from an xml file.
-    * 
+    *
     * @param enemyKey The key corresponding to a specific enemy type.
     */
     private void loadEnemy(int enemyKey) {
@@ -179,7 +179,7 @@ public class Enemy extends PosVel {
     /**
      * Updates the health of the enemy upon taking damage.
      * TODO hurt animation/invincibility frames?
-     * 
+     *
      * @param damage The damage being done to the enemy.
      */
     @Override
@@ -190,14 +190,14 @@ public class Enemy extends PosVel {
     }
     /**
     * Renders the enemy.
-    * 
+    *
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
         BufferedImage enemyImage = ImageLoader.getImage(enemyImagePath, rotation);
         xImagePad = enemyImage.getWidth()/2;
         yImagePad = enemyImage.getHeight()/2;
-        if(health>0) {g.drawImage(enemyImage, Math.round(xSide+xPos-xImagePad), Math.round(ySide+yPos-yImagePad), null);}
+        if(health>1) {g.drawImage(enemyImage, Math.round(xSide+xPos-xImagePad), Math.round(ySide+yPos-yImagePad), null);}
         if( weapon!=null ) { weapon.draw(g); }
     }
 }
