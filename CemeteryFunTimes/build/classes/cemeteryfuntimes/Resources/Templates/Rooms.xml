@@ -16,7 +16,7 @@
     <Room Key="2"
         NumSpawns="2"
         Difficulty1="0"
-        Difficulty2="0"
+        Difficulty2="10"
         Spawn1x="400"
         Spawn1y="400"
         Spawn2x="700"

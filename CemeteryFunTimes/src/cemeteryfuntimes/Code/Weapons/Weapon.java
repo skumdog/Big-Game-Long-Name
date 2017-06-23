@@ -115,7 +115,7 @@ public class Weapon implements Globals {
     * Updates the weapon.
     */
     public void update() {
-        if (type != 2) {
+        if (type != 2 && shootDirection() != -1) {
             createProjectile();
         }
         Projectile projectile;
@@ -136,8 +136,6 @@ public class Weapon implements Globals {
         if (now - lastUpdate < projectileDelay) {
             return;
         }
-        lastUpdate = now;
-
         //Create new projectile with correct location relative to posVel
         if (type == AOEBALLISTIC) {
             double angle = 2*Math.PI / numberofProjectiles;
@@ -147,12 +145,10 @@ public class Weapon implements Globals {
             }
         }
         else {
-            int direction = shootDirection();
-            if (direction >= 0) {
-                Projectile projectile = new StandardProjectile(posVel, direction, Double.POSITIVE_INFINITY, projectileImagePath, this);
-                projectiles.add(projectile);
-            }
+            Projectile projectile = new StandardProjectile(posVel, shootDirection(), Double.POSITIVE_INFINITY, projectileImagePath, this);
+            projectiles.add(projectile);
         }
+        lastUpdate = now;
     }
     /**
     * Returns the direction in which the player is shooting, represented as an integer.
