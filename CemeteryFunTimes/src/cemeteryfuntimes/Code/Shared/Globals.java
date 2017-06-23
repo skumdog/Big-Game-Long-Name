@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Shared;
-
 /**
 * Globals interface contains global constants.
 * @author David Kozloff & Tyler Law
@@ -14,8 +13,8 @@ public interface Globals {
     public final static int GAMEBORDER=(SCREENWIDTH-GAMEWIDTH)/2;
     
     //Movement constants
-    public final static float PLAYERACCEL=.2f;
-    public final static float PLAYERMAXSPEED=1;
+    public final static float PLAYERACCEL=.25f;
+    public final static float PLAYERMAXSPEED=1.75f;
     public final static float FRICTION=.05f; //Friction coeffecient
     public final static float PLAYERCOLLISIONVEL=3f; //Player accel upon enemy collision
     public final static float BOSSCOLLISIONVEL=7f; //Player accel upon boss collision
@@ -69,7 +68,7 @@ public interface Globals {
     public final static int STOREROOM=2;
     
     //Number of keys
-    public final static int ROOMKEYS=2; //Number of entries in Rooms.xml
+    public final static int ROOMKEYS=Utilities.countRoomKeys(); //Number of entries in Rooms.xml
     public final static int PICKUPTYPES=2; //Number of types of pickups
     
     //Action Types
@@ -105,5 +104,7 @@ public interface Globals {
     public final static int FIREBALL=21;
     public final static int SPIKEBALL=22;
     public final static int FIREBAT=23;
-    
+    public final static int GHOULIE1=24;
+    public final static int GHOULIE2=25;
+    public final static int GHOULIE3=26;
 }

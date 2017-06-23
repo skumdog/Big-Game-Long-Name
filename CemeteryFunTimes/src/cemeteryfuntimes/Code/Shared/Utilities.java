@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Shared;
-
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
@@ -17,22 +16,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 /**
 * Utilities class contains methods shared by multiple classes.
 * @author David Kozloff & Tyler Law
 */
 public class Utilities implements Globals {
-    
-     /**
-     * Convenience method that returns a scaled instance of the
-     * provided {@code BufferedImage}.
-     *
-     * @param filepath     The path to the image you want to render.
-     * @param targetWidth  The desired width of the scaled instance, in pixels.
-     * @param targetHeight The desired height of the scaled instance, in pixels.
-     * @return             A scaled version of the original {@code BufferedImage}.
-     */
+    /**
+    * Convenience method that returns a scaled instance of the
+    * provided {@code BufferedImage}.
+    *
+    * @param filepath     The path to the image you want to render.
+    * @param targetWidth  The desired width of the scaled instance, in pixels.
+    * @param targetHeight The desired height of the scaled instance, in pixels.
+    * @return             A scaled version of the original {@code BufferedImage}.
+    */
     public static BufferedImage getScaledInstance(String filepath,
                                            int targetWidth,
                                            int targetHeight)
@@ -79,7 +76,6 @@ public class Utilities implements Globals {
         atOp.filter(image,rotatedImage);
         return rotatedImage;
     }
-    
     /**
      * Helper function for rotateImage.
      *
@@ -154,6 +150,29 @@ public class Utilities implements Globals {
         return null;
     }
     /**
+    * Counts how many room keys the game uses.  Gets assigned to the
+    * global ROOMKEYS in Globals class.  ROOMKEYS used to facilitate quick
+    * addition and deletion of new room variants in NormalRoom class.
+    * 
+    * @return   The number of room keys in the Rooms.xml file.
+    */
+    public final static int countRoomKeys() {
+        try {	
+            File inputFile = new File(TEMPLATEPATH + "Rooms.xml");
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
+            NodeList nList = doc.getElementsByTagName("Room");
+            int count = 0;
+            for (int i = 0; i < nList.getLength(); i++) {
+                count++;
+            } return count;
+        } catch (Exception ex) {
+            return -1;
+        }
+    }
+    /**
     * Returns the wall opposite the specified wall, represented as an integer constant.
     * 
     * @param side The wall to get the opposite side of
@@ -186,5 +205,4 @@ public class Utilities implements Globals {
         horizontalVertical[VERTICAL] = positive * ((side == UP || side == DOWN) ? 1 : 0);
         return horizontalVertical;
     }
-    
 }

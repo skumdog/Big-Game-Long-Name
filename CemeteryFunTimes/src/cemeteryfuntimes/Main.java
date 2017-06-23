@@ -18,9 +18,9 @@ public class Main extends JFrame implements Globals {
         add(game);
         setTitle("Cemetery Fun Times");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setResizable(false);
         pack();
+        setLocationRelativeTo(null);
         game.setFocusable(true);
         game.requestFocus();
         game.setVisible(true);
@@ -30,7 +30,6 @@ public class Main extends JFrame implements Globals {
     * @param args Unused.
     */
     public static void main(String[] args) {
-        // TODO code application logic here
         EventQueue.invokeLater(() -> {
             new Main().setVisible(true);
         });

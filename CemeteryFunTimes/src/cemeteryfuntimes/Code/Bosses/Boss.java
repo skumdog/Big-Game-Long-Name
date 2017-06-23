@@ -12,18 +12,18 @@ import java.util.ArrayList;
 public abstract class Boss extends PosVel implements Globals {
     protected float health;
     protected final Player player;
-    public Player Player() {
+        public Player Player() {
         return player;
-    }
-    protected int contactDamage;
-    public int ContactDamage() {
-        return contactDamage;
     }
     protected final ArrayList<Weapon> weapons;
     public ArrayList<Weapon> weapons() {
         return weapons;
     }
     private final BufferedImage sourceBossImage;
+    protected int contactDamage;
+    public int ContactDamage() {
+        return contactDamage;
+    }
     /**
     * Boss class constructor initializes variables related to boss enemies.
     * 
@@ -41,6 +41,7 @@ public abstract class Boss extends PosVel implements Globals {
         xSide = GAMEBORDER;
         ySide = 0;
         xRad = width/2; yRad = height/2;
+        this.contactDamage = contactDamage;
     }
     /**
     * Updates the boss.  Overridden by a specific boss implementation.
@@ -56,7 +57,7 @@ public abstract class Boss extends PosVel implements Globals {
     * @param g The Graphics object used by Java to render everything in the game.
     */
     public void draw(Graphics2D g) {
-        for (int i=0; i<weapons.size(); i++) {
+         for (int i=0; i<weapons.size(); i++) {
             weapons.get(i).draw(g);
         }
         BufferedImage bossImage = Utilities.rotateImage(sourceBossImage, rotation);

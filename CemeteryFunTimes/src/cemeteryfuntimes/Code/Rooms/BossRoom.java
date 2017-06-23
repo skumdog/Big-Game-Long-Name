@@ -21,7 +21,7 @@ public final class BossRoom extends Room implements Globals {
     public BossRoom(Player player) {
         super(player,BOSSROOM);
         Random random = new Random();
-        int bossKey = random.nextInt(BOSSES);
+        int bossKey = random.nextInt(2);
         switch(bossKey) {
             case BATLORD: 
                 boss = new BatLord(player,this);
@@ -52,7 +52,11 @@ public final class BossRoom extends Room implements Globals {
     public boolean RoomClear() {
         return boss.isDead();
     }
-
+    /**
+    * Renders room objects.  Overridden by a specific room implementation.
+    * 
+    * @param g The Graphics object used by Java to render everything in the game.
+    */
     @Override
     public void draw(Graphics2D g) {
         boss.draw(g); 

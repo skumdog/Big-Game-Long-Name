@@ -35,16 +35,16 @@ public abstract class Room implements Globals {
     }
     public boolean visited;
     public final int type;
-    private final Random randPickup;
+    private final Random random;
     
      //Constants
-    private final static float pickupSpawnProb = 1f/3f;
+    private final static double pickupSpawnProb = 0.2;
     
     /**
     * Room class constructor initializes variables related to rooms.
     * 
     * @param player  The player.
-    * @param type
+    * @param type    The type of pickup.
     */
     public Room (Player player, int type) {
         this.player = player;
@@ -54,12 +54,16 @@ public abstract class Room implements Globals {
         pickups = new ArrayList();
         spawns = new ArrayList();
         deadEnemyProjectiles = new ArrayList();
-        randPickup = new Random();
+        random = new Random();
     }
     /**
     * Updates the room.  Overridden by a specific room implementation.
     */
     public void update() {
+        Collision.checkPickupCollision(player,pickups);
+        for (int i=0; i<spawns.size(); i++) {
+            spawns.get(i).update();
+        }
         Projectile projectile;
         for (int i=0; i<deadEnemyProjectiles.size(); i++) {
             projectile = deadEnemyProjectiles.get(i);
@@ -70,8 +74,23 @@ public abstract class Room implements Globals {
         for (Iterator<Enemy> enemyIt = enemies.iterator(); enemyIt.hasNext();) {
             enemy = enemyIt.next();
             if (enemy.health <= 0) { 
+                if (this.random.nextFloat() <= pickupSpawnProb) {
+                    Boolean collide = false;
+                    float y = 0;
+                    for (int i = 0; i < this.spawns.size(); i++) {
+                        if (this.spawns.get(i).collide(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)))) {
+                            collide = true;
+                            y = spawns.get(i).yPos();
+                        }
+                    }
+                    if (collide) {
+                        this.pickups.add(new Pickup(enemy.xPos(), y-100, this.random.nextInt(PICKUPTYPES)));
+                    } else {
+                        this.pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)));
+                    }
+                }
                 EnemyDead(enemy);
-                enemyIt.remove(); 
+                enemyIt.remove();
                 break;
             }
             enemy.update();
@@ -130,17 +149,17 @@ public abstract class Room implements Globals {
         deadEnemyProjectiles.addAll(enemy.getWeapon().Projectiles());
         boolean collide = false;
         float y=0;
-        if (randPickup.nextFloat() <= pickupSpawnProb) {
+        if (random.nextFloat() <= pickupSpawnProb) {
             for (int i = 0; i < this.spawns.size(); i++) {
-                if (this.spawns.get(i).collide(new Pickup(enemy.xPos(), enemy.yPos(), this.randPickup.nextInt(PICKUPTYPES)))) {
+                if (this.spawns.get(i).collide(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)))) {
                     collide = true;
                     y = spawns.get(i).yPos();
                 }
             }
             if (collide) {
-                this.pickups.add(new Pickup(enemy.xPos(), y-100, this.randPickup.nextInt(PICKUPTYPES)));
+                this.pickups.add(new Pickup(enemy.xPos(), y-100, this.random.nextInt(PICKUPTYPES)));
             } else {
-                this.pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), this.randPickup.nextInt(PICKUPTYPES)));
+                this.pickups.add(new Pickup(enemy.xPos(), enemy.yPos(), this.random.nextInt(PICKUPTYPES)));
             }
         }
     }

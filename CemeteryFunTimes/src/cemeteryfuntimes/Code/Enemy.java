@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code;
-
 import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;

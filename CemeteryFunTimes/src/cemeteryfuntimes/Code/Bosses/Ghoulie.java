@@ -1,19 +1,25 @@
 package cemeteryfuntimes.Code.Bosses;
 import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Shared.*;
+import cemeteryfuntimes.Code.Weapons.Weapon;
 import java.util.Random;
 /**
 * Ghoulie boss.
 * @author David Kozloff & Tyler Law
 */
 public final class Ghoulie extends Boss implements Globals {
-    private final float speed;
+    private final static int height = 300;
+    private final static int width = 300;
+    private final static int maxHealth = 70;
+    private float speed;
     public float Speed() {
         return speed;
     }
     private final int movementDelay;
     private long lastMovement;
-    private int timer;
+    private int attackTimer;
+    
+    // Used for making hitbox smaller than model.
     private final int fauxXRad;
     public int getFauxXRad() {
         return fauxXRad;
@@ -22,45 +28,100 @@ public final class Ghoulie extends Boss implements Globals {
     public int getFauxYRad() {
         return fauxYRad;
     }
+    private final static String imagePath = "General/GHOUL.png";
     /**
     * Ghoulie class constructor initializes variables related to the Ghoulie boss.
     * 
     * @param player     The player.
     */
     public Ghoulie(Player player) {
-        super(player, "General/GHOUL.png", 300, 300,50,1);
-        this.health = 70;
+        super(player, imagePath, height, width, 100, 2);
+        this.health = 100;
         this.rad = 150;
         this.xRad = this.rad;
         this.yRad = this.rad;
-        this.fauxXRad = 8;
-        this.fauxYRad = 75;
+        this.fauxXRad = 35;
+        this.fauxYRad = 110;
         this.xSide = GAMEBORDER;
         this.ySide = 0;
-        this.movementDelay = 1000;
+        this.movementDelay = 2000;
         this.speed = 2;
-        this.timer = 0;
+        this.attackTimer = 0;
+        this.contactDamage = 2;
+        Weapon weapon = new Weapon(this,GHOULIE1);
+        this.weapons.add(weapon);
+        weapon = new Weapon(this,GHOULIE2);
+        this.weapons.add(weapon);
+        weapon = new Weapon(this,GHOULIE3);
+        this.weapons.add(weapon);
+        this.weapons.get(0).inactive = true;
+        this.weapons.get(1).inactive = true;
+        this.weapons.get(2).inactive = true;
     }
     /**
     * Updates the boss.
     */
     @Override
     public void update() {
-        calcVels();
+        super.update();
+        if (isDead()) {
+            weapons.get(0).inactive = true;
+            weapons.get(1).inactive = true;
+            weapons.get(2).inactive = true;
+            return; 
+        }
+        attack();
         xPos += xVel;
         yPos += yVel;
     }
     /**
-    * Calculates the direction the boss should be moving in.
+    * Boss AI.
     */
-    public void calcVels() {
+    public void attack() {
+        if (this.health < (Ghoulie.maxHealth / 4)) {
+            this.speed = 4;
+        } else if (this.health < (Ghoulie.maxHealth / 2)) {
+            this.speed = 3;
+        }
         long now = System.currentTimeMillis();
         if ( now - lastMovement > movementDelay ) {
-            this.timer++;
-            if ((this.timer % 2) == 1) {
-                moveRandomly();
-            } else {
-                moveTowardPlayer();
+            lastMovement = now;
+            this.attackTimer++;
+            switch (this.attackTimer % 5) {
+                case 4:
+                    weapons.get(0).inactive = true;
+                    weapons.get(1).inactive = false;
+                    weapons.get(2).inactive = true;
+                    break;
+                case 3:
+                    weapons.get(0).inactive = false;
+                    weapons.get(1).inactive = true;
+                    weapons.get(2).inactive = true;
+                    break;
+                case 2:
+                    weapons.get(0).inactive = true;
+                    weapons.get(1).inactive = true;
+                    weapons.get(2).inactive = false;
+                    moveRandomly();
+                    break;
+                case 1:
+                    weapons.get(0).inactive = true;
+                    weapons.get(1).inactive = true;
+                    weapons.get(2).inactive = true;
+                    this.speed += 1;
+                    moveTowardPlayer();
+                    this.speed -= 1;
+                    break;
+                case 0:
+                    weapons.get(0).inactive = true;
+                    weapons.get(1).inactive = true;
+                    weapons.get(2).inactive = true;
+                    this.speed += 1;
+                    moveRandomly();
+                    this.speed -= 1;                    
+                    break;
+                default:
+                    break;
             }
         }
     }

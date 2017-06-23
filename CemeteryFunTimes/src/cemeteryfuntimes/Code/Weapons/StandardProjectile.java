@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Weapons;
-
 import cemeteryfuntimes.Code.Bosses.Boss;
 import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Player;
@@ -10,8 +9,8 @@ import java.util.Random;
 * StandardProjectile class contains variables and methods related to standard projectiles, i.e. projectiles for Pistol, Shotgun, etc.
 * @author David Kozloff & Tyler Law
 */
-
 public class StandardProjectile extends Projectile {
+    private final float offset;
     /**
     * StandardProjectile class constructor initializes variables related to standard projectiles.
     * 
@@ -20,9 +19,11 @@ public class StandardProjectile extends Projectile {
     * @param angle               The angle in which the projectile fires
     * @param projectileImagePath The file path for the projectile image.
     * @param weapon              The weapon firing the projectile.
+    * @param offset              Bullet offset value for shotgun projectiles.
     */
-    public StandardProjectile(PosVel posVel, int direction, double angle, String projectileImagePath, Weapon weapon) {
+    public StandardProjectile(PosVel posVel, int direction, double angle, String projectileImagePath, Weapon weapon, float offset) {
         super(weapon);
+        this.offset = offset;
         damage = weapon.Damage();
         rotation = posVel.rotation();
         if (weapon.EnemyWeapon()) {enemyWeaponInit(posVel,weapon,angle);}
@@ -37,7 +38,6 @@ public class StandardProjectile extends Projectile {
         int yImagePad = projectileImage.getHeight()/2;
         xSide = GAMEBORDER - xImagePad;
         ySide = -yImagePad;
-        
     }
     /**
     * Initializes the projectile if the player is firing it.
@@ -63,11 +63,11 @@ public class StandardProjectile extends Projectile {
         handleSpread(weapon);
     }
     /**
-     * Initializes projectiles if an enemy fired it.
-     * 
-     * @param posVel The enemy object.
-     * @param weapon The enemy's weapon.
-     */
+    * Initializes projectiles if an enemy fired it.
+    * 
+    * @param posVel The enemy object.
+    * @param weapon The enemy's weapon.
+    */
     private void enemyWeaponInit(PosVel posVel, Weapon weapon, double angle) {
         Player player;
         if (posVel instanceof Enemy) {
@@ -113,15 +113,18 @@ public class StandardProjectile extends Projectile {
         //Calculates a random angle smaller than "spread".
         //Updates xVel and yVel and rotation to account for the spread.
          double spread = weapon.ProjectileSpread();
-         if (spread != 0) {
-            Random random = new Random();
-            int sign = random.nextFloat() < 0.5 ? -1 : 1;
-            spread = Math.toRadians(sign * random.nextFloat() * spread);
-            //Rotates velocity vector by angle spread
-            xVel = (float) (xVel * Math.cos(spread) - yVel * Math.sin(spread));
-            yVel = (float) (xVel * Math.sin(spread) + yVel * Math.cos(spread));
-            rotation += spread;
+         if (weapon.Key() == SHOTGUN) {
+                spread = Math.toRadians(this.offset * spread);
+         } else {
+             if (spread != 0) {
+                Random random = new Random();
+                int sign = random.nextFloat() < 0.5 ? -1 : 1;
+                spread = Math.toRadians(sign * random.nextFloat() * spread);
+            }
         }
-     }
-    
+        //Rotates velocity vector by angle spread
+        xVel = (float) (xVel * Math.cos(spread) - yVel * Math.sin(spread));
+        yVel = (float) (xVel * Math.sin(spread) + yVel * Math.cos(spread));
+        rotation += spread; 
+    }
 }

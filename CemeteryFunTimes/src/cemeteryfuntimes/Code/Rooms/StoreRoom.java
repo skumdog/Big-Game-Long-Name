@@ -6,6 +6,7 @@ import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.Random;
 /**
 * StoreRoom class contains variables and methods related to store rooms.
 * @author David Kozloff & Tyler Law
@@ -13,6 +14,7 @@ import java.awt.Graphics2D;
 public final class StoreRoom extends Room implements Globals {
     private final Pickup heart;
     private final Pickup weapon;
+    private final Random random;
     /**
     * StoreRoom class constructor initializes variables related to store rooms.
     * 
@@ -22,7 +24,18 @@ public final class StoreRoom extends Room implements Globals {
         super(player,STOREROOM);
         this.heart = new Pickup(315, 300, 0);
         this.pickups.add(heart);
-        this.weapon = new Pickup(460, 282, 3);
+        random = new Random();
+        switch (player.getWeaponKeys().size()) {
+            case 1:
+                this.weapon = new Pickup(460, 302, 3);
+                break;
+            case 2:
+                this.weapon = new Pickup(460, 303, 4);
+                break; 
+            default:
+                this.weapon = new Pickup(460, 303, 2);
+                break;
+        }
         this.pickups.add(weapon);
     }
     /**
@@ -40,17 +53,20 @@ public final class StoreRoom extends Room implements Globals {
         }
         if (collided) {
             // Health purchase.
-            if (pickupType == 0 && this.player.getCoins() >= 3 && this.player.getHealth() < 5) {
+            if (pickupType == 0 && this.player.getCoins() >= 5 && this.player.getHealth() < 6) {
                 Collision.checkPickupCollision(this.player,this.pickups);
-                this.player.removeMoney(3);
+                this.player.removeMoney(5);
             // Machine gun purchase.
-            } else if (pickupType == 2 && this.player.getCoins() >= 5 && !player.getWeaponKeys().contains(MACHINEGUN)) {
+            } else if (pickupType == 2 && this.player.getCoins() >= 10 && !player.getWeaponKeys().contains(MACHINEGUN)) {
                 Collision.checkPickupCollision(this.player,this.pickups);
-                this.player.removeMoney(5);
+                this.player.removeMoney(10);
             // Flamethrower purchase.
-            } else if (pickupType == 3 && this.player.getCoins() >= 5 && !player.getWeaponKeys().contains(FLAMETHROWER)) {
+            } else if (pickupType == 3 && this.player.getCoins() >= 10 && !player.getWeaponKeys().contains(FLAMETHROWER)) {
                 Collision.checkPickupCollision(this.player,this.pickups);
-                this.player.removeMoney(5);
+                this.player.removeMoney(10);
+            } else if (pickupType == 4 && this.player.getCoins() >= 10 && !player.getWeaponKeys().contains(SHOTGUN)) {
+                Collision.checkPickupCollision(this.player,this.pickups);
+                this.player.removeMoney(10);
             }
         }
     }
@@ -69,10 +85,10 @@ public final class StoreRoom extends Room implements Globals {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Courier", 1, 25));
             if (this.pickups.contains(this.heart)) {
-                g.drawString("3", 508, 350);
+                g.drawString("5", 508, 350);
             }
             if (this.pickups.contains(this.weapon)) {
-                g.drawString("5", 672, 350);
+                g.drawString("10", 665, 350);
             }
         }
     }

@@ -156,7 +156,6 @@ public abstract class PosVel implements Globals {
         }
         return wallsHit;
     }
-    
     /**
      * Used to find which wall an object has collided with
      * 

@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Bosses;
-
 import cemeteryfuntimes.Code.Enemy;
 import cemeteryfuntimes.Code.Player;
 import cemeteryfuntimes.Code.Rooms.BossRoom;
@@ -8,9 +7,8 @@ import cemeteryfuntimes.Code.Weapons.Weapon;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
-
 /**
-* Boss abstract class contains variables and methods related to boss enemies.
+* Bat Lord boss.
 * @author David Kozloff & Tyler Law
 */
 public class BatLord extends Boss implements Globals {
@@ -22,7 +20,7 @@ public class BatLord extends Boss implements Globals {
     private final static int movementTypes = 2;
     private final static float chargeSpeed = 4;
     private final static int attackTypes = 3;
-    private long batSpawnDelay = 300; //Delay between spawning of bats
+    private final long batSpawnDelay = 300; //Delay between spawning of bats
     private final static int[][] durations = {
         {2000,500},{5000,2000},{0,4500}
     };
@@ -32,6 +30,7 @@ public class BatLord extends Boss implements Globals {
     private int movementType=0; //The style of movement batlord is currently using
                                 // 0 - Rest, duration = 2000
                                 // 1 - Charge, duration = 5000
+                                // 2 - Spiral
     private long movementDuration=2000;
     private long movementTimer=System.currentTimeMillis();
     private int attackType=0; //The weapon batlord is currently using
@@ -44,7 +43,8 @@ public class BatLord extends Boss implements Globals {
     private final ArrayList<Enemy> bats; //Spawned bats
 
     public BatLord(Player player, BossRoom room) {
-        super(player, imagePath, height, width, 50,2);
+        super(player, imagePath, height, width, 50, 2);
+        this.health = 100;
         bats = room.getEnemies();
         randType = new Random();
         Weapon firebat = new Weapon(this,FIREBAT);
@@ -156,9 +156,11 @@ public class BatLord extends Boss implements Globals {
         }
     }
     
+    /**
+    * Spawns bats.
+    */
     private void spawnBat() {
         Enemy bat = new Enemy(player,xPos,yPos,BAT);
         bats.add(bat);
     }
-    
 }

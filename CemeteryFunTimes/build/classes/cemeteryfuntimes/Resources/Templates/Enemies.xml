@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- XML enemy template
-    This template contains the base properties of enemies
+    This template contains the base properties of enemies.
     
 -->
 <Enemies>
     <Enemy Key="1" 
         Name="Zombie"
         Type="1"
-        Difficulty="1"
+        Difficulty="2"
         MovementType="1"
         MovementDelay="0"
         Health="3"
@@ -25,7 +25,7 @@
         Health="1"
         ContactDamage="1" 
         EnemySpeed="2"
-        EnemySize="30"
+        EnemySize="20"
         EnemyImage="Enemies/Bat/bat.png"
     />
     <Enemy Key="3"
@@ -60,7 +60,7 @@
         Difficulty="3"
         MovementType="2"
         MovementDelay="1000"
-        Health="6"
+        Health="5"
         ContactDamage="2"
         EnemySpeed=".5"
         EnemySize="60"

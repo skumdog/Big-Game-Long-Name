@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Weapons;
-
 import cemeteryfuntimes.Code.Shared.ImageLoader;
 import cemeteryfuntimes.Code.Shared.PosVel;
 import java.awt.Graphics2D;
@@ -74,7 +73,6 @@ public class SingleProjectile extends Projectile {
         xPos = xPadding + posVel.xPos();
         yPos = yPadding + posVel.yPos();
     }
-    
     /**
     * Renders the projectile.
     * 
@@ -84,5 +82,4 @@ public class SingleProjectile extends Projectile {
     public void draw(Graphics2D g) {
         if (active) { super.draw(g); }
     }
-    
 }

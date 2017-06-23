@@ -33,7 +33,7 @@ public final class Level implements Globals {
     private Random random;
     
     //Level creation constants
-    private static final int totalRooms=2;
+    private static final int totalRooms=8;
     private int numberOfRooms;
     private static final double roomCreationProb=1d/8d;
     private static final double noRoomProb=1d/4d;
@@ -70,7 +70,7 @@ public final class Level implements Globals {
     * Initializes the level map.
     */
     private void createMap() {
-        currentRoom = new NormalRoom(player); 
+        currentRoom = new NormalRoom(player);
         currentRoom.visited=true;
         map = new Object[mapSize][mapSize];
         intMap = new int[mapSize][mapSize];
@@ -97,9 +97,8 @@ public final class Level implements Globals {
             }
         }
         while (numberOfRooms < totalRooms);
-        createSpecialRoom(BOSSROOM);
         createSpecialRoom(STOREROOM);
-        //createSpecialRoom(STOREROOM);
+        createSpecialRoom(BOSSROOM);
     }
     /**
     * Create a room and assign it to a coordinate on the level map.
@@ -216,6 +215,7 @@ public final class Level implements Globals {
     public boolean changeRoom(int side) {
         Room newRoom = currentRoom.GetNeighbor(side);
         if (newRoom == null) { return false; }
+        currentRoom.deadEnemyProjectiles().clear();
         currentRoom = newRoom;
         currentRoom.visited = true;
         player.changeRoom(side);
@@ -282,5 +282,4 @@ public final class Level implements Globals {
             }
         }
     }
-    
 }

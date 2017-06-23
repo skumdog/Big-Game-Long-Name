@@ -1,10 +1,8 @@
 package cemeteryfuntimes;
-
 import cemeteryfuntimes.Code.Shared.Globals;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import java.awt.event.KeyEvent;
-
 import cemeteryfuntimes.Code.*;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -18,7 +16,6 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-
 /**
 * Screen class enables rendering, handles keyboard input and
 * sets up the game loop.
@@ -26,12 +23,12 @@ import javax.swing.KeyStroke;
 */
 public class Screen extends JPanel implements Globals {
     
-    private Game game;
+    private final Game game;
     public Game getGame() {
         return game;
     }
     private final java.util.Timer gameUpdater; 
-    private boolean gameRunning;
+    private final boolean gameRunning;
     
     private BufferedImage backgroundImage;
     private BufferedImage gameBackgroundImage;
@@ -53,7 +50,8 @@ public class Screen extends JPanel implements Globals {
         SHOOTINGUP(KeyEvent.VK_UP,SHOOT,UP),SHOOTINGDOWN(KeyEvent.VK_DOWN,SHOOT,DOWN),SHOOTINGLEFT(KeyEvent.VK_LEFT,SHOOT,LEFT),SHOOTINGRIGHT(KeyEvent.VK_RIGHT,SHOOT,RIGHT),
         //These are the changing weapon key events
         WEAPONPREV(KeyEvent.VK_Q,CHANGEWEAPON,PREVIOUSWEAPON),WEAPONNEXT(KeyEvent.VK_E,CHANGEWEAPON,NEXTWEAPON),
-        WEAPONONE(KeyEvent.VK_1,CHANGESPECIFICWEAPON,PISTOL) ,WEAPONTWO(KeyEvent.VK_2,CHANGESPECIFICWEAPON,MACHINEGUN),WEAPONFIVE(KeyEvent.VK_5,CHANGESPECIFICWEAPON,FLAMETHROWER);
+        WEAPONONE(KeyEvent.VK_1,CHANGESPECIFICWEAPON,PISTOL) ,WEAPONTWO(KeyEvent.VK_2,CHANGESPECIFICWEAPON,MACHINEGUN),WEAPONFIVE(KeyEvent.VK_4,CHANGESPECIFICWEAPON,FLAMETHROWER),
+        WEAPONTHREE(KeyEvent.VK_3,CHANGESPECIFICWEAPON,SHOTGUN);
         private final int keyCode;
         private final int actionType;
         private final int gameCode;
@@ -97,6 +95,7 @@ public class Screen extends JPanel implements Globals {
         //Start updating game 
         gameUpdater = new Timer();
         gameUpdater.schedule(new GameUpdater(), 0, TIMERDELAY);
+      
     }
     
     /** 
@@ -108,14 +107,14 @@ public class Screen extends JPanel implements Globals {
         // The game loop stops if gameRunning is set to false.
         @Override
         public void run() {
-            long now = System.currentTimeMillis();
-            /*if (game.getPlayer().getHealth() <= 0) {
-                if (now - lastUpdate < 3000) {
-                    return;
-                }
-                game = new Game();
-            }*/
-            lastUpdate = now;
+//            long now = System.currentTimeMillis();
+//            if (game.getPlayer().getHealth() <= 0) {
+//                if (now - lastUpdate < 3000) {
+//                    return;
+//                }
+//                game = new Game();
+//            }
+//            lastUpdate = now;
             game.update();
             repaint();
             if (!gameRunning) {
@@ -240,5 +239,4 @@ public class Screen extends JPanel implements Globals {
         backgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/background.jpg",SCREENWIDTH,SCREENHEIGHT);
         gameBackgroundImage = cemeteryfuntimes.Code.Shared.Utilities.getScaledInstance(IMAGEPATH+"General/gameBackground.jpg",GAMEWIDTH,GAMEHEIGHT);
     }
-    
 }

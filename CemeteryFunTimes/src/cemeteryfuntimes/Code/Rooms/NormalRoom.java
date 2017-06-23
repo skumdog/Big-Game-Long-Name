@@ -35,7 +35,6 @@ public final class NormalRoom extends Room implements Globals {
     */
     @Override
     public void update() {
-        Collision.checkPickupCollision(player,pickups);
         for (int i=0; i<spawns.size(); i++) {
             spawns.get(i).update();
         }

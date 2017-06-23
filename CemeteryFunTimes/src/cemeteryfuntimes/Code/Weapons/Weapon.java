@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code.Weapons;
-
 import cemeteryfuntimes.Code.Shared.*;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -68,7 +67,6 @@ public class Weapon implements Globals {
     }
     private SingleProjectile singleProjectile;
     public boolean inactive=false;
-    
     /**
     * Weapon class constructor initializes variables related to weapons.
     * 
@@ -115,9 +113,6 @@ public class Weapon implements Globals {
     * Updates the weapon.
     */
     public void update() {
-        if (type != 2 && shootDirection() != -1) {
-            createProjectile();
-        }
         Projectile projectile;
         for (Iterator<Projectile> projectileIt = projectiles.iterator(); projectileIt.hasNext();) {
             projectile = projectileIt.next();
@@ -125,6 +120,12 @@ public class Weapon implements Globals {
             projectile.update();
         }
         if (singleProjectile != null) { singleProjectile.update(); }
+        // Checking if the player is firing allows the weapon
+        // to fire immediately when a shoot key is pressed,
+        // rather than waiting the projectile delay period before firing.
+        if ((type != 2) && (shootDirection() != -1)) { 
+            createProjectile();
+        } 
     }
     /**
     * Spawns a new projectile.
@@ -136,19 +137,30 @@ public class Weapon implements Globals {
         if (now - lastUpdate < projectileDelay) {
             return;
         }
+        lastUpdate = now;
+ 
         //Create new projectile with correct location relative to posVel
         if (type == AOEBALLISTIC) {
             double angle = 2*Math.PI / numberofProjectiles;
             for (int i=0; i<numberofProjectiles; i++) {
-                Projectile projectile = new StandardProjectile(posVel, -1, i*angle, projectileImagePath, this);
+                Projectile projectile = new StandardProjectile(posVel, -1, i*angle, projectileImagePath, this, 0.0f);
                 projectiles.add(projectile);
             }
         }
         else {
-            Projectile projectile = new StandardProjectile(posVel, shootDirection(), Double.POSITIVE_INFINITY, projectileImagePath, this);
-            projectiles.add(projectile);
+            int direction = shootDirection();
+            Projectile projectile;
+            if (direction >= 0) {
+                if (this.key == SHOTGUN) {
+                    for (int i=1; i<6; i++) {
+                        projectile = new StandardProjectile(posVel, direction, Double.POSITIVE_INFINITY, projectileImagePath, this, i * 0.5f - 1.5f);
+                        projectiles.add(projectile);
+                    }
+                }
+                projectile = new StandardProjectile(posVel, direction, Double.POSITIVE_INFINITY, projectileImagePath, this, 0.0f);
+                projectiles.add(projectile);
+            }
         }
-        lastUpdate = now;
     }
     /**
     * Returns the direction in which the player is shooting, represented as an integer.

@@ -22,10 +22,11 @@ public class Collision implements Globals {
     * @return        -1 if room is not clear or no door collided, else side of door collision
     */
     public static int checkCollisions(Player player, Room room) {
-       //Check for collisions between Player and player projectiles with enemies
-        //As well as enemy and enemy projectile collision with player
-        //Also collisions with pickups / interactables and walls
-        //Update accordingly
+        // Check for collisions between Player and player projectiles with enemies
+        // As well as enemy and enemy projectile collision with player
+        // Also collisions with pickups / interactables and walls
+        // Update accordingly
+        
         boolean roomClear = room.RoomClear();
         ArrayList<Enemy> enemies = room.getEnemies();
         for (int i=0; i < enemies.size(); i++) {
@@ -231,6 +232,10 @@ public class Collision implements Globals {
                     case 3:
                         // Add flamethrower if flamethrower pickup.
                         player.getWeaponKeys().add(FLAMETHROWER);
+                        break;
+                    case 4:
+                        // Add shotgun if shotgun pickup.
+                        player.getWeaponKeys().add(SHOTGUN);
                         break;
                     default:
                         break;

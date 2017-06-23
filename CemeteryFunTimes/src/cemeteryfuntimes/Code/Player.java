@@ -1,5 +1,4 @@
 package cemeteryfuntimes.Code;
-
 import cemeteryfuntimes.Code.Bosses.Boss;
 import cemeteryfuntimes.Code.Weapons.Weapon;
 import cemeteryfuntimes.Code.Shared.*;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 * Player class contains variables and methods related to the player.
 * @author David Kozloff & Tyler Law
 */
-public class Player extends PosVel {
+public final class Player extends PosVel {
 
     //Movement based variables
     private float xAccel;
@@ -23,7 +22,6 @@ public class Player extends PosVel {
     }
     private BufferedImage playerImage;
     private BufferedImage sourcePlayerImage;
-    private double currentRotation; //Current player orientation in radians
     private int health;
     public int getHealth() {
         return health;
@@ -51,9 +49,9 @@ public class Player extends PosVel {
     public Player(int xPos, int yPos) {
         super (xPos,yPos);
         moveKeysPressed = new boolean [4];
-        health = 4;
-        coins = 8;
-        rad = PLAYERSIZE/2; xRad = rad; yRad = rad;
+        health = 6;
+        coins = 3;
+        rad = PLAYERSIZE*4/9; xRad = rad; yRad = rad;
         xSide = GAMEBORDER-rad;
         ySide = -rad;
         weaponKeys = new ArrayList();
@@ -61,8 +59,9 @@ public class Player extends PosVel {
         currentWeaponKey = PISTOL;
         weaponKeys.add(PISTOL);
         changePlayerImage();
-        weaponKeys.add(MACHINEGUN);
-        weaponKeys.add(FLAMETHROWER);
+        rotatePlayerImage(1);
+        this.xPos = 400;
+        this.yPos = 400;
     }
     /**
      * Updates player position on room change.
@@ -212,10 +211,9 @@ public class Player extends PosVel {
             yAccel /= 1.41421356237;
         }
         //Combine both player accel and friction deaccel
-        xAccel += -FRICTION * xVel;
-        yAccel += -FRICTION *  yVel;
+        xAccel += -FRICTION * xVel / PLAYERMAXSPEED;
+        yAccel += -FRICTION *  yVel / PLAYERMAXSPEED;
     }
-
     /**
     * Handles collision if the player is not currently in invincibility frames.
     * 
@@ -293,9 +291,6 @@ public class Player extends PosVel {
     */
     public void draw(Graphics2D g) {
         weapon.draw(g);
-        if (invincTimer != 0) {
-            //Different drawing / animation of player when injured?
-        }
         g.drawImage(playerImage, Math.round(xSide+xPos), Math.round(ySide+yPos), null);
     }
 }

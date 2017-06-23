@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 * @author David Kozloff & Tyler Law
 */
 public class Pickup extends PosVel {
-    // Make this global?
     private final static int HEARTSIZE = 40;
     private final int type;
     public int getType() {
@@ -15,7 +14,8 @@ public class Pickup extends PosVel {
     }
     private final static String[] imagePaths = {
         "General/heart.png","General/coin.png",
-        "General/machinegun.png","General/flamethrower.png"
+        "General/machinegun.png","General/flamethrower.png",
+        "General/shotgun.png"
     };
     /**
     * Pickup class constructor initializes variables related to pickups.

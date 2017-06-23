@@ -17,8 +17,8 @@ public class Game implements Globals {
     private final Level level;
     private Room room;
     private BufferedImage heartContainer;
+    private BufferedImage halfHeartContainer;
     private BufferedImage coin;
-    //private BufferedImage halfHeartContainer=null;
     
     //Constants
     private final static int HEARTSIZE=40;
@@ -32,7 +32,6 @@ public class Game implements Globals {
         room = level.getCurrentRoom();
         // Image setup.
         setupImages();
-        // TODO: Logic for loading new room/level as the player progresses.
     }
     /**
     * Updates the game.
@@ -43,7 +42,6 @@ public class Game implements Globals {
         }
         player.update();
         room.update();
-        //Check for all collisions
     }
     /**
     * Renders the game.
@@ -68,17 +66,21 @@ public class Game implements Globals {
     */
     public void drawHUD(Graphics2D g) {
         //Draw player's heart containers
-        for (int i=0; i<player.getHealth(); i=i+2) {
-            g.drawImage(this.heartContainer,(i/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
+        int index = 0;
+        for (int i=2; i<player.getHealth()+1; i=i+2) {
+            g.drawImage(this.heartContainer,(i/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING-50,HEARTPADDING,null);
+            index = i;
+        }
+        if (player.getHealth() % 2 == 1) {
+            g.drawImage(this.halfHeartContainer,(1+(index/2))*(HEARTSIZE+HEARTPADDING)+HEARTPADDING-50,HEARTPADDING,null);
         }
         //Draw player's coins.
-        for (int i=0; i<player.getCoins(); i=i+1) {
-           g.drawImage(this.coin,10*i+10,70,null);
-        }
-        //Check if player has half a heart
-        /*if (player.health % 2 != 0) {
-            g.drawImage(halfHeartContainer,((player.health-1)/2)*(HEARTSIZE+HEARTPADDING)+HEARTPADDING,HEARTPADDING,null);
-        }*/
+        g.drawImage(this.coin,10,70,null);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Courier", 1, 25));
+        Integer coinInt = player.getCoins();
+        String coinStr = coinInt.toString();
+        g.drawString(coinStr, 55, 99);
     }
     /**
     * Calls the callback method triggered by a set of related key events.
@@ -130,10 +132,13 @@ public class Game implements Globals {
     private void setupImages() {
        //Initialize always relevent images images
        ImageLoader.loadImage("General/heart.png",HEARTSIZE,HEARTSIZE);
+       ImageLoader.loadImage("General/halfheart.png",HEARTSIZE/2,HEARTSIZE);
        ImageLoader.loadImage("General/coin.png",HEARTSIZE,HEARTSIZE);
-       ImageLoader.loadImage("General/machinegun.png",HEARTSIZE*2,HEARTSIZE*2);
-       ImageLoader.loadImage("General/flamethrower.png",HEARTSIZE*2,HEARTSIZE*2);
+       ImageLoader.loadImage("General/machinegun.png",HEARTSIZE*2,HEARTSIZE);
+       ImageLoader.loadImage("General/flamethrower.png",HEARTSIZE*2,HEARTSIZE*3/4);
+       ImageLoader.loadImage("General/shotgun.png",HEARTSIZE*2,HEARTSIZE*3/4);
        this.heartContainer = ImageLoader.getImage("General/heart.png",0);
+       this.halfHeartContainer = ImageLoader.getImage("General/halfheart.png",0);
        this.coin = ImageLoader.getImage("General/coin.png",0);
        //halfHeartContainer = cemeteryfuntimes.Resources.Shared.Other.getScaledInstance("General/halfHeart.png",HEARTSIZE/2,HEARTSIZE);
     }

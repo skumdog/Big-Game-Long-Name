@@ -18,7 +18,7 @@ public abstract class Projectile extends PosVel {
     public int type() {
         return type;
     }
-    /**
+    /** 
      * Default projectile constructor
      * 
      * @param weapon The weapon firing the projectile
