@@ -10,6 +10,8 @@ import java.util.Random;
 * Level class contains variables and methods related to levels.
 * Levels are represented as two-dimensional arrays of rooms.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 Make starting room have no enemies. Add portal image. Add depth variable.
 */
 public final class Level implements Globals {
     private final Player player;
@@ -30,25 +32,30 @@ public final class Level implements Globals {
     public int yCord() {
         return yCord;
     }
-    private Random random;
+    private final int depth;
+    public int Depth() {
+        return depth;
+    }
     
     //Level creation constants
-    private static final int totalRooms=8;
+    private int totalRooms=2;
     private int numberOfRooms;
     private static final double roomCreationProb=1d/8d;
     private static final double noRoomProb=1d/4d;
-    private static final int mapSize = 11;
+    private int mapSize = 11;
     
     //Map drawing constants
     private final static int MAPPADDING=7;
     private final static int MAPBORDER=GAMEBORDER+GAMEWIDTH+MAPPADDING;
     private final static float MAPLENGTH=SCREENWIDTH-MAPBORDER-2*MAPPADDING;
-    private final static int MAPELEMENTS=11;
+    private final static int MAPELEMENTS=5;
     private final static int MAPELEMENT=(int)((MAPLENGTH-(MAPELEMENTS+1)*MAPPADDING)/MAPELEMENTS);
     private final static int MAPDOORWIDTH=5;
     private final static int MAPDOORPADDING=(int)(MAPELEMENT/2d-MAPDOORWIDTH/2d);
     private final static int doorHeight=100;
     private final static int doorWidth=50;
+    private final static int caveHeight=100; //DKOZLOFF+1 06/22
+    private final static int caveWidth=150;
     private final static Color[] roomColors = {
         Color.BLACK,Color.RED,Color.BLUE
     };
@@ -56,21 +63,31 @@ public final class Level implements Globals {
     * Level constructor initializes variables related to levels.
     * 
     * @param player  The player.
+    * @param depth   The level the player has reached.
+    * 
+    * //DKOZLOFF 06/22 Load portal image. Use cave height + width variables. Account for level depth.
     */
-    public Level(Player player) {
+    public Level(Player player, int depth) {
         //Load level images
         ImageLoader.loadImage("General/doorClosed.png",doorHeight,doorWidth);
         ImageLoader.loadImage("General/doorOpen.png",doorHeight,doorWidth);
-        ImageLoader.loadImage("General/cave.png",100,150);
+        ImageLoader.loadImage("General/portal.png",PORTALSIZE,PORTALSIZE); //DKOZLOFF+4 06/22
+        ImageLoader.loadImage("General/cave.png",caveHeight,caveWidth);
+        //Update variables to account for depth 
+        this.depth = depth;
+        totalRooms = totalRooms + depth*2;
+        mapSize = totalRooms;
         //Initialze map
         this.player = player;
         createMap();
     }
     /**
     * Initializes the level map.
+    * 
+    * //DKOZLOFF 06/22 Use new normal room constructor for starting room.
     */
     private void createMap() {
-        currentRoom = new NormalRoom(player);
+        currentRoom = new NormalRoom(player,true); //DKOZLOFF 06/22
         currentRoom.visited=true;
         map = new Object[mapSize][mapSize];
         intMap = new int[mapSize][mapSize];
@@ -83,7 +100,7 @@ public final class Level implements Globals {
         do {
             for (int x=0; x<intMap.length; x++) 
                 for (int y=0; y<intMap[0].length; y++) 
-                    if (numberOfRooms >= totalRooms) { break; }
+                    if (numberOfRooms == totalRooms) { break; }
                     else if (intMap[x][y] == 1) {
                         createRooms((Room)map[x][y],x,y);
                     }
@@ -110,8 +127,11 @@ public final class Level implements Globals {
     private void createRooms(Room room, int x, int y) {
         int length = map.length-1;
         if (x > 0 ) { checkAndCreateRoom(room,x,y,LEFT,NORMALROOM); }
+        if (numberOfRooms == totalRooms) { return; }
         if (x < length ) { checkAndCreateRoom(room,x,y,RIGHT,NORMALROOM); }
+        if (numberOfRooms == totalRooms) { return; }
         if (y > 0 ) { checkAndCreateRoom(room,x,y,UP,NORMALROOM); }
+        if (numberOfRooms == totalRooms) { return; }
         if (y < length ) { checkAndCreateRoom(room,x,y,DOWN,NORMALROOM); }
     }
     /**

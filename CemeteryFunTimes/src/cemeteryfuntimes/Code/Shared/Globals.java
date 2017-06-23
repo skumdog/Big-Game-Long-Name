@@ -2,6 +2,8 @@ package cemeteryfuntimes.Code.Shared;
 /**
 * Globals interface contains global constants.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 Add PORTALSIZE, PORTALX, PORTALY, PORTALCOLLISION.
 */
 public interface Globals {
     
@@ -48,6 +50,10 @@ public interface Globals {
     public final static double MINIMUMROTATION=0.0174533; //1 degrees in radians
     public final static String IMAGEPATH="src/cemeteryfuntimes/Resources/Images/";
     public final static String TEMPLATEPATH="src/cemeteryfuntimes/Resources/Templates/";
+    public final static int PORTALSIZE=200; //DKOZLOFF+3 06/22
+    public final static int PORTALX=GAMEWIDTH/2;
+    public final static int PORTALY=GAMEHEIGHT/2;
+    public final static int PORTALCOLLISION=4;
     
     //Player Weapons
     public final static int PISTOL=1;

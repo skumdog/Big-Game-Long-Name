@@ -12,6 +12,8 @@ import java.util.Iterator;
 /**
 * Collision class contains methods related to object collisions.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 Fixed problem where boss projectiles stopped being checked upon roomClear.
 */
 public class Collision implements Globals {
     /**
@@ -19,7 +21,11 @@ public class Collision implements Globals {
     * 
     * @param player  The player.
     * @param room    The current room
-    * @return        -1 if room is not clear or no door collided, else side of door collision
+    * @return        -1 if room is not clear or no door collided, 
+    *                PORTALCOLLISION if cleared boss room and player steps into portal,
+    *                else side of door collision
+    * 
+    * //DKOZLOFF 06/22 Fix boss projectile collisions after room clear. Add portal collision.
     */
     public static int checkCollisions(Player player, Room room) {
         // Check for collisions between Player and player projectiles with enemies
@@ -28,6 +34,7 @@ public class Collision implements Globals {
         // Update accordingly
         
         boolean roomClear = room.RoomClear();
+        int portalCollision=-1; //DKOZLOFF 06/22
         ArrayList<Enemy> enemies = room.getEnemies();
         for (int i=0; i < enemies.size(); i++) {
             enemies.get(i).calcVels();
@@ -39,17 +46,20 @@ public class Collision implements Globals {
             spawns = ((NormalRoom) room).getSpawns();
             checkPlayerSpawnCollision(player,spawns);
         }
-        if (!roomClear) {
-            if (room instanceof BossRoom) {
-                BossRoom bossRoom = (BossRoom) room;
-                handleBossCollisions(bossRoom.getBoss(),player);
-            }
+        if (room instanceof BossRoom) { //DKOZLOFF+3 06/22 Moved out of if (!roomClear)
+            BossRoom bossRoom = (BossRoom) room;
+            portalCollision = handleBossCollisions(bossRoom.getBoss(),player,roomClear);
+        }
+        if (!roomClear) { 
             checkEnemyWallCollisions(enemies);
             checkEnemyEnemyCollision(enemies);
             checkEnemyPlayerCollision(player,enemies);
         }
         checkBallisticWallCollisions(player,enemies,deadEnemyProjectiles);
         boolean[] wall = checkPlayerWallCollision(player);
+        //Return PORTALCOLLISION if this is a cleared boss room and player steps into portal. //DKOZLOFF+2 06/22
+        if (portalCollision == PORTALCOLLISION) { return portalCollision; }
+        //Check if player collides with a door, if so return the door.
         return checkPlayerDoorCollision(player,wall,roomClear);
     }
     /**
@@ -57,21 +67,35 @@ public class Collision implements Globals {
      * 
      * @param boss   The boss of this level.
      * @param player The player.
+     * @return       Returns PORTALCOLLISION if boss is dead and player steps into portal, else -1.
+     * 
+     * //DKOZLOFF 06/22 Added if(!roomClear) block. Add return type, and portal collision code.
      */
-    private static void handleBossCollisions(Boss boss, Player player) {
-        //Handle wall collisions
-        handleWallCollision(boss,boss.checkWallCollision()); 
-        //Handle ballistic collisions
-        handleBallisticCollisions(player.getWeapon().Projectiles(),boss); 
+    private static int handleBossCollisions(Boss boss, Player player, Boolean roomClear) {
+        //Handle ballistic wall collisions
         ArrayList<Weapon> weapons = boss.weapons();
         for (int i=0; i <weapons.size(); i++) {
             handleBallisticCollisions(weapons.get(i).Projectiles(),player);
             ballisticWallCollisionLoop(weapons.get(i).Projectiles());
         }
-        //Handle physical collisions
-        if (boss.collide(player)) {
-            handleBossPlayerCollision(player,boss);
+        if (!roomClear) { //DKOZLOFF+17 06/22
+            handleBallisticCollisions(player.getWeapon().Projectiles(),boss); 
+            //Handle wall collisions
+            handleWallCollision(boss,boss.checkWallCollision()); 
+            //Handle physical collisions
+            if (boss.collide(player)) {
+                handleBossPlayerCollision(player,boss);
+            }
         }
+        //If room is clear, then check if player steps into portal.
+        else {
+            if (player.xPos > PORTALX - PORTALSIZE/2 && player.xPos < PORTALX + PORTALSIZE/2) {
+                if (player.yPos > PORTALY - PORTALSIZE/2 && player.yPos < PORTALY + PORTALSIZE/2) {
+                    return PORTALCOLLISION;
+                }
+            }
+        }
+        return -1;
     }
     /**
     * Checks for collisions between player projectiles and enemies.
@@ -100,6 +124,8 @@ public class Collision implements Globals {
     * 
     * @param projectiles Array of projectiles.
     * @param target      The PosVel to check if the projectiles collided with.
+    * 
+    * //DKOZLOFF 06/22 Make it so a single projectile can collide with multiple enemies.
     */
     private static void handleBallisticCollisions(ArrayList<Projectile> projectiles, PosVel target) {
         Projectile projectile;
@@ -108,7 +134,7 @@ public class Collision implements Globals {
             if (target.collide(projectile)) {
                 target.damaged(projectile.damage());
                 projectile.collide = true;
-                break;
+                if (projectile.type() != SINGLEBULLET) { break; } //DKOZLOFF 06/22
             }
         }
     }

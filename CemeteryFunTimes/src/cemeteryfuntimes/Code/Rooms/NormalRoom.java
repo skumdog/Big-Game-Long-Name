@@ -8,6 +8,8 @@ import org.w3c.dom.NamedNodeMap;
 /**
 * NormalRoom class contains variables and methods related to normal rooms.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 New alternate constructor
 */
 public final class NormalRoom extends Room implements Globals {
     protected final int key;
@@ -31,6 +33,18 @@ public final class NormalRoom extends Room implements Globals {
         loadRoom(roomKey);
     }
     /**
+    * Alternate constructor used to create an empty room.
+    * 
+    * @param player     The player.
+    * @param emptyRoom  Boolean = true if room is empty.
+    * 
+    * //DKOZLOFF 06/22 Created this routine
+    */
+    public NormalRoom (Player player, Boolean emptyRoom) {
+        super (player,NORMALROOM); 
+        key = -1;
+    }
+    /**
     * Updates the room.
     */
     @Override
@@ -47,7 +61,7 @@ public final class NormalRoom extends Room implements Globals {
     @Override
     public void draw(Graphics2D g) {
         //Draw pickups and enemies
-        for (int i=0; i<spawns.size(); i++) {
+        for (int i=0; i<spawns.size(); i++) { 
             spawns.get(i).draw(g);
         }
         super.draw(g);

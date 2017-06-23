@@ -10,7 +10,7 @@ import java.util.Random;
 public final class Ghoulie extends Boss implements Globals {
     private final static int height = 300;
     private final static int width = 300;
-    private final static int maxHealth = 70;
+    private final static int maxHealth = 100;
     private float speed;
     public float Speed() {
         return speed;

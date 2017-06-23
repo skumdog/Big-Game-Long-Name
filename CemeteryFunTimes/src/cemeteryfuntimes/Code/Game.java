@@ -8,13 +8,15 @@ import java.awt.image.BufferedImage;
 /**
 * Game class contains variables and methods related to game state.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 Call RoomEntered, upon entering a new room.
 */
 public class Game implements Globals {
     private final Player player;
     public Player getPlayer() {
         return player;
     }
-    private final Level level;
+    private Level level;
     private Room room;
     private BufferedImage heartContainer;
     private BufferedImage halfHeartContainer;
@@ -28,17 +30,26 @@ public class Game implements Globals {
     */
     public Game() {
         player = new Player(PLAYERSIZE/2,PLAYERSIZE/2);
-        level = new Level(player);
+        level = new Level(player,1);
         room = level.getCurrentRoom();
         // Image setup.
         setupImages();
     }
     /**
     * Updates the game.
+    * 
+    * //DKOZLOFF 06/22 Call RoomEntered. Add code for going to next level.
     */    
     public void update() {
-        if (level.changeRoom(Collision.checkCollisions(player,room))) {
+        int collisionResult = Collision.checkCollisions(player,room); //DKOZLOFF+6 06/22
+        if (collisionResult == PORTALCOLLISION) {
+            int currentDepth = level.Depth();
+            level = new Level(player,currentDepth+1);
             room = level.getCurrentRoom();
+        }
+        else if (level.changeRoom(collisionResult)) {
+            room = level.getCurrentRoom();
+            room.RoomEntered(); //DKOZLOFF 06/22
         }
         player.update();
         room.update();
@@ -63,6 +74,8 @@ public class Game implements Globals {
     * Renders the player's heads up display.
     * 
     * @param g The Graphics object used by Java to render everything in the game.
+    * 
+    * //DKOZLOFF 06/22 Add display for current level.
     */
     public void drawHUD(Graphics2D g) {
         //Draw player's heart containers
@@ -81,6 +94,8 @@ public class Game implements Globals {
         Integer coinInt = player.getCoins();
         String coinStr = coinInt.toString();
         g.drawString(coinStr, 55, 99);
+        g.setFont(new Font("Courier", 1, 25));
+        g.drawString("Level: " + level.Depth(), 20, 750);
     }
     /**
     * Calls the callback method triggered by a set of related key events.

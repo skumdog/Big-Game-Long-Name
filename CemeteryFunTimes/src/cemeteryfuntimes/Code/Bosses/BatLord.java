@@ -10,6 +10,8 @@ import java.util.Random;
 /**
 * Bat Lord boss.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 Make boss easier.
 */
 public class BatLord extends Boss implements Globals {
     
@@ -18,11 +20,11 @@ public class BatLord extends Boss implements Globals {
     private final static int width = (int)(height*1.29); //Conversion factor for dimensions of image
     private final static String imagePath = "Bosses/BatLord/batlord.png";
     private final static int movementTypes = 2;
-    private final static float chargeSpeed = 4;
+    private final static float chargeSpeed = 3;
     private final static int attackTypes = 3;
-    private final long batSpawnDelay = 300; //Delay between spawning of bats
+    private final long batSpawnDelay = 700; //Delay between spawning of bats
     private final static int[][] durations = {
-        {2000,500},{5000,2000},{0,4500}
+        {2000,1000},{5000,2500},{0,4500}
     };
     
     //Member Variables
@@ -31,20 +33,20 @@ public class BatLord extends Boss implements Globals {
                                 // 0 - Rest, duration = 2000
                                 // 1 - Charge, duration = 5000
                                 // 2 - Spiral
-    private long movementDuration=2000;
+    private long movementDuration=durations[0][0];
     private long movementTimer=System.currentTimeMillis();
     private int attackType=0; //The weapon batlord is currently using
-                              // 0 - Rest, duration = 500
-                              // 1 - Bat cannon, duration = 3000
+                              // 0 - Rest, duration = 1000
+                              // 1 - Bat cannon, duration = 2500
                               // 2 - Fire bat, duration = 4500
-    private long attackDuration=500;
+    private long attackDuration=durations[0][1];
     private long attackTimer=System.currentTimeMillis();
     private long batTimer; //Timer to keep track of when last bat was spawned
     private final ArrayList<Enemy> bats; //Spawned bats
 
     public BatLord(Player player, BossRoom room) {
         super(player, imagePath, height, width, 50, 2);
-        this.health = 100;
+        this.health = 50;
         bats = room.getEnemies();
         randType = new Random();
         Weapon firebat = new Weapon(this,FIREBAT);
@@ -56,7 +58,7 @@ public class BatLord extends Boss implements Globals {
     public void update() {
         super.update();
         updateBats();
-        if (isDead()) { return; }
+        if (isDead()) { weapons.get(0).inactive=true; return; }
         movementUpdate();
         attackUpdate();
     }

@@ -13,6 +13,8 @@ import java.util.Random;
 /**
 * Room abstract class contains variables and methods related to rooms.
 * @author David Kozloff & Tyler Law
+* 
+* //DKOZLOFF 06/22 Add room entered routine.
 */
 public abstract class Room implements Globals {
     protected final Player player;
@@ -137,6 +139,12 @@ public abstract class Room implements Globals {
     * @return A boolean indicating if the room has been cleared.
     */
     public abstract boolean RoomClear();
+    /**
+    * Call any necessary code upon entering a room.
+    * 
+    * //DKOZLOFF 06/22 Created routine.
+    */
+    public void RoomEntered() {}
     /**
     * Removes dead enemy frome the enemies array
     * Adds any remaining projectiles to deadEnemyProjectiles
